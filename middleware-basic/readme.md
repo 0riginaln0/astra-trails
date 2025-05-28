@@ -10,7 +10,7 @@ Here is a *best effort* visualization:
 ![Astra Middleware visualisation](Astra_Middleware_Visualization.png)
 
 
-Each middleware takes a `next_handler` function which can be a root handler an another middleware.
+Each middleware takes a `next_handler` function which can be a root handler or an another middleware.
 Each middleware has `Entry` and `Leave` part. If everything is ok in Entry logic, middleware calls `next_handler`, otherwise, it can return early.
 
 ```lua
