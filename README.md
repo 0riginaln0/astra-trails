@@ -5,6 +5,7 @@ Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astr
 - [Routes grouping](routes-grouping): How to register a group of routes in one place.
 
 ## Middleware
+- [Middleware basics](middleware-base): Introducing pattern for middleware 
 
 ## Templating
 
