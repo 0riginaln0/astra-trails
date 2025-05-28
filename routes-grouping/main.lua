@@ -112,12 +112,13 @@ local function justHi(request, response)
     return "Hello!"
 end
 
+
 Routes {
-    { GET,         "/",       homepage },
-    { POST,        "/",       addHomepageInfo },
-    { GET,         "/hi",     justHi },
-    { STATIC_FILE, "/main",   "main.lua" },
-    { STATIC_DIR,  "/public", "public" },
+    { GET,         "/",       homepage },        -- server:get("/", homepage)
+    { POST,        "/",       addHomepageInfo }, -- server:post("/", addHomepageInfo)
+    { GET,         "/hi",     justHi },          -- server:get("/hi", justHi)
+    { STATIC_FILE, "/main",   "main.lua" },      -- server:static_file("/main", "main.lua")
+    { STATIC_DIR,  "/public", "public" },        -- server:static_dir("/public", "public")
 }
 
 server:run()
