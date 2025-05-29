@@ -1,4 +1,4 @@
-# astra-trails
+# Astra Trails
 Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astra) - a web server runtime for Lua.
 
 ## Routing
