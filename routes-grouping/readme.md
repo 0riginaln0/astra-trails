@@ -3,7 +3,7 @@ This example shows how to create a `Routes` function which will enable alternati
 ```lua
 Routes {
     { GET,         "/",       homepage },
-    { POST,        "/",       add_homepage_info },
+    { POST,        "/",       addHomepageInfo },
     { GET,         "/hi",     justHi },
     { STATIC_FILE, "/main",   "main.lua" },
     { STATIC_DIR,  "/public", "public" },
