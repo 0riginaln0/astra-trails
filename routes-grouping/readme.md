@@ -1,4 +1,4 @@
-This example shows how to create a `Routes` function which will enable alternative way for defining routes:
+This example shows how to create a `Routes` function which enables alternative way for defining routes:
 
 ```lua
 Routes {
