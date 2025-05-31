@@ -197,8 +197,9 @@ end
 ---@field options fun(server: HTTPServer, path: string, callback: callback, config: RouteConfiguration?)
 ---@field patch fun(server: HTTPServer, path: string, callback: callback, config: RouteConfiguration?)
 ---@field trace fun(server: HTTPServer, path: string, callback: callback, config: RouteConfiguration?)
----@field static_dir fun(server: HTTPServer, serve_path: string, callback: callback, config: RouteConfiguration?)
----@field static_file fun(server: HTTPServer, serve_path: string, callback: callback, config: RouteConfiguration?)
+---@field static_dir fun(server: HTTPServer, path: string, serve_path: string, config: RouteConfiguration?)
+---@field static_file fun(server: HTTPServer, path: string, serve_path: string, config: RouteConfiguration?)
+---@field templates fun(server: HTTPServer, templates: TemplateEngine, config: RouteConfiguration?)
 ---@field run fun(server: HTTPServer) Runs the server
 
 ---@diagnostic disable-next-line: duplicate-doc-alias
@@ -276,6 +277,21 @@ end
 ---@field remove_header fun(response: Response, key: string) Removes a header from the headers list
 ---@field set_cookie fun(response: Response, cookie: Cookie) Sets a cookie
 ---@field remove_cookie fun(response: Response, cookie: Cookie) Removes a cookie from the list
+
+---@diagnostic disable-next-line: duplicate-doc-alias
+--- @alias template_function fun(args: table): any
+
+---
+--- Tera templating engine
+---@class TemplateEngine
+---@field add_template fun(templates: TemplateEngine, name: string, template: string)
+---@field add_template_file fun(templates: TemplateEngine, name: string, path: string)
+---@field exclude_templates fun(templates: TemplateEngine, names: string[])
+---@field context_add fun(templates: TemplateEngine, key: string, value: any)
+---@field context_remove fun(templates: TemplateEngine, key: string)
+---@field context_get fun(templates: TemplateEngine, key: string): any
+---@field add_function fun(templates: TemplateEngine, name: string, function: template_function): any
+---@field render fun(templates: TemplateEngine, name: string): string
 
 -- MARK: FileIO
 
@@ -425,10 +441,29 @@ function Server:register_methods()
 		})
 	end
 
+	self.templates = function(_, templates, config)
+		table.insert(self.routes, {
+			path = "/",
+			templates = templates,
+			method = "templates",
+			func = function() end,
+			config = config or {},
+		})
+	end
+
 	self.run = function(_)
 		---@diagnostic disable-next-line: undefined-global
 		astra_internal__start_server(self)
 	end
+end
+
+--- Returns a new templating engine
+---@param dir? string path to the directory, for example: `"templates/**/[!exclude.html]*.html"`
+---@return TemplateEngine
+---@nodiscard
+function _G.Astra.new_templating_engine(dir)
+	---@diagnostic disable-next-line: undefined-global
+	return astra_internal__new_tera(dir)
 end
 
 -- MARK: FileIO
@@ -534,7 +569,7 @@ _G.Astra.io = {
 ---@diagnostic disable-next-line: missing-return, lowercase-global
 function _G.Astra.database_connect(database_type, url, max_connections)
 	---@diagnostic disable-next-line: undefined-global
-	return astra_inner__database_connect(database_type, url, max_connections)
+	return astra_internal__database_connect(database_type, url, max_connections)
 end
 
 -- MARK: HTTPClient
