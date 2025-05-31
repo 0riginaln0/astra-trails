@@ -7,9 +7,7 @@ function m.context(next_handler)
     ---@param response Response
     return function(request, response)
         local ctx = {}
-        ctx.data_for_next_handler = 42
-        local result = next_handler(request, response, ctx)
-        return result
+        return next_handler(request, response, ctx)
     end
 end
 
@@ -18,11 +16,8 @@ function m.logger(next_handler)
     ---@param response Response
     ---@param ctx table
     return function(request, response, ctx)
-        -- Entry part
         print("Request:", request:method(), request:uri(), inspect(request:queries()))
-        local result = next_handler(request, response, ctx)
-        -- Leave part
-        return result
+        return next_handler(request, response, ctx)
     end
 end
 
