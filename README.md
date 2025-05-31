@@ -1,7 +1,7 @@
 # Astra Trails
 Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astra) - a web server runtime for Lua.
 
-- [Quickstart](quickstart): Shows everything in one place
+- [Quickstart](quickstart): basically a blueprint for a new project
 
 ## Routing
 - [Routes grouping](routes-grouping): How to register a group of routes in one place.
