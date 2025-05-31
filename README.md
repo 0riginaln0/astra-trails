@@ -6,6 +6,8 @@ Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astr
 ## Routing
 - [Routes grouping](routes-grouping): How to register a group of routes in one place.
 
+    Improved version of `Routes` is in [quickstart/globals.lua](quickstart/globals.lua)
+
 ## Middleware
 - [Middleware basics](middleware-basic): Introducing pattern for middleware
 
