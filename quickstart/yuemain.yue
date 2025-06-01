@@ -1,9 +1,8 @@
 -- I just wanted to see how it is to use current API from YueScript (a MoonScript dialect).
 -- I consider YueScript to be Lua without boilerplate.
 -- I don't use any OOP stuff: class, extends, super, @__class, @__name, @__base, @@, etc.
-
--- `yue yuemain.yue`
--- `astra run yuemain.lua`
+--
+-- `yue yuemain.yue` `astra run yuemain.lua`
 
 require "globals"
 { :html, :context, :logger, :chain } = require "middleware"
