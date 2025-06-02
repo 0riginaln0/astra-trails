@@ -28,13 +28,12 @@ homepage = -> table.concat(homepage_info, "\n")
 add_homepage_info = (req, res) ->
   if new_info := req\queries().info
     homepage_info[] = new_info
-    return "New info added!"
-  "Failed to add new info"
+    "New info added!"
+  else
+    "Failed to add new info"
 
 just_hi = (request, response) ->
-  if name := request\queries().name
-    return "Hello #{name}!"
-  "Hello!"
+  if name := request\queries().name then "Hello #{name}!" else "Hello!"
 
 Routes(server)
   base_middleware: chain { context, logger }
