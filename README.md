@@ -13,7 +13,7 @@ Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astr
 
 ## Templating
 - [Templating with Tera](templating-tera): Example of static and dynamic templates
-- [Pure Lua templating](templating-lua)
+- [Templating with Lustache](templating-lua): Mustache templates in pure Lua
 
 ## Something else
 
