@@ -1,2 +1,2 @@
-Mustache-like Lua templating library: https://github.com/Olivine-Labs/lustache
+Lua implementation of Mustache templating system: https://github.com/Olivine-Labs/lustache
 
