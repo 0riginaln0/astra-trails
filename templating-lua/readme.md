@@ -67,7 +67,7 @@ Show me too!
 ]]
 assert(expected == rendered)
 
--- When the section key value is a list, the block is rendered for each item
+-- When the section is a list of key-value tables, the block is rendered for each table
 local list_template = [[
 {{#puskas_award_winners}}
 <b>{{year}} - {{name}}</b>
@@ -114,7 +114,7 @@ expected = [[
 ]]
 assert(expected == rendered)
 
--- If a section key is an list of strings, use '.' to reference current item
+-- If a section key is a list of strings, use '.' to reference current item
 local array_template = [[
 {{#musketeers}}
 * {{.}}
