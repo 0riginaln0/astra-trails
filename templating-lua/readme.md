@@ -58,7 +58,7 @@ Shown.
 Show me too!
 {{/section}}
 ]]
--- If the section key exists and is not false/nil, the block will be rendered
+-- If the section key exists and is not false/nil or empty {}, the block will be rendered
 view = { section = true } -- try to change to false or nil or {}
 rendered = print_return(lustache:render(template, view))
 expected = [[
