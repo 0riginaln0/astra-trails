@@ -229,8 +229,11 @@ for i=1, string.len(rendered) do
     end
 end
 
--- assert(expected == rendered) -- somehow it fails. However, the above check does not reveal any inequalities.
-
+--assert(expected == rendered) -- somehow it fails. However, the above check does not reveal any inequalities.
+local function normalize_ws(str)
+  return str:gsub("%s+", " "):gsub("^%s*(.-)%s*$", "%1")
+end
+assert(normalize_ws(expected) == normalize_ws(rendered))
 
 -- SET DELIMITER
 -- Customize tag delimiters {{=cUstOm DelImItEr=}}
@@ -258,3 +261,4 @@ assert(expected == rendered)
 
 print("All examples executed successfully!")
 ```
+
