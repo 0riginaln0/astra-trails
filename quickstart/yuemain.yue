@@ -15,36 +15,36 @@ rendered_static_template = templates\render("static/favlangs.html")
 favlangs = -> rendered_static_template
 
 tier_list = (req) ->
-  q = req\queries()
-  for param in *["name", "s", "a", "b", "c", "d", "e", "f"]
-    templates\context_add(param, q[param])
-  templates\render("dynamic/tier-list.html")
+    q = req\queries()
+    for param in *["name", "s", "a", "b", "c", "d", "e", "f"]
+        templates\context_add(param, q[param])
+    templates\render("dynamic/tier-list.html")
 
 homepage_info = { "I'm a homepage" }
 
 homepage = -> table.concat(homepage_info, "\n")
 
 add_homepage_info = (req, res) ->
-  if new_info := req\queries().info
-    homepage_info[] = new_info
-    "New info added!"
-  else
-    "Failed to add new info"
+    if new_info := req\queries().info
+        homepage_info[] = new_info
+        "New info added!"
+    else
+        "Failed to add new info"
 
 just_hi = (request, response) ->
-  if name := request\queries().name then "Hello #{name}!" else "Hello!"
+    if name := request\queries().name then "Hello #{name}!" else "Hello!"
 
 Routes(server)
-  base_middleware: chain { context, logger }
-  * { GET,         "/",       homepage }
-  * { POST,        "/",       add_homepage_info }
-  * { GET,         "/hi",     just_hi }
-  * { STATIC_FILE, "/main",   "main.lua" }
-  * { STATIC_DIR,  "/public", "public" }
+    base_middleware: chain { context, logger }
+    * { GET,         "/",       homepage }
+    * { POST,        "/",       add_homepage_info }
+    * { GET,         "/hi",     just_hi }
+    * { STATIC_FILE, "/main",   "main.lua" }
+    * { STATIC_DIR,  "/public", "public" }
 
 Routes(server)
-  * { GET, "/favlangs",  html favlangs }
-  * { GET, "/tier-list", logger html tier_list }
+    * { GET, "/favlangs",  html favlangs }
+    * { GET, "/tier-list", logger html tier_list }
 
 server\run()
 
