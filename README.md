@@ -13,7 +13,7 @@ Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astr
 
 ## Templating
 - [Templating with Lustache](templating-lua): Mustache templates in pure Lua
-- Templating with MiniJinja: TODO
+- [Templating with MiniJinja](templating-minijinja): MiniJinja templates
 
 ## Something else
 
