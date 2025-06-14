@@ -21,8 +21,8 @@ Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astr
 # Contribution
 Please feel free to send us PRs of your outstanding use cases!
 
-
-# Deprecated
+---
+### Deprecated
 
 Up to v0.21
 - [Templating with Tera](templating-tera): Example of static and dynamic templates
