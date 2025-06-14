@@ -199,7 +199,6 @@ end
 ---@field trace fun(server: HTTPServer, path: string, callback: callback, config: RouteConfiguration?)
 ---@field static_dir fun(server: HTTPServer, path: string, serve_path: string, config: RouteConfiguration?)
 ---@field static_file fun(server: HTTPServer, path: string, serve_path: string, config: RouteConfiguration?)
----@field templates fun(server: HTTPServer, templates: TemplateEngine, config: RouteConfiguration?)
 ---@field run fun(server: HTTPServer) Runs the server
 
 ---@diagnostic disable-next-line: duplicate-doc-alias
@@ -282,16 +281,20 @@ end
 --- @alias template_function fun(args: table): any
 
 ---
---- Tera templating engine
+--- Jinja2 templating engine
 ---@class TemplateEngine
 ---@field add_template fun(templates: TemplateEngine, name: string, template: string)
 ---@field add_template_file fun(templates: TemplateEngine, name: string, path: string)
+---@field get_template_names fun(template: TemplateEngine): string[]
+---Excludes template files from being added to the server for rendering
 ---@field exclude_templates fun(templates: TemplateEngine, names: string[])
----@field context_add fun(templates: TemplateEngine, key: string, value: any)
----@field context_remove fun(templates: TemplateEngine, key: string)
----@field context_get fun(templates: TemplateEngine, key: string): any
----@field add_function fun(templates: TemplateEngine, name: string, function: template_function): any
----@field render fun(templates: TemplateEngine, name: string): string
+---@field reload_templates fun(templates: TemplateEngine) Refreshes the template code from the glob given at the start
+---@field add_function fun(templates: TemplateEngine, name: string, function: template_function): any Add a function to the templates
+---Renders the given template into a string with the available context
+---@field render fun(templates: TemplateEngine, name: string, context?: table): string 
+---@field add_to_server fun(templates: TemplateEngine, server: HTTPServer, context?: table) Adds the templates to the server
+---Adds the templates to the server in debugging manner, where the content refreshes on each request
+---@field add_to_server_debug fun(templates: TemplateEngine, server: HTTPServer, context?: table)
 
 -- MARK: FileIO
 
@@ -345,7 +348,15 @@ end
 ---@field query_all fun(database: Database, sql: string, parameters: table | nil): table | nil
 ---@field close fun(database: Database)
 
+-- MARK: Regex
+---@class Regex
+---@field captures fun(regex: Regex, content: string): string[][]
+---@field replace fun(regex: Regex, content: string, replacement: string, limit: number?): string
+---@field is_match fun(regex: Regex, content: string): boolean
+
 ---============================ DEFINITIONS ============================---
+
+-- MARK: IMPL - Utils
 
 -- The main global
 _G.Astra = {
@@ -374,6 +385,10 @@ _G.Astra.dotenv_load(".env.dev")
 _G.Astra.dotenv_load(".env.test")
 _G.Astra.dotenv_load(".env.local")
 
+---@type fun(expression: string): Regex
+---@diagnostic disable-next-line: undefined-global
+_G.Astra.regex = astra_internal__regex
+
 ---@diagnostic disable-next-line: undefined-global
 os.getenv = astra_internal__getenv
 ---Sets the environment variable.
@@ -381,6 +396,116 @@ os.getenv = astra_internal__getenv
 ---NOT SAFE WHEN USED IN MULTITHREADING ENVIRONMENT
 ---@diagnostic disable-next-line: undefined-global
 os.setenv = astra_internal__setenv
+
+---Pretty prints any table or value
+---@param value any
+---@diagnostic disable-next-line: duplicate-set-field
+function _G.pprint(value)
+	---@diagnostic disable-next-line: undefined-global
+	astra_internal__pretty_print(value)
+end
+
+---
+---Splits a sentence into an array given the separator
+---@param input_str string The input string
+---@param separator_str string The input string
+---@return table array
+---@nodiscard
+---@diagnostic disable-next-line: duplicate-set-field
+function string.split(input_str, separator_str)
+	local result_table = {}
+	for word in input_str:gmatch("([^" .. separator_str .. "]+)") do
+		table.insert(result_table, word)
+	end
+	return result_table
+end
+
+-- MARK: TemplateEngine
+
+--- Returns a new templating engine
+---@param dir? string path to the directory, for example: `"templates/**/[!exclude.html]*.html"`
+---@return TemplateEngine
+---@nodiscard
+function _G.Astra.new_templating_engine(dir)
+	---@type TemplateEngine
+	---@diagnostic disable-next-line: undefined-global
+	local engine = astra_internal__new_templating_engine(dir)
+	---@type TemplateEngine
+	---@diagnostic disable-next-line: missing-fields
+	local TemplateEngineWrapper = { engine = engine }
+	local templates_re = Astra.regex([[(?:index)?\.(html|lua)$]])
+
+	local function normalize_paths(path)
+		-- Ensure path starts with "/"
+		if path:sub(1, 1) ~= "/" then
+			path = "/" .. path
+		end
+
+		-- If empty, it's just the root
+		if path == "/" then
+			return { "/" }
+		end
+
+		-- Return both with and without trailing slash
+		if path:sub(-1) == "/" then
+			return { path, path:sub(1, -2) }
+		else
+			return { path, path .. "/" }
+		end
+	end
+
+	function TemplateEngineWrapper:add_to_server(server, context)
+		local names = self.engine:get_template_names()
+		for _, value in ipairs(names) do
+			local path = templates_re:replace(value, "")
+			local content = self.engine:render(value, context)
+
+			for _, route in ipairs(normalize_paths(path)) do
+				server:get(route, function(_, response)
+					response:set_header("Content-Type", "text/html")
+					return content
+				end)
+			end
+		end
+	end
+
+	function TemplateEngineWrapper:add_to_server_debug(server, context)
+		local names = self.engine:get_template_names()
+		for _, value in ipairs(names) do
+			local path = templates_re:replace(value, "")
+
+			for _, route in ipairs(normalize_paths(path)) do
+				server:get(route, function(_, response)
+					self.engine:reload_templates()
+					response:set_header("Content-Type", "text/html")
+					return self.engine:render(value, context)
+				end)
+			end
+		end
+	end
+
+	local templating_methods = {
+		"add_template",
+		"add_template_file",
+		"get_template_names",
+		"exclude_templates",
+		"reload_templates",
+		"context_add",
+		"context_remove",
+		"context_get",
+		"add_function",
+		"render",
+	}
+
+	for _, method in ipairs(templating_methods) do
+		---@diagnostic disable-next-line: assign-type-mismatch
+		TemplateEngineWrapper[method] = function(self, ...)
+			self.engine[method](self.engine, ...)
+		end
+	end
+
+	return TemplateEngineWrapper
+end
 
 -- MARK: HTTPServer
 
@@ -412,7 +537,8 @@ function Server:register_methods()
 
 	for _, method in ipairs(http_methods) do
 		self[method] = function(_, path, callback, config)
-			table.insert(self.routes, {
+			local index = (path == "/") and 1 or #self.routes + 1
+			table.insert(self.routes, index, {
 				path = path,
 				method = method,
 				func = callback,
@@ -441,29 +567,10 @@ function Server:register_methods()
 		})
 	end
 
-	self.templates = function(_, templates, config)
-		table.insert(self.routes, {
-			path = "/",
-			templates = templates,
-			method = "templates",
-			func = function() end,
-			config = config or {},
-		})
-	end
-
 	self.run = function(_)
 		---@diagnostic disable-next-line: undefined-global
 		astra_internal__start_server(self)
 	end
-end
-
---- Returns a new templating engine
----@param dir? string path to the directory, for example: `"templates/**/[!exclude.html]*.html"`
----@return TemplateEngine
----@nodiscard
-function _G.Astra.new_templating_engine(dir)
-	---@diagnostic disable-next-line: undefined-global
-	return astra_internal__new_tera(dir)
 end
 
 -- MARK: FileIO
@@ -703,30 +810,7 @@ _G.Astra.json = {
 	end,
 }
 
--- MARK: Utils
-
----Pretty prints any table or value
----@param value any
----@diagnostic disable-next-line: duplicate-set-field
-function _G.pprint(value)
-	---@diagnostic disable-next-line: undefined-global
-	astra_internal__pretty_print(value)
-end
-
----
----Splits a sentence into an array given the separator
----@param input_str string The input string
----@param separator_str string The input string
----@return table array
----@nodiscard
----@diagnostic disable-next-line: duplicate-set-field
-function string.split(input_str, separator_str)
-	local result_table = {}
-	for word in input_str:gmatch("([^" .. separator_str .. "]+)") do
-		table.insert(result_table, word)
-	end
-	return result_table
-end
+--------------
 
 -- This is to prevent a small undefined behavior in Lua
 ---@diagnostic disable-next-line: redundant-parameter

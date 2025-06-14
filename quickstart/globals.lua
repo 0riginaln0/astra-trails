@@ -1,3 +1,12 @@
+do
+    if pcall(require, 'jit') then
+        local x = require 'jit'
+        print("Server uses:", _VERSION, x.version)
+    else
+        print("Server uses:", _VERSION)
+    end
+end
+
 local set     = require("utils").set
 local inspect = require("inspect").inspect
 

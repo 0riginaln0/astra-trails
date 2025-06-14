@@ -5,22 +5,30 @@ local context = middleware.context
 local logger = middleware.logger
 local chain = middleware.chain
 
-local server = Astra.http.server:new()
+local lustache = require("lustache")
 
-local templates = Astra.new_templating_engine("templates/**/*.html")
-templates:context_add("favourite_languages", "Lua, Elixir, C, Rust")
-local rendered_static_template = templates:render("static/favlangs.html")
-
-local function favlangs()
-    return rendered_static_template
+local function read_all(file)
+    local f = assert(io.open(file, "rb"), tostring(file) .. " is not found.")
+    local content = f:read("*all")
+    f:close()
+    return content
 end
 
-local function tier_list(req)
-    local q = req:queries()
-    for _, param in ipairs {"name", "s", "a", "b", "c", "d", "e", "f"} do
-        templates:context_add(param, q[param])
-    end
-    return templates:render("dynamic/tier-list.html")
+local favlangs_template = read_all("templates/static/favlangs.html")
+local rendered_favlangs = lustache:render(favlangs_template, {favourite_languages = "Lua, Elixir, C, Rust"})
+local tier_list_template = read_all("templates/dynamic/tier-list.html")
+
+local server = Astra.http.server:new()
+
+local function favlangs()
+	return rendered_favlangs
+end
+
+local function tier_list(req, res)
+	res:set_header("Content-Type", "text/html")
+	local q = req:queries()
+	local params = { name = q.name, s = q.s, a = q.a, b = q.b, c = q.c, d = q.d, e = q.e, f = q.f }
+	return lustache:render(tier_list_template, params)
 end
 
 local homepage_info = { "I'm a homepage" }
@@ -56,8 +64,9 @@ Routes(server) {
 }
 
 Routes(server) {
-    { GET, "/favlangs",  html (favlangs) },
-    { GET, "/tier-list", chain { logger, html } (tier_list) },
+    base_middleware = html,
+    { GET, "/favlangs",  favlangs },
+    { GET, "/tier-list", logger(tier_list) },
 }
 
 server:run()
