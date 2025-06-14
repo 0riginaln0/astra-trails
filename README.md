@@ -16,7 +16,7 @@ Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astr
 - [Templating with MiniJinja](templating-minijinja): MiniJinja templates
 
 ## Something else
-- [Yielding from a handler](yield) Cooperative/non-preemptive multitasking.
+- [Yielding from a handler/task](yield): Cooperative/non-preemptive multitasking.
 
 # Contribution
 Please feel free to send us PRs of your outstanding use cases!
