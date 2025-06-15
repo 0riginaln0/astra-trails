@@ -21,14 +21,14 @@ local tier_list_template = read_all("templates/dynamic/tier-list.html")
 local server = Astra.http.server:new()
 
 local function favlangs()
-	return rendered_favlangs
+    return rendered_favlangs
 end
 
 local function tier_list(req, res)
-	res:set_header("Content-Type", "text/html")
-	local q = req:queries()
-	local params = { name = q.name, s = q.s, a = q.a, b = q.b, c = q.c, d = q.d, e = q.e, f = q.f }
-	return lustache:render(tier_list_template, params)
+    res:set_header("Content-Type", "text/html")
+    local q = req:queries()
+    local params = { name = q.name, s = q.s, a = q.a, b = q.b, c = q.c, d = q.d, e = q.e, f = q.f }
+    return lustache:render(tier_list_template, params)
 end
 
 local homepage_info = { "I'm a homepage" }
