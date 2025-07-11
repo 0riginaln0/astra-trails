@@ -5,8 +5,8 @@ local server = Astra.http.server:new()
 --#region Middleware
 
 local function my_middleware(next_handler)
-    ---@param request Request
-    ---@param response Response
+    ---@param request HTTPServerRequest
+    ---@param response HTTPServerResponse
     return function(request, response, ctx)
         -- Pre-handler logic
         if "something wrong" then
@@ -22,8 +22,8 @@ local function my_middleware(next_handler)
 end
 
 local function context(next_handler)
-    ---@param request Request
-    ---@param response Response
+    ---@param request HTTPServerRequest
+    ---@param response HTTPServerResponse
     return function(request, response)
         local ctx = {}
         ctx.data_for_next_handler = 42
@@ -33,8 +33,8 @@ local function context(next_handler)
 end
 
 local function logger(next_handler)
-    ---@param request Request
-    ---@param response Response
+    ---@param request HTTPServerRequest
+    ---@param response HTTPServerResponse
     ---@param ctx table
     return function(request, response, ctx)
         -- Entry part
@@ -64,15 +64,15 @@ local function chain(chain)
 end
 --#endregion
 
----@param req Request
----@param res Response
+---@param req HTTPServerRequest
+---@param res HTTPServerResponse
 local function homepage(req, res)
     res:set_header("Content-Type", "text/html")
     return "Hi there!"
 end
 
----@param req Request
----@param res Response
+---@param req HTTPServerRequest
+---@param res HTTPServerResponse
 ---@param ctx table
 local function someHandler(req, res, ctx)
     return "I got `" .. tostring(ctx.data_for_next_handler) .. "` from context"

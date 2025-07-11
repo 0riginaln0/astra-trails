@@ -90,8 +90,8 @@ local function homepage()
     return table.concat(homepage_info, "\n")
 end
 
----@param req Request
----@param res Response
+---@param req HTTPServerRequest
+---@param res HTTPServerResponse
 local function addHomepageInfo(req, res)
     local new_info = req:queries().info
     if new_info then
@@ -101,8 +101,8 @@ local function addHomepageInfo(req, res)
     return "Failed to add new info"
 end
 
----@param request Request
----@param response Response
+---@param request HTTPServerRequest
+---@param response HTTPServerResponse
 local function justHi(request, response)
     local queries = request:queries()
     local name = queries.name

@@ -1,2 +1,4 @@
 astra-luajit-windows-amd64.exe
 astra-lua54-windows-amd64.exe
+.astra
+.luarc.json

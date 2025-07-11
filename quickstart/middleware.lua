@@ -3,8 +3,8 @@ local inspect = require("inspect").inspect
 local m = {}
 
 function m.context(next_handler)
-    ---@param request Request
-    ---@param response Response
+    ---@param request HTTPServerRequest
+    ---@param response HTTPServerResponse
     return function(request, response)
         local ctx = {}
         return next_handler(request, response, ctx)
@@ -12,8 +12,8 @@ function m.context(next_handler)
 end
 
 function m.logger(next_handler)
-    ---@param request Request
-    ---@param response Response
+    ---@param request HTTPServerRequest
+    ---@param response HTTPServerResponse
     ---@param ctx table
     return function(request, response, ctx)
         print("Request:", request:method(), request:uri(), inspect(request:queries()))
@@ -38,8 +38,8 @@ function m.chain(chain)
 end
 
 function m.html(next_handler)
-    ---@param request Request
-    ---@param response Response
+    ---@param request HTTPServerRequest
+    ---@param response HTTPServerResponse
     return function(request, response, ctx)
         response:set_header("Content-Type", "text/html")
         return next_handler(request, response, ctx)
