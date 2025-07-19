@@ -19,7 +19,6 @@ Please feel free to send us PRs of your outstanding use cases!
 
 - [Middleware basics](middleware-basic): Introducing pattern for middleware
 
----
 ### Deprecated
 
 Up to v0.21
