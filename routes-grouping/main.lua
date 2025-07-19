@@ -23,7 +23,7 @@ local function homepage()
 end
 
 ---@param req HTTPServerRequest
-local function addHomepageInfo(req)
+local function add_homepage_info(req)
     local new_info = req:queries().info
     if new_info then
         table.insert(homepage_info, new_info)
@@ -57,11 +57,11 @@ end
 Routes(server) {
     base_middleware = ctx,
     { "GET",         "/",       homepage },
-    { "POST",        "/",       addHomepageInfo },
+    { "POST",        "/",       add_homepage_info },
     { "GET",         "/hi",     justHi },
     { "STATIC_FILE", "/main",   "main.lua" },
     { "STATIC_DIR",  "/public", "public" },
-
+    
     scope "/api" {
         { "GET", "", api_description },
         scope "/v1" {
