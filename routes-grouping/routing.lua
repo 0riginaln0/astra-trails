@@ -51,7 +51,17 @@ function r.Routes(server)
             assert(type(serve_path) == "string",
                 "Serve path must be a string, got `" .. type(serve_path) .. "`: " .. inspect(route))
         end
-        print(string.format("%11s %s", route_type, path))
+        print(string.format("%11s %s", route_type, path))   -- printing result endpoints 
+                                                            --[[
+                                                                    GET /
+                                                                   POST /
+                                                                    GET /hi
+                                                            STATIC_FILE /main
+                                                             STATIC_DIR /public
+                                                                    GET /api
+                                                                    GET /api/v1/favlangs
+                                                                    GET /api/v2/favlangs
+                                                            ]]
         return route_type, path, callback_or_serve_path, config
     end
 
@@ -82,14 +92,4 @@ function r.scope(path)
     end
 end
 
---[[
-        GET /
-       POST /
-        GET /hi
-STATIC_FILE /main
- STATIC_DIR /public
-        GET /api
-        GET /api/v1/favlangs
-        GET /api/v2/favlangs
-]]
 return r

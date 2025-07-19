@@ -33,7 +33,7 @@ local function add_homepage_info(req)
 end
 
 ---@param request HTTPServerRequest
-local function justHi(request)
+local function just_hi(request)
     local queries = request:queries()
     local name = queries.name
     if name then
@@ -58,15 +58,17 @@ Routes(server) {
     base_middleware = ctx,
     { "GET",         "/",       homepage },
     { "POST",        "/",       add_homepage_info },
-    { "GET",         "/hi",     justHi },
+    { "GET",         "/hi",     just_hi },
     { "STATIC_FILE", "/main",   "main.lua" },
     { "STATIC_DIR",  "/public", "public" },
-    
+
     scope "/api" {
         { "GET", "", api_description },
+        
         scope "/v1" {
             { "GET", "/favlangs", favlangs },
         },
+
         scope "/v2" {
             base_middleware = html,
             { "GET", "/favlangs", favlangs2 },
