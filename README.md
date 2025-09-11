@@ -10,14 +10,13 @@ Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astr
 
 ## Something else
 - [Yielding](yield): Cooperative/non-preemptive multitasking.
+- [Middleware basics](middleware-basic): Introducing pattern for middleware
 
 # Contribution
 Please feel free to send us PRs of your outstanding use cases!
 
 ---
-### Added to Astra
 
-- [Middleware basics](middleware-basic): Introducing pattern for middleware
 
 ### Deprecated
 
