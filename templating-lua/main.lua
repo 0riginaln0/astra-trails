@@ -7,11 +7,12 @@ local function read_all(file)
     return content
 end
 
-local server = Astra.http.server:new()
+local http = require "astra.lua.http"
+local server = http.server:new()
 
 local favlangs_template = read_all("templates/static/favlangs.html")
 local rendered_static_template = lustache:render(favlangs_template, {
-    favourite_languages = "Lua, Elixir, C, Rust"
+    favourite_languages = "Lua, Gleam, Odin"
 })
 
 server:get("/favlangs", function(request, response)

@@ -1,111 +1,55 @@
-local inspect = require("inspect").inspect
+local http = require("astra.lua.http")
+local datetime = require("astra.lua.datetime")
+local server = http.server:new()
+local chain = http.middleware.chain
 
-local server = Astra.http.server:new()
-
---- `on Entry:`
---- Include *on Entry* description if the middleware does something before calling *next_handler*
----
---- `on Leave:`
---- Include *on Leave* description if the middleware does something after calling *next_handler*
----
---- `Depends on:`
---- Include *Depends on* description if the middleware depends on other middlewares
----
----@param next_handler function
-local function middleware_template(next_handler)
-    --- Next_handler is a function which represents a middleware or a handler
-
-    --- Each middleware must return a function which accepts 3 arguments,
-    --- and passes them to the next_handler
-    ---@param request HTTPServerRequest
-    ---@param response HTTPServerResponse
-    ---@param ctx { key_inserted_by_middleware_I_depend_on: string }
-    return function(request, response, ctx)
-        -- Pre-handler logic
-        if "something wrong" then
-            return "Waaait a minute."
-        end
-        local result = next_handler(request, response, ctx)
-        -- Post-handler logic
-        if "you came up with a use case" then
-            local things = "Do some on-Leave logic"
-        end
-        return result
-    end
+local function sunny_day(_request, _response)
+    return "What a great sunny day!"
 end
 
----------------
--- Utilities --
----------------
-
---- Chains middlewares together in order
----@param chain table A list of middlewares
----@return function middleware Composed middleware
----
---- Functionally
---- ```lua
---- chain {context, html, logger} (handler)
---- ```
---- equals to
---- ```lua
---- context(html(logger(handler)))
---- ```
----
---- and
---- ```lua
---- chain {context, html, logger}
---- ```
---- equals to
---- ```lua
---- function(next_handler)
----     return function(request, response, ctx)
----         context(html(logger(next_handler(request, response, ctx))))
----     end
---- end
---- ```
-local function chain(chain)
-    return function(handler)
-        assert(type(handler) == "function",
-            "Handler must be a function, got " .. type(handler))
-        assert(#chain >= 2, "Chain must have at least 2 middlewares")
-        for i = #chain, 1, -1 do
-            local middleware = chain[i]
-            assert(type(middleware) == "function",
-                "Middleware must be a function, got " .. type(middleware))
-            handler = middleware(handler)
-        end
-        return handler
-    end
+local function normal_day(_request, _response)
+    return "It's a normal day... I guess..."
 end
 
-----------
--- Core --
-----------
+---@param ctx { datetime: DateTime }
+local function favourite_day(_request, _response, ctx)
+    local today = string.format(
+        "%d/%d/%d",
+        ctx.datetime:get_day(),
+        ctx.datetime:get_month(),
+        ctx.datetime:get_year()
+    )
+    return "My favourite day is " .. today
+end
 
 --- `on Entry:`
 --- Creates a new `ctx` table and passes it as a third argument into the `next_handler`
-local function context(next_handler)
-    ---@param request HTTPServerRequest
-    ---@param response HTTPServerResponse
+local function ctx(next_handler)
     return function(request, response)
         local ctx = {}
         return next_handler(request, response, ctx)
     end
 end
 
--------------
--- Loggers --
--------------
-
 --- `on Entry:`
---- Logs request method and uri into the console via `print()`
-local function console_logger(next_handler)
-    ---@param request HTTPServerRequest
-    ---@param response HTTPServerResponse
-    ---@param ctx table
+--- Inserts `datetime.new()` into `ctx.datetime`
+---
+--- `Depends on:`
+--- `ctx`
+local function insert_datetime(next_handler)
     return function(request, response, ctx)
-        print("Request:", request:method(), request:uri())
+        ctx.datetime = datetime.new()
         return next_handler(request, response, ctx)
+    end
+end
+
+--- `on Leave:`
+--- sets `"Content-Type": "text/html"` response header
+local function html(next_handler)
+    return function(request, response, ctx)
+        local result = next_handler(request, response, ctx)
+        response:set_header("Content-Type", "text/html")
+        return result
     end
 end
 
@@ -117,9 +61,6 @@ local function file_logger(file_handler, flush_interval)
     local flush_interval = flush_interval or 1
     local flush_countdown = flush_interval
     return function(next_handler)
-        ---@param request HTTPServerRequest
-        ---@param response HTTPServerResponse
-        ---@param ctx table
         return function(request, response, ctx)
             local str = string.format("[New Request %s] %s %s\n", os.date(), request:method(), request:uri())
             file_handler:write(str)
@@ -133,39 +74,12 @@ local function file_logger(file_handler, flush_interval)
         end
     end
 end
+local file_handler, err = io.open("logs.txt", "a")
+if not file_handler then error(err) end
+local logger = file_logger(file_handler)
 
-------------------
--- HTTP Headers --
-------------------
-
---- `on Leave:`
---- sets `"Content-Type": "text/html"` response header
-local function html(next_handler)
-    ---@param request HTTPServerRequest
-    ---@param response HTTPServerResponse
-    return function(request, response, ctx)
-        result = next_handler(request, response, ctx)
-        response:set_header("Content-Type", "text/html")
-        return result
-    end
-end
-
----@param req HTTPServerRequest
----@param res HTTPServerResponse
-local function homepage(req, res)
-    res:set_header("Content-Type", "text/html")
-    return "Hi there!"
-end
-
----@param req HTTPServerRequest
----@param res HTTPServerResponse
----@param ctx table
-local function someHandler(req, res, ctx)
-    return "I got `" .. tostring(ctx.data_for_next_handler) .. "` from context"
-end
-
-
-server:get("/", console_logger(homepage))
-server:get("/ctx", chain { context, console_logger } (someHandler)) -- same as context(logger(someHandler))
+server:get("/sunny-day", logger(html(sunny_day)))
+server:get("/normal-day", chain { logger, html } (normal_day))
+server:get("/favourite-day", chain { ctx, logger, insert_datetime, html } (favourite_day))
 
 server:run()

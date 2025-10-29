@@ -1,4 +1,5 @@
-local server = Astra.http.server:new()
+local http = require "astra.lua.http"
+local server = http.server:new()
 
 local function yield()
     spawn_task(function() end):await()
@@ -21,7 +22,7 @@ server:get("/ctx", function(req,res)
         -- Suspends execution 70 times
         if i % 1000000 == 0 then
             print("yield #" .. tostring(i/1000000))
-            -- Try comment out the following line and see if "/" requests will be handled while the "/ctx" is running
+            -- Try to comment out the following line and check if "/" requests will be handled while the "/ctx" is running
             yield()
         end
         ctx = ctx + 2
