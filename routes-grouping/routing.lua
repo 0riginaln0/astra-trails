@@ -15,10 +15,11 @@ end
 local http_routes = set { "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE", }
 local static_routes = set { "STATIC_DIR", "STATIC_FILE", }
 
---- 
+---
 --- Usage:
---- 
+---
 ---    Routes(server) {
+---        base_middleware = ctx,
 ---        { "GET",         "/path",   callback  },
 ---        { "POST",        "/path2",  callback2 },
 ---        { "STATIC_FILE", "/main",   "main.lua" },
@@ -61,7 +62,7 @@ function r.Routes(server)
             assert(type(serve_path) == "string",
                 "Serve path must be a string, got `" .. type(serve_path) .. "`: " .. inspect(route))
         end
-        print(string.format("%11s %s", route_type, path))   -- printing result endpoints 
+        print(string.format("%11s %s", route_type, path))   -- printing result endpoints
                                                             --[[
                                                                     GET /
                                                                    POST /
@@ -77,23 +78,48 @@ function r.Routes(server)
 
     return function(routes)
         local base_middleware = routes.base_middleware
+        print("------- API -------")
         for _, route in ipairs(routes) do
             local route_type, path, callback_or_serve_path, config = validate_route_params(route, base_middleware)
             route_type_to_astra_function[route_type](server, path, callback_or_serve_path, config)
         end
+        print("------- API -------")
     end
 end
 
----@param path string
+---
+---    Routes(server) {
+---        base_middleware = ctx,
+---        { "GET",         "/",       homepage },
+--- 
+---        scope "/api" {
+---            base_middleware = html,
+---            { "GET", "", api_description },
+--- 
+---            scope "/v1" {
+---                { "GET", "/favlangs", favlangs },
+---            },
+--- 
+---            scope "/v2" {
+---                { "GET", "/favlangs", favlangs2 },
+---            },
+---        },
+---    }
+---
+---@param scope_path string
 ---@return function
-function r.scope(path)
+function r.scope(scope_path)
     return function(routes)
         local scoped_routes = {}
 
         for _, route in ipairs(routes) do
-            route[2] = path .. route[2]
-            if http_routes[route[1]] and routes.base_middleware then
-                route[3] = routes.base_middleware(route[3])
+            local route_type = route[1]
+            local route_path = route[2]
+
+            route_path = scope_path .. route_path
+            if http_routes[route_type] and routes.base_middleware then
+                local callback = route[3]
+                callback = routes.base_middleware(callback)
             end
             table.insert(scoped_routes, route)
         end
