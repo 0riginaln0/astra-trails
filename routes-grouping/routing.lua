@@ -15,6 +15,16 @@ end
 local http_routes = set { "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE", }
 local static_routes = set { "STATIC_DIR", "STATIC_FILE", }
 
+--- 
+--- Usage:
+--- 
+---    Routes(server) {
+---        { "GET",         "/path",   callback  },
+---        { "POST",        "/path2",  callback2 },
+---        { "STATIC_FILE", "/main",   "main.lua" },
+---        { "STATIC_DIR",  "/public", "public" },
+---    }
+---
 ---@param server HTTPServer
 ---@return function
 function r.Routes(server)
