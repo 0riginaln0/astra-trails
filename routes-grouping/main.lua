@@ -4,11 +4,8 @@ else
     print("Server uses:", _VERSION)
 end
 
-local server = Astra.http.server:new()
-
-local middleware = Astra.http.middleware
-local html = middleware.html
-local ctx = middleware.context
+local http = require "astra.lua.http"
+local server = http.server:new()
 
 local routing = require("routing")
 local Routes = routing.Routes
@@ -51,7 +48,26 @@ local function favlangs()
 end
 
 local function favlangs2()
-    return { "Lua, Elixir, Rust, Odin" }
+    return { "Lua, Gleam, Odin" }
+end
+
+--- `on Leave:`
+--- sets `"Content-Type": "text/html"` response header
+local function html(next_handler)
+    return function(request, response, ctx)
+        local result = next_handler(request, response, ctx)
+        response:set_header("Content-Type", "text/html")
+        return result
+    end
+end
+
+--- `on Entry:`
+--- Creates a new `ctx` table and passes it as a third argument into the `next_handler`
+local function ctx(next_handler)
+    return function(request, response)
+        local ctx = {}
+        return next_handler(request, response, ctx)
+    end
 end
 
 Routes(server) {
@@ -64,7 +80,7 @@ Routes(server) {
 
     scope "/api" {
         { "GET", "", api_description },
-        
+
         scope "/v1" {
             { "GET", "/favlangs", favlangs },
         },
