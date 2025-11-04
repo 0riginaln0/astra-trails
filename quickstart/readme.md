@@ -4,6 +4,8 @@ Commands to start working with Astra:
 
 `astra run main.lua`
 
+`astra run test.lua`
+
 - lust.lua is a great library for tests
 - inspect.lua is a great library for introspecting lua values
 

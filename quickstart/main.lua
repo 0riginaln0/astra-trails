@@ -1,5 +1,5 @@
-local http   = require("astra.lua.http")
-local server = http.server:new()
+local http = require("astra.lua.http")
+local server = http.server:new(); if RUNNING_FROM_TEST_SUITE then TEST_SERVER = server end
 
 
 local middleware     = require "middleware"
