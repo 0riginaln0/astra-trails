@@ -50,7 +50,7 @@ For more details, see the [middleware.lua](https://github.com/ArkForgeLabs/Astra
 The following example shows the most basic middleware that changes the response headers.
 
 ```lua
-local http = require("astra.lua.http")
+local http = require("http")
 local server = http.server:new()
 
 local function sunny_day(request, response)
@@ -78,7 +78,7 @@ server:run()
 When we want to pass data through middleware, we can use the third argument and treat it as a context table.
 
 ```lua
-local datetime = require("astra.lua.datetime")
+local datetime = require("datetime")
 local server = http.server:new()
 
 ---@param ctx { datetime: DateTime }
@@ -194,8 +194,8 @@ The `logger` we got from the `file_logger` is gonna be used in all routes we pas
 ## Full example
 
 ```lua
-local http = require("astra.lua.http")
-local datetime = require("astra.lua.datetime")
+local http = require("http")
+local datetime = require("datetime")
 local server = http.server:new()
 local chain = http.middleware.chain
 

@@ -1,4 +1,4 @@
-local http = require("astra.lua.http")
+local http = require("http")
 local server = http.server:new(); if RUNNING_FROM_TEST_SUITE then TEST_SERVER = server end
 
 

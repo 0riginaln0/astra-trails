@@ -7,7 +7,7 @@ local function read_all(file)
     return content
 end
 
-local http = require "astra.lua.http"
+local http = require "http"
 local server = http.server:new()
 
 local favlangs_template = read_all("templates/static/favlangs.html")

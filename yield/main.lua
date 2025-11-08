@@ -1,4 +1,4 @@
-local http = require "astra.lua.http"
+local http = require "http"
 local server = http.server:new()
 
 local function yield()

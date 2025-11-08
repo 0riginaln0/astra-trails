@@ -1,7 +1,7 @@
 local lust = require 'lust'
 local describe, it, expect = lust.describe, lust.it, lust.expect
 
-local http = require 'astra.lua.http'
+local http = require 'http'
 local request = http.request
 
 local wait = require('runtime').wait

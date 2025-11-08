@@ -4,7 +4,7 @@ else
     print("Server uses:", _VERSION)
 end
 
-local http = require "astra.lua.http"
+local http = require "http"
 local server = http.server:new()
 
 local routing = require("routing")
