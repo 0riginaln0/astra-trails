@@ -1,13 +1,7 @@
 # Astra Trails
 Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astra) - a web server runtime for Lua.
-
-
-- [Middleware basics](middleware-basic): Introducing pattern for middleware.
+- [Middleware](middleware): Introducing pattern for middleware.
 - [Routes grouping](routes-grouping): How to register a group of routes in one place.
-- [Templating with Lustache](templating-lua): Full overview of Mustache templates in pure Lua.
-- [Yielding](yield): Cooperative/non-preemptive multitasking.
-
----
-
-- [Quickstart](quickstart): All in one project template
-
+- [Templating with Lustache](templating-lua): Full overview of Mustache templates in pure Lua
+- [Runtime utils](runtime-utils): Explicit cooperative multitasking for you!
+- [Other useful code](other-useful-code)
