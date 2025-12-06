@@ -2,6 +2,7 @@ local fs = require("fs")
 local wait = require("runtime").wait
 local http = require("http")
 
+Hot_Reload_Enabled = true
 -- Init hot reloadable files list
 local hot_reloadable_files = {
     { path = "app.lua", last_modified = nil },
