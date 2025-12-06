@@ -1,8 +1,10 @@
-So it is a Trails project folder template.
+So it is a Trails project template.
 
 It's recommended to run `astra export` in the root folder in order to enable auto-complete.
 ```
 │   .luarc.json
+|   readme.md
+|   watch.sh
 │   main.lua
 ├───astra
 │   └───lua

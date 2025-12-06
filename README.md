@@ -33,4 +33,4 @@ Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astr
 
 ---
 
-- [Quickstart](quickstart): Trails project folder template
+- [Quickstart](quickstart): The Trails project template. The archived template can be downloaded directly from the [releases](https://github.com/0riginaln0/astra-trails/releases/)
