@@ -5,7 +5,7 @@ function s.one(req, res)
 end
 
 function s.two(req, res)
-    return "two!!!"
+    return "two"
 end
 
 return s

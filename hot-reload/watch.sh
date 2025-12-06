@@ -8,7 +8,7 @@ set -e
 
 # Default command to run
 COMMAND="astra run main.lua"
-WATCH_FILES=("main.lua" "lib/")
+WATCH_FILES=("main.lua")
 
 # Use provided files if any
 if [ $# -gt 0 ]; then
