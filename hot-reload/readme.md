@@ -1,3 +1,7 @@
+Ok. Maybe it's a bit misleading, because it restarts the web server entirely, but I don't care.
+
+> (I care) The real hot code reloading could be achieved via `invalidate_cache` `server:shutdown` and a couple of other Astra functions, but at the end of a day the app state should be kept in some single module which is not gonna be reloaded. And at the end of another day Astra web apps are more about stateless web apps sooo... the provided shell script is good enough.
+
 Usage:
 
 > [!NOTE]
