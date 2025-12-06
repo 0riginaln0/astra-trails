@@ -11,8 +11,8 @@ for _, hot_reloabled_file in ipairs(hot_reloadable_files) do
 end
 
 -- Load the app first time
-server = http.server:new()
 local app, err_load = loadfile("app.lua"); if not app then error("Something gone wrong: " .. err_load) end
+server = http.server:new()
 app()
 local running_app_task = spawn_task(function() server:run() end)
 
