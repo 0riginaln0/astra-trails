@@ -4,7 +4,7 @@ local handlers = require("some-handlers")
 local h2 = require("lib.some")
 
 server:get("/", function (request, response)
-    return "Hello there!!!!"
+    return "Hello there!"
 end)
 
 server:get("/1", handlers.one)

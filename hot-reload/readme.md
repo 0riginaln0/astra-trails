@@ -1,4 +1,7 @@
-Usage: 
+Usage:
+
+> [!NOTE]
+> Dear Windows users, run this script from Git Bash
 
 ```sh
 ./watch.sh [files_to_watch...]
