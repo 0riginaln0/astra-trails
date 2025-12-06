@@ -6,6 +6,7 @@ local scope    = require("trails.routing").scope
 
 local context  = require("trails.middleware").ctx
 local chain    = require("trails.middleware").chain
+local html     = require("trails.middleware").html
 
 local lustache = require("trails.templates.lustache")
 
@@ -20,7 +21,7 @@ end
 
 Routes(server) {
     base_middleware = context,
-    { "GET", "/", homepage }
+    { "GET", "/", chain { html } (homepage) }
 }
 
 require("trails.other-useful-code.print-server-info")(server)
