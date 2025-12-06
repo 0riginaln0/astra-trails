@@ -4,12 +4,12 @@ local http = require("http")
 
 Hot_Reload_Enabled = true
 -- Init hot reloadable files list
-local hot_reloadable_files = {
+local hot_reloaded_files = {
     { path = "app.lua", last_modified = nil },
     { path = "some-handlers.lua", last_modified = nil}
 }
-for _, hot_reloabled_file in ipairs(hot_reloadable_files) do
-    hot_reloabled_file.last_modified = fs.get_metadata(hot_reloabled_file.path):last_modified()
+for _, hot_reloaded_file in ipairs(hot_reloaded_files) do
+    hot_reloaded_file.last_modified = fs.get_metadata(hot_reloaded_file.path):last_modified()
 end
 
 -- Load the app first time
@@ -23,10 +23,10 @@ local check_files_for_modification_ms = 1000
 
 Times_Reloaded = 0
 spawn_interval(function()
-    for _, hot_reloabled_file in ipairs(hot_reloadable_files) do
-        local last_modified = fs.get_metadata(hot_reloabled_file.path):last_modified()
-        if hot_reloabled_file.last_modified ~= last_modified then
-            hot_reloabled_file.last_modified = last_modified;
+    for _, hot_reloaded_file in ipairs(hot_reloaded_files) do
+        local last_modified = fs.get_metadata(hot_reloaded_file.path):last_modified()
+        if hot_reloaded_file.last_modified ~= last_modified then
+            hot_reloaded_file.last_modified = last_modified;
             do_reload = true
         end
     end
@@ -51,10 +51,5 @@ spawn_interval(function()
         running_app_task = spawn_task(function() server:run() end)
         print("Reloaded")
         Times_Reloaded = Times_Reloaded + 1
-
-        for index, value in ipairs(package.loaded) do
-            print("toto")
-            print(index, value)
-        end
     end
 end, check_files_for_modification_ms):await()
