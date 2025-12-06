@@ -8,5 +8,4 @@ function s.two(req, res)
     return "two!!!"
 end
 
-print('he')
 return s

@@ -1,1 +1,10 @@
-Astra overwrites the `require` function thus [regular lua hot reload methods](https://github.com/anton-kl/lua-hot-reload/) don't work.
+Usage: 
+
+```sh
+./watch.sh [files_to_watch...]
+```
+
+Example:
+```sh
+./watch.sh "*.lua" "lib/" "config/"
+```
