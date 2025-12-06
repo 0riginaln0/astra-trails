@@ -26,7 +26,7 @@ Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astr
         },
     }
     ```
-- [Hot reload](hot-reload): A way to hot reload code! Very convenient during development.
+- [Hot reload](hot-reload): A way to hot reload your code! Very convenient during development.
 - [Templating with Lustache](templating-lua): Full overview of Mustache templates in pure Lua
 - [Runtime utils](runtime-utils): Explicit cooperative multitasking
 - [Other useful code](other-useful-code): It is what it is
