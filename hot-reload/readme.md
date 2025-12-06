@@ -1,0 +1,1 @@
+Astra overwrites the `require` function thus [regular lua hot reload methods](https://github.com/anton-kl/lua-hot-reload/) don't work.
