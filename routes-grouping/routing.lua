@@ -78,12 +78,12 @@ function r.Routes(server)
 
     return function(routes)
         local base_middleware = routes.base_middleware
-        print("------- API -------")
+        print("------- API ----------------------------")
         for _, route in ipairs(routes) do
             local route_type, path, callback_or_serve_path, config = validate_route_params(route, base_middleware)
             route_type_to_astra_function[route_type](server, path, callback_or_serve_path, config)
         end
-        print("------- API -------")
+        print("------- API ----------------------------")
     end
 end
 

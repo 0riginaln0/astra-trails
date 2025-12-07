@@ -29,6 +29,9 @@ package.path = package.path .. ";" .. debug.getinfo(1, "S").source:match("(.*[\\
 
 # Run project in a watch mode
 
+> [!NOTE]
+> Dear Windows users, run this script from Git Bash
+
 - Watch only for `main.lua` changes (by default it watches only for that file)
 ```sh
 ./watch.sh
