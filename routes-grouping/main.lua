@@ -63,7 +63,7 @@ end
 
 --- `on Entry:`
 --- Creates a new `ctx` table and passes it as a third argument into the `next_handler`
-local function ctx(next_handler)
+local function context(next_handler)
     return function(request, response)
         local ctx = {}
         return next_handler(request, response, ctx)
@@ -71,7 +71,7 @@ local function ctx(next_handler)
 end
 
 Routes(server) {
-    base_middleware = ctx,
+    base_middleware = context,
     { "GET",         "/",       homepage },
     { "POST",        "/",       add_homepage_info },
     { "GET",         "/hi",     just_hi },

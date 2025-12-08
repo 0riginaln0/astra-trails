@@ -76,7 +76,7 @@ end
 
 --- `on Entry:`
 --- Creates a new `ctx` table and passes it as a third argument into the `next_handler`
-function m.ctx(next_handler)
+function m.context(next_handler)
     return function(request, response)
         local ctx = {}
         return next_handler(request, response, ctx)

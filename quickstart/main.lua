@@ -4,7 +4,7 @@ local server   = http.server:new()
 local Routes   = require("trails.routing").Routes
 local scope    = require("trails.routing").scope
 
-local context  = require("trails.middleware").ctx
+local context  = require("trails.middleware").context
 local chain    = require("trails.middleware").chain
 local html     = require("trails.middleware").html
 
