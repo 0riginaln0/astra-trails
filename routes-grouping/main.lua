@@ -48,7 +48,7 @@ local function favlangs()
 end
 
 local function favlangs2()
-    return { "Lua, Gleam, Odin" }
+    return { "Lua, Elixir, Odin" }
 end
 
 --- `on Leave:`
