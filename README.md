@@ -24,6 +24,9 @@ Routes(server) {
             { "GET", "/favlangs", favlangs2 },
         },
     },
+    fallback = function(req, res)
+        return "Sorry, It's 404"
+    end
 }
 ```
 - [Hot reload](hot-reload): A way to hot reload your code! Very convenient during development.

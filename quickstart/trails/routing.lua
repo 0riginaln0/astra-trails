@@ -28,6 +28,9 @@ local static_routes = set { "STATIC_DIR", "STATIC_FILE", }
 ---        { "POST",        "/path2",  callback2 },
 ---        { "STATIC_FILE", "/main",   "main.lua" },
 ---        { "STATIC_DIR",  "/public", "public" },
+---        fallback = function(req, res)
+---            return "sorry, it's 404"
+---        end
 ---    }
 ---
 ---@param server HTTPServer
@@ -82,6 +85,9 @@ function r.Routes(server)
 
     return function(routes)
         local base_middleware = routes.base_middleware
+        local fallback = routes.fallback
+        assert(type(fallback) == "function", "Fallback must be a function, got `" .. type(fallback))
+        server:fallback(fallback)
         print("------- API ----------------------------")
         for _, route in ipairs(routes) do
             local route_type, path, callback_or_serve_path, config = validate_route_params(route, base_middleware)

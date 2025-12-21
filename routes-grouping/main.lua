@@ -90,5 +90,8 @@ Routes(server) {
             { "GET", "/favlangs", favlangs2 },
         },
     },
+    fallback = function (req, res)
+        return "Sorry, it's 404"
+    end
 }
 server:run()

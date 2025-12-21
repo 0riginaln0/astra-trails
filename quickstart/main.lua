@@ -21,7 +21,10 @@ end
 
 Routes(server) {
     base_middleware = context,
-    { "GET", "/", chain { html } (homepage) }
+    { "GET", "/", chain { html } (homepage) },
+    fallback = function(req, res)
+        return "Sorry, it's 404"
+    end
 }
 
 require("trails.other-useful-code.print-server-info")(server)
