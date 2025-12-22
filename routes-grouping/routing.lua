@@ -84,7 +84,11 @@ function r.Routes(server)
         local fallback = routes.fallback
         if fallback then
             assert(type(fallback) == "function", "Fallback must be a function, got `" .. type(fallback))
-            server:fallback(fallback) 
+            if base_middleware then
+                assert(type(base_middleware) == "function", "Base middleware must be a function, got `" .. type(base_middleware))
+                fallback = base_middleware(fallback)
+            end
+            server:fallback(fallback)
         end
         print("------- API ----------------------------")
         for _, route in ipairs(routes) do
