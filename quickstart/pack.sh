@@ -4,7 +4,7 @@
 mkdir -p quickstart
 
 # Copy files and folder into quickstart
-cp main.lua readme.md watch.sh quickstart/
+cp main.lua readme.md quickstart/
 cp -r trails quickstart/
 
 # Create a zip archive of the quickstart folder
