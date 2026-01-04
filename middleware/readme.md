@@ -41,8 +41,6 @@ We decided to take an advantage of Lua functions being a [first-class values](ht
 > [!NOTE]
 > If you are familiar with this concept, feel free to go to the **Full example** at the bottom of the page.
 
-Astra has several built-in middlewares. You can modify or extend middlewares directly in `.astra/middleware.lua` (after running `astra export`) or in your own files. We are opened to PRs.
-
 ## Basic middleware
 
 The following example shows the most basic middleware that changes the response headers.
