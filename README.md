@@ -36,4 +36,4 @@ Routes(server) {
 
 ---
 
-- [Quickstart](quickstart): The Trails project template. The archived template can be downloaded directly from the [releases](https://github.com/0riginaln0/astra-trails/releases/)
+- [Quickstart](quickstart): The Trails project template. The archived template can be downloaded directly from the [releases](https://github.com/0riginaln0/astra-trails/releases/).
