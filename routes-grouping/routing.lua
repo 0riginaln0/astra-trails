@@ -105,7 +105,6 @@ end
 ---        { "GET",         "/",       homepage },
 --- 
 ---        scope "/api" {
----            base_middleware = html,
 ---            { "GET", "", api_description },
 --- 
 ---            scope "/v1" {
