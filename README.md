@@ -20,7 +20,7 @@ Routes(server) {
             { "GET", "/favlangs", favlangs },
         },
         scope "/v2" {
-            base_middleware = html,
+            base_middleware = v2_scope_specific_middleware,
             { "GET", "/favlangs", favlangs2 },
         },
     },
