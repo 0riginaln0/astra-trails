@@ -53,8 +53,7 @@ end
 
 function pp(...args)
   local n = #args
-  for i = 1, n, 1 do
-    local v = args[i]
+  for i, v in ipairs(args) do
     io.write(type(v) == "table" and table:to_string(v) or tostring(v))
     if i ~= n then io.write("\t") end
   end

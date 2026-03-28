@@ -3,6 +3,15 @@ local r = {}
 require "utils"
 unpack = unpack or table.unpack -- For Compatibility with all Lua versions
 
+r.GET = "GET"
+r.POST = "POST"
+r.PUT = "PUT"
+r.PATCH = "PATCH"
+r.DELETE = "DELETE"
+r.OPTIONS = "OPTIONS"
+r.TRACE = "TRACE"
+r.STATIC_DIR = "STATIC_DIR"
+r.STATIC_FILE = "STATIC_FILE"
 
 ---Constructs a set from a list of entries, where each entry is mapped to key value pair: `[entry] = true`.
 ---@param entries table A list (table) of entries to be included in the set.
@@ -68,7 +77,7 @@ function r.Routes(server)
       local serve_path = callback_or_serve_path
       assert(type(serve_path) == "string",
         "Serve path must be a string, got `" ..
-        type(serve_path) .. "`: " .. inspect(route))
+        type(serve_path) .. "`: " .. table:to_string(route))
     end
     print(string.format("%11s %s", route_type, path))
     --[==[ printing result endpoints
@@ -147,15 +156,5 @@ function r.scope(scope_path)
     return unpack(scoped_routes)
   end
 end
-
-r.GET = "GET"
-r.POST = "POST"
-r.PUT = "PUT"
-r.PATCH = "PATCH"
-r.DELETE = "DELETE"
-r.OPTIONS = "OPTIONS"
-r.TRACE = "TRACE"
-r.STATIC_DIR = "STATIC_DIR"
-r.STATIC_FILE = "STATIC_FILE"
 
 return r

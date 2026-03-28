@@ -5,7 +5,7 @@ local scope = require("routing").scope
 local GET = require("routing").GET
 local POST = require("routing").POST
 
-local l = require("middleware").console_logger
+local logger = require("middleware").console_logger
 
 local guestbook = {
   { name = "Alice", message = "Hello, world!" },
@@ -42,7 +42,7 @@ local function handle_post_guestbook(rq, rp)
 end
 
 Routes(server) {
-  base_middleware = l,
+  base_middleware = logger,
   { GET, "/", function() return "hello world" end },
   scope "/api" {
     { GET,  "/guestbook", function() return guestbook end },
