@@ -34,9 +34,7 @@ Routes(server) {
 
   { GET, "/health", function() return { status = "UP" } end },
 
-  fallback = chain {html} (function()
-    return "Page not Found"
-  end)
+  fallback = chain {html} (function() return "Page not Found" end)
 }
 
 server:run()
