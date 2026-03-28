@@ -63,8 +63,11 @@ function r.Routes(server)
       if entry._scope then
         -- Nested scope: recursively process its inner block.
         if entry.block.base_middleware then
-          process_block(entry.block, current_prefix .. entry._scope,
-            chain({ current_middleware, entry.block.base_middleware }))
+          if current_middleware then
+            process_block(entry.block, current_prefix .. entry._scope, chain({ current_middleware, entry.block.base_middleware }))
+          else
+            process_block(entry.block, current_prefix .. entry._scope, entry.block.base_middleware)
+          end
         else
           process_block(entry.block, current_prefix .. entry._scope, current_middleware)
         end
@@ -74,7 +77,11 @@ function r.Routes(server)
         print(string.format("%11s %s", route_type, path))
         if http_routes[route_type] then
           local callback = callback_or_serve_path
-          add_route[route_type](server, current_prefix .. path, current_middleware(callback), config)
+          if current_middleware then
+            add_route[route_type](server, current_prefix .. path, current_middleware(callback), config)
+          else
+            add_route[route_type](server, current_prefix .. path, callback, config)
+          end
         elseif static_routes[route_type] then
           local serve_path = callback_or_serve_path
           add_route[route_type](server, current_prefix .. path, serve_path, config)
@@ -91,7 +98,11 @@ function r.Routes(server)
       process_block(block, "", base_middleware)
 
       if block.fallback then
-        server:fallback(base_middleware(block.fallback))
+        if base_middleware then
+          server:fallback(base_middleware(block.fallback))
+        else
+          server:fallback(block.fallback)
+        end
       end
     end
   })
