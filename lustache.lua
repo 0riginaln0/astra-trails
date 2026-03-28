@@ -4,9 +4,10 @@
 
 local string_gmatch = string.gmatch
 
+
 function string.split(str, sep)
   local out = {}
-  for m in string_gmatch(str, "[^"..sep.."]+") do out[#out+1] = m end
+  for m in string_gmatch(str, "[^" .. sep .. "]+") do out[#out + 1] = m end
   return out
 end
 

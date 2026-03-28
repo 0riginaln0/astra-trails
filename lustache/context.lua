@@ -1,5 +1,7 @@
 local string_find, string_split, tostring, type =
-      string.find, string.split, tostring, type
+    string.find, string.split, tostring, type
+
+
 
 local context = {}
 context.__index = context
@@ -28,7 +30,7 @@ function context:lookup(name)
 
           value = context.view
 
-          if(type(value)) == "number" then
+          if (type(value)) == "number" then
             value = tostring(value)
           end
 
