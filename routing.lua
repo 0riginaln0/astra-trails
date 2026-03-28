@@ -1,7 +1,7 @@
 local r = {}
 
-require "utils"
-unpack = unpack or table.unpack -- For Compatibility with all Lua versions
+local utils = require "utils"
+local set = utils.set
 local chain = require("middleware").chain
 
 r.GET = "GET"
@@ -14,19 +14,9 @@ r.TRACE = "TRACE"
 r.STATIC_DIR = "STATIC_DIR"
 r.STATIC_FILE = "STATIC_FILE"
 
----Constructs a set from a list of entries, where each entry is mapped to key value pair: `[entry] = true`.
----@param entries table A list (table) of entries to be included in the set.
----@return table set new table representing the set
-local function set(entries)
-  local new_set = {}; for _, value in ipairs(entries) do new_set[value] = true end
-  return new_set
-end
-
 local http_routes = set { "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE", }
 local static_routes = set { "STATIC_DIR", "STATIC_FILE", }
 
--- The `scope` function: takes a path prefix, returns a function that
--- captures a nested block and wraps it in a marker table.
 function r.scope(path_or_block)
   if type(path_or_block) == "string" then
     return function(block)
@@ -55,21 +45,18 @@ function r.Routes(server)
     ["STATIC_FILE"] = server.static_file,
   }
 
-  -- Recursive function that registers routes with proper prefix and middleware.
   local function process_block(block, current_prefix, current_middleware)
-    -- `block` is the table from the DSL. Its unnamed entries (the array part)
-    -- are either route tables {method, path, handler} or scope‑marker tables.
     for _, entry in ipairs(block) do
       if entry._scope then
         -- Nested scope: recursively process its inner block.
-        if entry.block.base_middleware then
+        if not entry.block.base_middleware then
+          process_block(entry.block, current_prefix .. entry._scope, current_middleware)
+        else
           if current_middleware then
             process_block(entry.block, current_prefix .. entry._scope, chain({ current_middleware, entry.block.base_middleware }))
           else
             process_block(entry.block, current_prefix .. entry._scope, entry.block.base_middleware)
           end
-        else
-          process_block(entry.block, current_prefix .. entry._scope, current_middleware)
         end
       else
         -- Route entry: expects {method, path, handler, <config>}
@@ -93,13 +80,12 @@ function r.Routes(server)
   -- The callable that receives the top‑level DSL block.
   local callable = setmetatable({}, {
     __call = function(_, block)
-      local base_middleware = block.base_middleware
       -- Start with empty prefix and the base middleware (if any)
-      process_block(block, "", base_middleware)
+      process_block(block, "", block.base_middleware)
 
       if block.fallback then
-        if base_middleware then
-          server:fallback(base_middleware(block.fallback))
+        if block.base_middleware then
+          server:fallback(block.base_middleware(block.fallback))
         else
           server:fallback(block.fallback)
         end
