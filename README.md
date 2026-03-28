@@ -12,7 +12,15 @@ Check out [main.lua](main.lua) for the app example.
 Run it with:
 
 ```sh
-astra run main.lua
+$ astra run main.lua 
+        GET /
+        GET /hello
+        GET /tier-list
+       POST /guestbook
+        GET /guestbook
+        GET /health
+Server uses:    Lua 5.5
+Running on http://127.0.0.1:8080
 ```
 
 Short snippet:
@@ -38,4 +46,7 @@ Routes(server) {
 
   fallback = chain {html} (function() return "Page not Found" end)
 }
+
+require("print-server-info")(server)
+server:run()
 ```
