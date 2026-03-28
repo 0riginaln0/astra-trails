@@ -21,7 +21,6 @@ end
 local tier_list_template = read_all("templates/tier-list.html")
 
 local function handle_tier_list(req, res)
-  res:set_header("Content-Type", "text/html")
   local q = req:queries()
   local params = {
     name = q.name,
@@ -73,17 +72,18 @@ end
 Routes(server) {
   base_middleware = logger,
 
+  scope {
+    base_middleware = html,
+    { GET, "/",          function() return "hello world" end },
+    { GET, "/tier-list", handle_tier_list },
+  },
+
   scope "/api" {
     { POST, "/guestbook", handle_post_guestbook },
     { GET,  "/guestbook", function() return guestbook end },
   },
 
-
-  scope "" {
-    base_middleware = html,
-    { GET, "/",          function() return "hello world" end },
-    { GET, "/tier-list", handle_tier_list },
-  },
+  { GET, "/health", function() return { status = "UP" } end },
 
 }
 

@@ -2,6 +2,7 @@ local r = {}
 
 require "utils"
 unpack = unpack or table.unpack -- For Compatibility with all Lua versions
+local chain = require("middleware").chain
 
 r.GET = "GET"
 r.POST = "POST"
@@ -24,45 +25,25 @@ end
 local http_routes = set { "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE", }
 local static_routes = set { "STATIC_DIR", "STATIC_FILE", }
 
-local function flatten_scopes(flattened, routes)
-  for _, value in ipairs(routes) do
-    if type(value) ~= "table" then goto continue end
-
-    if not value.scope then
-      table.insert(flattened, value)
-      goto continue
+-- The `scope` function: takes a path prefix, returns a function that
+-- captures a nested block and wraps it in a marker table.
+function r.scope(path_or_block)
+  if type(path_or_block) == "string" then
+    return function(block)
+      local path = path_or_block
+      return { _scope = path, block = block }
     end
-
-    for _, valuee in ipairs(value) do
-      pp(valuee)
-      flatten_scopes(flattened, valuee)
-    end
-
-    ::continue::
   end
 
-  return flattened
+  if type(path_or_block) == "table" then
+    local block = path_or_block
+    return { _scope = "", block = block }
+  end
 end
 
-
----
---- Usage:
----
----    Routes(server) {
----        base_middleware = ctx,
----        { "GET",         "/path",   callback  },
----        { "POST",        "/path2",  callback2 },
----        { "STATIC_FILE", "/main",   "main.lua" },
----        { "STATIC_DIR",  "/public", "public" },
----        fallback = function(req, res)
----            return "sorry, it's 404"
----        end
----    }
----
 ---@param server HTTPServer
----@return function
 function r.Routes(server)
-  local route_type_to_astra_function = {
+  local add_route = {
     ["GET"] = server.get,
     ["POST"] = server.post,
     ["PUT"] = server.put,
@@ -74,110 +55,43 @@ function r.Routes(server)
     ["STATIC_FILE"] = server.static_file,
   }
 
-  local function validate_route_params(route, base_middleware)
-    local route_type, path, callback_or_serve_path, config = route[1], route[2],
-        route[3], route[4]
-
-    assert(route_type_to_astra_function[route_type],
-      "Unknown route type `" .. route_type .. "`: " .. table:to_string(route))
-    assert(type(path) == "string",
-      "Path must be a string, got `" ..
-      type(path) .. "`: " .. table:to_string(route))
-    assert((type(config) == "table") or (type(config) == "nil"),
-      "Config must be a table, got `" ..
-      type(config) .. "`: " .. table:to_string(route))
-    if http_routes[route_type] then
-      local callback = callback_or_serve_path
-      assert(type(callback) == "function",
-        "Callback must be a function, got `" ..
-        type(callback) .. "`: " .. table:to_string(route))
-      if base_middleware then
-        callback_or_serve_path = base_middleware(callback)
+  -- Recursive function that registers routes with proper prefix and middleware.
+  local function process_block(block, current_prefix, current_middleware)
+    -- `block` is the table from the DSL. Its unnamed entries (the array part)
+    -- are either route tables {method, path, handler} or scope‑marker tables.
+    for _, entry in ipairs(block) do
+      if entry._scope then
+        -- Nested scope: recursively process its inner block.
+        if entry.block.base_middleware then
+          process_block(entry.block, current_prefix .. entry._scope,
+            chain({ current_middleware, entry.block.base_middleware }))
+        else
+          process_block(entry.block, current_prefix .. entry._scope, current_middleware)
+        end
+      else
+        -- Route entry: expects {method, path, handler, <config>}
+        local route_type, path, callback_or_serve_path, config = entry[1], entry[2], entry[3], entry[4]
+        print(string.format("%11s %s", route_type, path))
+        if http_routes[route_type] then
+          local callback = callback_or_serve_path
+          add_route[route_type](server, current_prefix .. path, current_middleware(callback), config)
+        elseif static_routes[route_type] then
+          local serve_path = callback_or_serve_path
+          add_route[route_type](server, current_prefix .. path, serve_path, config)
+        end
       end
-    elseif static_routes[route_type] then
-      local serve_path = callback_or_serve_path
-      assert(type(serve_path) == "string",
-        "Serve path must be a string, got `" ..
-        type(serve_path) .. "`: " .. table:to_string(route))
     end
-    print(string.format("%11s %s", route_type, path))
-    --[==[ printing result endpoints
-            GET /
-            POST /
-            GET /hi
-    STATIC_FILE /main
-      STATIC_DIR /public
-            GET /api
-            GET /api/v1/favlangs
-            GET /api/v2/favlangs
-    ]==]
-    return route_type, path, callback_or_serve_path, config
   end
 
-  return function(routes)
-    local base_middleware = routes.base_middleware
-    local fallback = routes.fallback
-    if fallback then
-      assert(type(fallback) == "function",
-        "Fallback must be a function, got `" .. type(fallback))
-      if base_middleware then
-        assert(type(base_middleware) == "function",
-          "Base middleware must be a function, got `" .. type(base_middleware))
-        fallback = base_middleware(fallback)
-      end
-      server:fallback(fallback)
+  -- The callable that receives the top‑level DSL block.
+  local callable = setmetatable({}, {
+    __call = function(_, block)
+      local base_middleware = block.base_middleware
+      -- Start with empty prefix and the base middleware (if any)
+      process_block(block, "", base_middleware)
     end
-
-    local flatten_routes = flatten_scopes({}, routes)
-    print("------- API ----------------------------")
-    for _, route in ipairs(flatten_routes) do
-      local route_type, path, callback_or_serve_path, config =
-          validate_route_params(route, base_middleware)
-      route_type_to_astra_function[route_type](server, path,
-        callback_or_serve_path, config)
-    end
-    print("------- API ----------------------------")
-  end
-end
-
----
----    Routes(server) {
----        base_middleware = ctx,
----        { "GET",         "/",       homepage },
----
----        scope "/api" {
----            { "GET", "", api_description },
----
----            scope "/v1" {
----                { "GET", "/favlangs", favlangs },
----            },
----
----            scope "/v2" {
----                { "GET", "/favlangs", favlangs2 },
----            },
----        },
----    }
----
----@param scope_path string
----@return function
-function r.scope(scope_path)
-  return function(routes)
-    local scoped_routes = { scope = true }
-
-    for _, route in ipairs(routes) do
-      local route_type = route[1]
-      local route_path = route[2]
-
-      route[2] = scope_path .. route_path
-      if http_routes[route_type] and routes.base_middleware then
-        local callback = route[3]
-        callback = routes.base_middleware(callback)
-      end
-      table.insert(scoped_routes, route)
-    end
-
-    return scoped_routes
-  end
+  })
+  return callable
 end
 
 return r
