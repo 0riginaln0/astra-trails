@@ -1,16 +1,19 @@
 local server = require("http").server:new()
 
+
 local routing = require("routing")
 local Routes, scope = routing.Routes, routing.scope
 local GET, POST = routing.GET, routing.POST
 
+
 local middleware = require("middleware")
 local chain = middleware.chain
 local html = middleware.html
+local logger = middleware.console_logger
 
-local logger = require("middleware").console_logger
 
 local lustache = require("lustache")
+
 
 local function read_all(file)
   local f = assert(io.open(file, "rb"), tostring(file) .. " is not found.")
@@ -19,11 +22,12 @@ local function read_all(file)
   return content
 end
 
+
 local homepage = read_all("views/homepage.html")
 local function homepage_handler() return homepage end
 
-local tier_list_template = read_all("templates/tier-list.html")
 
+local tier_list_template = read_all("templates/tier-list.html")
 local function handle_tier_list(req)
   local q = req:queries()
   local params = {
@@ -38,6 +42,7 @@ local function handle_tier_list(req)
   }
   return lustache:render(tier_list_template, params)
 end
+
 
 local guestbook = {
   { name = "Alice", message = "Hello, world!" },
@@ -73,14 +78,15 @@ local function handle_post_guestbook(rq, rp)
   return { status = "success" }
 end
 
+
 Routes(server) {
   base_middleware = logger,
 
-  { GET, "/", html(homepage_handler)},
+  { GET, "/",       html(homepage_handler) },
 
   scope {
     base_middleware = html,
-    { GET, "/hello", function() return "hello world" end },
+    { GET, "/hello",     function() return "hello world" end },
     { GET, "/tier-list", handle_tier_list },
   },
 
@@ -91,7 +97,7 @@ Routes(server) {
 
   { GET, "/health", function() return { status = "UP" } end },
 
-  fallback = chain {html} (function() return "Page not Found" end)
+  fallback = chain { html } (function() return "Page not Found" end)
 }
 
 require("print-server-info")(server)
