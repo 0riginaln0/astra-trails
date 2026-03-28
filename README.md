@@ -21,9 +21,11 @@ Short snippet:
 Routes(server) {
   base_middleware = logger,
 
+  { GET, "/", html(homepage_handler)},
+
   scope {
     base_middleware = html,
-    { GET, "/",          function() return "hello world" end },
+    { GET, "/hello", function() return "hello world" end },
     { GET, "/tier-list", handle_tier_list },
   },
 
@@ -36,6 +38,4 @@ Routes(server) {
 
   fallback = chain {html} (function() return "Page not Found" end)
 }
-
-server:run()
 ```

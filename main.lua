@@ -2,7 +2,7 @@ local server = require("http").server:new()
 
 local routing = require("routing")
 local Routes, scope = routing.Routes, routing.scope
-local GET, POST = routing.GET, routing.POST
+local GET, POST, STATIC_FILE = routing.GET, routing.POST, routing.STATIC_FILE
 
 local middleware = require("middleware")
 local chain = middleware.chain
@@ -18,6 +18,9 @@ local function read_all(file)
   f:close()
   return content
 end
+
+local homepage = read_all("views/homepage.html")
+local function homepage_handler(rq, rp) return homepage end
 
 local tier_list_template = read_all("templates/tier-list.html")
 
@@ -73,9 +76,11 @@ end
 Routes(server) {
   base_middleware = logger,
 
+  { GET, "/", html(homepage_handler)},
+
   scope {
     base_middleware = html,
-    { GET, "/",          function() return "hello world" end },
+    { GET, "/hello", function() return "hello world" end },
     { GET, "/tier-list", handle_tier_list },
   },
 
