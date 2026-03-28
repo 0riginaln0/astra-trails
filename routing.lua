@@ -24,6 +24,27 @@ end
 local http_routes = set { "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE", }
 local static_routes = set { "STATIC_DIR", "STATIC_FILE", }
 
+local function flatten_scopes(flattened, routes)
+  for _, value in ipairs(routes) do
+    if type(value) ~= "table" then goto continue end
+
+    if not value.scope then
+      table.insert(flattened, value)
+      goto continue
+    end
+
+    for _, valuee in ipairs(value) do
+      pp(valuee)
+      flatten_scopes(flattened, valuee)
+    end
+
+    ::continue::
+  end
+
+  return flattened
+end
+
+
 ---
 --- Usage:
 ---
@@ -106,8 +127,10 @@ function r.Routes(server)
       end
       server:fallback(fallback)
     end
+
+    local flatten_routes = flatten_scopes({}, routes)
     print("------- API ----------------------------")
-    for _, route in ipairs(routes) do
+    for _, route in ipairs(flatten_routes) do
       local route_type, path, callback_or_serve_path, config =
           validate_route_params(route, base_middleware)
       route_type_to_astra_function[route_type](server, path,
@@ -139,7 +162,7 @@ end
 ---@return function
 function r.scope(scope_path)
   return function(routes)
-    local scoped_routes = {}
+    local scoped_routes = { scope = true }
 
     for _, route in ipairs(routes) do
       local route_type = route[1]
@@ -153,7 +176,7 @@ function r.scope(scope_path)
       table.insert(scoped_routes, route)
     end
 
-    return unpack(scoped_routes)
+    return scoped_routes
   end
 end
 
