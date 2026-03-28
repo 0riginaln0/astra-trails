@@ -7,7 +7,7 @@ In short, each route has a root handler that is wrapped in another function, whi
 
 Here is a *best effort* visualization:
 
-![Astra Middleware visualisation](Astra_Middleware_Visualization.png)
+![Astra Middleware visualisation](middleware_Astra_Middleware_Visualization.png)
 
 
 Each middleware takes a `next_handler` function which can be a root handler or an another middleware.

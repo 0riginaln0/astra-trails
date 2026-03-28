@@ -1,4 +1,3 @@
-This example shows how to create a `Routes` function which enables alternative way for defining routes:
 
 ```lua
 Routes(server) {
