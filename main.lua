@@ -5,6 +5,7 @@ local Routes, scope = routing.Routes, routing.scope
 local GET, POST = routing.GET, routing.POST
 
 local middleware = require("middleware")
+local chain = middleware.chain
 local html = middleware.html
 
 local logger = require("middleware").console_logger
@@ -85,6 +86,9 @@ Routes(server) {
 
   { GET, "/health", function() return { status = "UP" } end },
 
+  fallback = chain {html} (function()
+    return "Page not Found"
+  end)
 }
 
 require("print-server-info")(server)

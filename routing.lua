@@ -89,8 +89,13 @@ function r.Routes(server)
       local base_middleware = block.base_middleware
       -- Start with empty prefix and the base middleware (if any)
       process_block(block, "", base_middleware)
+
+      if block.fallback then
+        server:fallback(base_middleware(block.fallback))
+      end
     end
   })
+
   return callable
 end
 
