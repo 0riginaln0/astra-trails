@@ -37,7 +37,6 @@ return function(db)
   function M.get_user(args)
     local order = { 'id' }
     local ok, result = pcall(db.query_one, db, [[SELECT * FROM users WHERE id = ?1;
-
 ]], parse_args(args, order))
     return ok, result
   end
