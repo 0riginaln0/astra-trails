@@ -21,9 +21,7 @@ local function SQL(str)
 
   return function(args)
     local params = {}
-    for i, name in ipairs(order) do
-      params[i] = args[name]
-    end
+    for i, name in ipairs(order) do params[i] = args[name] end
     return sql, params
   end
 end
