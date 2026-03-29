@@ -59,6 +59,8 @@ local ok, result = queries.get_user({id=1})
 
 `astra run test.lua`
 
+[sql/queries.sql](https://github.com/0riginaln0/astra-trails/blob/main/sql/queries.sql)
+
 ```lua
 -- test.lua
 require("lugsql")("sql/queries.sql")
