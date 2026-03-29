@@ -110,7 +110,3 @@ end
 
 queries.drop_tables()
 ```
-
-## Future enhancements
-
-- [ ] ATM it supports only SQLite. Maybe add Postgres support? 
