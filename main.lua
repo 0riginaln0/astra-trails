@@ -96,7 +96,7 @@ end
 
 local function get_api_guestbook(rq, rp)
   local ok, result = queries.get_messages()
-  if not ok then 
+  if not ok then
     rp:set_status_code(sc.BAD_REQUEST)
     return { error = result }
   end
@@ -108,10 +108,10 @@ local guestbook_html = read_all("views/guestbook.html")
 local function guestbook_page(req)
   local ok, messages = queries.get_messages()
   if not ok then
-    return "<h1>Error loading guestbook</h1><p>" .. tostring(messages) .. "</p>"
+    return "<h1>Error loading guestbook</h1><p>"..tostring(messages).."</p>"
   end
   local view = {
-    messages = messages,   -- list of { name, message }
+    messages = messages, -- list of { name, message }
     no_messages = #messages == 0
   }
   return lustache:render(guestbook_html, view)
@@ -138,7 +138,7 @@ local function post_guestbook_form(rq, rp)
   local ok, err = queries.save_message(record)
   if not ok then
     rp:set_status_code(sc.BAD_REQUEST)
-    return "<h1>Error</h1><p>" .. tostring(err) .. "</p><a href='/guestbook'>Go back</a>"
+    return "<h1>Error</h1><p>"..tostring(err).."</p><a href='/guestbook'>Go back</a>"
   end
 
   rp:set_status_code(sc.SEE_OTHER)
@@ -147,9 +147,9 @@ local function post_guestbook_form(rq, rp)
 end
 
 Routes(server) {
-  base_middleware = chain {ctx, logger},
+  base_middleware = chain { ctx, logger },
 
-  { GET, "/",       html(homepage) },
+  { GET,  "/",          html(homepage) },
 
   scope {
     base_middleware = html,
@@ -158,12 +158,12 @@ Routes(server) {
   },
 
 
-  { GET, "/guestbook", html(guestbook_page) },
+  { GET,  "/guestbook", html(guestbook_page) },
   { POST, "/guestbook", post_guestbook_form },
 
   scope "/api" {
-    { POST, "/guestbook", post_api_guestbook },
     { GET,  "/guestbook", get_api_guestbook },
+    { POST, "/guestbook", post_api_guestbook },
   },
 
   { GET, "/health", function() return { status = "UP" } end },

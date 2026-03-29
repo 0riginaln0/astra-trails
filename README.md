@@ -27,24 +27,28 @@ Short snippet:
 
 ```lua
 Routes(server) {
-  base_middleware = logger,
+  base_middleware = chain { ctx, logger },
 
-  { GET, "/", html(homepage_handler)},
+  { GET,  "/",          html(homepage) },
 
   scope {
     base_middleware = html,
-    { GET, "/hello", function() return "hello world" end },
-    { GET, "/tier-list", handle_tier_list },
+    { GET, "/hello",     function() return "hello world" end },
+    { GET, "/tier-list", tier_list },
   },
 
+
+  { GET,  "/guestbook", html(guestbook_page) },
+  { POST, "/guestbook", post_guestbook_form },
+
   scope "/api" {
-    { POST, "/guestbook", handle_post_guestbook },
-    { GET,  "/guestbook", function() return guestbook end },
+    { POST, "/guestbook", post_api_guestbook },
+    { GET,  "/guestbook", get_api_guestbook },
   },
 
   { GET, "/health", function() return { status = "UP" } end },
 
-  fallback = chain {html} (function() return "Page not Found" end)
+  fallback = chain { html } (function() return "Page not Found" end)
 }
 
 require("print-server-info")(server)

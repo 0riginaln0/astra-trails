@@ -4,8 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Astra Trails Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
 </head>
 <body>
     <h1>Astra Trails Demo</h1>
+
+    <h2>Site Map</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>Endpoint</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>GET</td><td>/</td><td>Homepage</td></tr>
+            <tr><td>GET</td><td>/hello</td><td>Hello World</td></tr>
+            <tr><td>GET</td><td>/tier-list</td><td>Tier List</td></tr>
+            <tr><td>GET</td><td>/guestbook</td><td>Guestbook Page</td></tr>
+            <tr><td>POST</td><td>/guestbook</td><td>Submit Guestbook Form</td></tr>
+            <tr><td>GET</td><td>/api/guestbook</td><td>Get Guestbook Messages via API</td></tr>
+            <tr><td>POST</td><td>/api/guestbook</td><td>Submit Guestbook via API</td></tr>
+            <tr><td>GET</td><td>/health</td><td>Health Check</td></tr>
+        </tbody>
+    </table>
+
+    <h2>What This Demo App Uses</h2>
+    <p>
+        This demo app is built using <a href="https://github.com/ArkForgeLabs/Astra">Astra</a>, a web server runtime for Lua.
+        It showcases several features and libraries:
+    </p>
+    <ul>
+        <li><strong>Middleware:</strong> Introducing patterns for middleware.</li>
+        <li><strong>Routes Grouping:</strong> DSL to register a group of routes in one place.</li>
+        <li><strong>Templating with Lustache:</strong> Full overview of Mustache templates in pure Lua.</li>
+        <li><strong>LugSQL:</strong> Turns parameterized SQL into Lua functions.</li>
+    </ul>
+    <p>
+        The server is written in Lua 5.5 and runs on <code>http://127.0.0.1:8080</code>.
+    </p>
+    <p>
+        Check out the <a href="https://github.com/ArkForgeLabs/Astra">Astra GitHub repository</a> for more details.
+    </p>
 </body>
 </html>
