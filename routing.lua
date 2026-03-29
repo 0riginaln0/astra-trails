@@ -61,7 +61,7 @@ function r.Routes(server)
       else
         -- Route entry: expects {method, path, handler, <config>}
         local route_type, path, callback_or_serve_path, config = entry[1], entry[2], entry[3], entry[4]
-        print(string.format("%11s %s", route_type, path))
+        print(string.format("%11s %s", route_type, current_prefix .. path))
         if http_routes[route_type] then
           local callback = callback_or_serve_path
           if current_middleware then

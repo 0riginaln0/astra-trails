@@ -16,8 +16,8 @@ $ astra run main.lua
         GET /
         GET /hello
         GET /tier-list
-       POST /guestbook
-        GET /guestbook
+       POST /api/guestbook
+        GET /api/guestbook
         GET /health
 Server uses:    Lua 5.5
 Running on http://127.0.0.1:8080
