@@ -11,68 +11,60 @@ end
 return function(db)
   local M = {}
 
-  
+  ---@param args { id: number }
   function M.get_user(args)
-    local order = { 'id', 'number' }
-    return db:query_all([[SELECT * FROM users WHERE id = ?1?2
+    local order = { 'id' }
+    return db:query_all([[SELECT * FROM users WHERE id = ?1
 ]], parse_args(args, order))
     end
 
-  
+  ---@param args { name: string, id: number }
   function M.update_user_name(args)
-    local order = { 'name', 'string', 'id', 'number' }
-    return db:execute([[UPDATE users SET name = ?1?2 WHERE id = ?3?4
+    local order = { 'name', 'id' }
+    return db:execute([[UPDATE users SET name = ?1 WHERE id = ?2
 ]], parse_args(args, order))
     end
 
-  
-  function M.list_active_users(args)
-    local order = {  }
+  function M.list_active_users()
     return db:query_all([[SELECT * FROM users WHERE active = 1
-]], parse_args(args, order))
+]])
     end
 
-  
-  function M.create_guestbook_table(args)
-    local order = {  }
+  function M.create_guestbook_table()
     return db:execute([[CREATE TABLE guestbook (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name VARCHAR(30),
   message VARCHAR(200),
   timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-]], parse_args(args, order))
+]])
     end
 
-  
-  function M.drop_guestbook_table(args)
-    local order = {  }
+  function M.drop_guestbook_table()
     return db:execute([[DROP TABLE IF EXISTS guestbook;
-]], parse_args(args, order))
+]])
     end
 
-  
+  ---@param args { name: string, message: string }
   function M.save_message(args)
-    local order = { 'name', 'string', 'message' }
+    local order = { 'name', 'message' }
     return db:execute([[INSERT INTO guestbook
 (name, message)
-VALUES (?1?2, ?3?2);
+VALUES (?1, ?2);
 ]], parse_args(args, order))
     end
 
-  
-  function M.get_messages(args)
-    local order = {  }
+  function M.get_messages()
     return db:query_all([[SELECT * FROM guestbook;
-]], parse_args(args, order))
+]])
     end
 
-  
+  ---@param args { name: string }
   function M.get_messages_by_name(args)
-    local order = { 'name', 'string' }
+    local order = { 'name' }
     return db:query_all([[SELECT id, message, timestamp
 FROM guestbook
-WHERE name = ?1?2
+WHERE name = ?1
 ORDER BY timestamp DESC;]], parse_args(args, order))
     end
 

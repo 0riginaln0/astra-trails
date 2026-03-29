@@ -15,11 +15,17 @@ end
 
 local function parse_parameters(sql)
   local types = {}
-  local cleaned = sql:gsub(":([%a_][%w_]*):(string|number|boolean)", function(name, typ)
-    print("GOT NAME", name, "WITH TYPE", type)
-    types[name] = typ
-    return ":" .. name
+  local allowed_types = { string = true, number = true, boolean = true }
+
+  local cleaned = sql:gsub(":([%a_][%w_]*):([%a_]+)", function(name, typ)
+    if allowed_types[typ] then
+      types[name] = typ
+      return ":" .. name
+    else
+      return ":" .. name .. ":" .. typ
+    end
   end)
+
   return cleaned, types
 end
 
@@ -32,7 +38,7 @@ local function read_queries(filename)
   local sql_lines = {}
   local function flush()
     if current then
-      local raw_sql = table.concat(sql_lines, "\n"):gsub("^%s*\n", "")       -- remove leading blank lines
+      local raw_sql = table.concat(sql_lines, "\n"):gsub("^%s*\n", "") -- remove leading blank lines
       local cleaned_sql, param_types = parse_parameters(raw_sql)
       current.sql = cleaned_sql
       current.param_types = param_types
@@ -48,7 +54,7 @@ local function read_queries(filename)
       flush()
       local name = trimmed:match("^%-%- %:name%s+(%S+)")
       if name then
-        current = { name = name, type = "query_all" }         -- default
+        current = { name = name, type = "query_all" } -- default
       else
         error("Invalid :name directive: " .. line)
       end
@@ -101,6 +107,7 @@ local function SQL(str)
   local pos = {}
   for i, name in ipairs(order) do pos[name] = i end
 
+  -- ? is SQLite specifig. Maybe in future add Postgres support
   local sql = str:gsub(":(%w+)", function(name) return "?" .. pos[name] end)
   return sql, order
 end
@@ -136,11 +143,22 @@ end
       error("Unknown type for " .. func_name)
     end
 
-    pprint(q.param_types, order)
-    table.insert(lines, string.format("  "))
-    table.insert(lines, string.format("  function M.%s(args)", func_name))
-    table.insert(lines, string.format("    local order = %s", table:to_string(order)))
-    table.insert(lines, string.format("    return db:%s(%s, parse_args(args, order))", method, sql_str))
+    if #order == 0 then
+      table.insert(lines, string.format("  function M.%s()", func_name))
+      table.insert(lines, string.format("    return db:%s(%s)", method, sql_str))
+    else
+      local parts = {}
+      for _, param_name in ipairs(order) do
+        local typ = q.param_types[param_name]
+        if typ then
+          parts[#parts + 1] = param_name .. ": " .. typ
+        end
+      end
+      table.insert(lines, string.format("  ---@param args { %s }", table.concat(parts, ", ")))
+      table.insert(lines, string.format("  function M.%s(args)", func_name))
+      table.insert(lines, string.format("    local order = %s", table:to_string(order)))
+      table.insert(lines, string.format("    return db:%s(%s, parse_args(args, order))", method, sql_str))
+    end
     table.insert(lines, "    end")
     table.insert(lines, "")
   end
