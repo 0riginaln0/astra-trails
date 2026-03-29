@@ -52,7 +52,7 @@ local driver = require("database")
 local db = driver.new("sqlite", "db.sqlite")
 local queries = require("sql.queries")(db)
 
-queries.get_user({id=1})
+local ok, result = queries.get_user({id=1})
 ```
 
 ## Full example:
