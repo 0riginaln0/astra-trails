@@ -7,7 +7,7 @@ Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astr
 - [Templating with Lustache](lustache.md): Full overview of Mustache templates in pure Lua.
 - [LugSQL](lugsql.md): Turns parameterized SQL into Lua functions.
 
-Check out [main.lua](main.lua) for the app example.
+Check out [main.lua](main.lua) for an app example.
 
 Run it with:
 
