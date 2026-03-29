@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Guestbook</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+        .message { border-bottom: 1px solid #ccc; padding: 0.5rem 0; }
+        .name { font-weight: bold; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.25rem; }
+        input, textarea { width: 100%; padding: 0.5rem; box-sizing: border-box; }
+        button { padding: 0.5rem 1rem; background: #0066cc; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0052a3; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Guestbook</h1>
+
+    {{#no_messages}}
+        <p><em>No messages yet. Be the first to sign!</em></p>
+    {{/no_messages}}
+
+    {{#messages}}
+        <div class="message">
+            <div class="name">{{name}}</div>
+            <div class="content">{{message}}</div>
+        </div>
+    {{/messages}}
+
+    <h2>Leave a message</h2>
+    <form method="post" action="/guestbook">
+        <div class="form-group">
+            <label for="name">Your name (optional)</label>
+            <input type="text" id="name" name="name" placeholder="Anonymous">
+        </div>
+        <div class="form-group">
+            <label for="message">Message *</label>
+            <textarea id="message" name="message" rows="4" required></textarea>
+        </div>
+        <button type="submit">Sign guestbook</button>
+    </form>
+</body>
+</html>

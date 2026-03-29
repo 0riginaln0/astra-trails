@@ -53,3 +53,10 @@ SELECT id, message, timestamp
 FROM guestbook
 WHERE name = :name:string
 ORDER BY timestamp DESC;
+
+
+-- :name get_messages
+-- :querry_all
+SELECT message, name
+FROM guestbook
+ORDER BY timestamp DESC;
