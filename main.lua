@@ -19,9 +19,8 @@ local lustache = require("lustache")
 
 require("lugsql")("sql/queries.sql", "sqlite")
 
-local driver = require("database")
-local db = driver.new("sqlite", "db.sqlite")
 
+local db = require("database").new("sqlite", "db.sqlite")
 local queries = require("sql.queries")(db)
 queries.drop_tables()
 queries.create_tables()
@@ -55,11 +54,6 @@ local function tier_list(req)
   return lustache:render(tier_list_template, params)
 end
 
-
-local guestbook = {
-  { name = "Alice", message = "Hello, world!" },
-  { name = "Bob",   message = "Nice to be here!" }
-}
 
 ---@param rq HTTPServerRequest
 ---@param rp HTTPServerResponse
