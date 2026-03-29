@@ -12,7 +12,7 @@ return function(db)
   local M = {}
 
   function M.create_tables()
-    return db:execute([[CREATE TABLE IF NOT EXISTS users (
+    local ok, result = pcall(db.execute, db, [[CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   active INTEGER DEFAULT 1
@@ -26,63 +26,71 @@ CREATE TABLE IF NOT EXISTS guestbook (
 );
 
 ]])
-    end
+    return ok, result
+  end
 
   function M.drop_tables()
-    return db:execute([[DROP TABLE IF EXISTS guestbook;
+    local ok, result = pcall(db.execute, db, [[DROP TABLE IF EXISTS guestbook;
 DROP TABLE IF EXISTS users;
 
 ]])
-    end
+    return ok, result
+  end
 
   ---@param args { name: string, active: number }
   function M.insert_user(args)
     local order = { 'name', 'active' }
-    return db:execute([[INSERT INTO users (name, active) VALUES (?1, ?2);
+    local ok, result = pcall(db.execute, db, [[INSERT INTO users (name, active) VALUES (?1, ?2);
 
 ]], parse_args(args, order))
-    end
+    return ok, result
+  end
 
   --- Fetch a single user by id
   ---@param args { id: number }
   function M.get_user(args)
     local order = { 'id' }
-    return db:query_one([[SELECT * FROM users WHERE id = ?1;
+    local ok, result = pcall(db.query_one, db, [[SELECT * FROM users WHERE id = ?1;
 
 ]], parse_args(args, order))
-    end
+    return ok, result
+  end
 
   ---@param args { name: string, id: number }
   function M.update_user_name(args)
     local order = { 'name', 'id' }
-    return db:execute([[UPDATE users SET name = ?1 WHERE id = ?2;
+    local ok, result = pcall(db.execute, db, [[UPDATE users SET name = ?1 WHERE id = ?2;
 
 ]], parse_args(args, order))
-    end
+    return ok, result
+  end
 
   function M.list_active_users()
-    return db:query_all([[SELECT * FROM users WHERE active = 1;
+    local ok, result = pcall(db.query_all, db, [[SELECT * FROM users WHERE active = 1;
 
 ]])
-    end
+    return ok, result
+  end
 
   ---@param args { name: string, message: string }
   function M.save_message(args)
     local order = { 'name', 'message' }
-    return db:execute([[INSERT INTO guestbook (name, message)
+    local ok, result = pcall(db.execute, db, [[INSERT INTO guestbook (name, message)
 VALUES (?1, ?2);
 
 ]], parse_args(args, order))
-    end
+    return ok, result
+  end
 
   ---@param args { name: string }
   function M.get_messages_by_name(args)
     local order = { 'name' }
-    return db:query_all([[SELECT id, message, timestamp
+    local ok, result = pcall(db.query_all, db, [[SELECT id, message, timestamp
 FROM guestbook
 WHERE name = ?1
 ORDER BY timestamp DESC;]], parse_args(args, order))
-    end
+    return ok, result
+  end
 
   return M
 end

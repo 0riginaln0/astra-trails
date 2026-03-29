@@ -145,7 +145,8 @@ end
     end
     if #order == 0 then
       table.insert(lines, string.format("  function M.%s()", func_name))
-      table.insert(lines, string.format("    return db:%s(%s)", method, sql_str))
+      table.insert(lines, string.format("    local ok, result = pcall(db.%s, db, %s)", method, sql_str))
+      table.insert(lines, string.format("    return ok, result"))
     else
       local parts = {}
       for _, param_name in ipairs(order) do
@@ -157,9 +158,10 @@ end
       table.insert(lines, string.format("  ---@param args { %s }", table.concat(parts, ", ")))
       table.insert(lines, string.format("  function M.%s(args)", func_name))
       table.insert(lines, string.format("    local order = %s", table:to_string(order)))
-      table.insert(lines, string.format("    return db:%s(%s, parse_args(args, order))", method, sql_str))
+      table.insert(lines, string.format("    local ok, result = pcall(db.%s, db, %s, parse_args(args, order))", method, sql_str))
+      table.insert(lines, string.format("    return ok, result"))
     end
-    table.insert(lines, "    end")
+    table.insert(lines, "  end")
     table.insert(lines, "")
   end
 
