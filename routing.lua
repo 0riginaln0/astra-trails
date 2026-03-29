@@ -50,28 +50,28 @@ function r.Routes(server)
       if entry._scope then
         -- Nested scope: recursively process its inner block.
         if not entry.block.base_middleware then
-          process_block(entry.block, current_prefix .. entry._scope, current_middleware)
+          process_block(entry.block, current_prefix..entry._scope, current_middleware)
         else
           if current_middleware then
-            process_block(entry.block, current_prefix .. entry._scope, chain({ current_middleware, entry.block.base_middleware }))
+            process_block(entry.block, current_prefix..entry._scope, chain({ current_middleware, entry.block.base_middleware }))
           else
-            process_block(entry.block, current_prefix .. entry._scope, entry.block.base_middleware)
+            process_block(entry.block, current_prefix..entry._scope, entry.block.base_middleware)
           end
         end
       else
         -- Route entry: expects {method, path, handler, <config>}
         local route_type, path, callback_or_serve_path, config = entry[1], entry[2], entry[3], entry[4]
-        print(string.format("%11s %s", route_type, current_prefix .. path))
+        print(string.format("%11s %s", route_type, current_prefix..path))
         if http_routes[route_type] then
           local callback = callback_or_serve_path
           if current_middleware then
-            add_route[route_type](server, current_prefix .. path, current_middleware(callback), config)
+            add_route[route_type](server, current_prefix..path, current_middleware(callback), config)
           else
-            add_route[route_type](server, current_prefix .. path, callback, config)
+            add_route[route_type](server, current_prefix..path, callback, config)
           end
         elseif static_routes[route_type] then
           local serve_path = callback_or_serve_path
-          add_route[route_type](server, current_prefix .. path, serve_path, config)
+          add_route[route_type](server, current_prefix..path, serve_path, config)
         end
       end
     end

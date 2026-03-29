@@ -4,5 +4,5 @@ return function(server)
   else
     print("Server uses:", _VERSION)
   end
-  print("Running on http://" .. server.hostname .. ":" .. server.port)
+  print("Running on http://"..server.hostname..":"..server.port)
 end

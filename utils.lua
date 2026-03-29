@@ -38,16 +38,16 @@ function table:to_string(t)
   local hash_part = {}
   for i = 1, #hash_keys do
     local k = hash_keys[i]
-    hash_part[i] = tostring(k) .. " = " .. v_to_string(t[k])
+    hash_part[i] = tostring(k).." = "..v_to_string(t[k])
   end
 
   local num_str = table.concat(num_part, ", ")
   local hash_str = table.concat(hash_part, ", ")
 
   if num_str ~= "" and hash_str ~= "" then
-    return "{ " .. num_str .. " | " .. hash_str .. " }"
+    return "{ "..num_str.." | "..hash_str.." }"
   else
-    return "{ " .. num_str .. hash_str .. " }"
+    return "{ "..num_str..hash_str.." }"
   end
 end
 

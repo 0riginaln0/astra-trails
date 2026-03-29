@@ -62,12 +62,10 @@ end
 --- ```
 function m.chain(chain)
   return function(handler)
-    assert(type(handler) == "function",
-      "Handler must be a function, got " .. type(handler))
+    assert(type(handler) == "function", "Handler must be a function, got "..type(handler))
     for i = #chain, 1, -1 do
       local middleware = chain[i]
-      assert(type(middleware) == "function",
-        "Middleware must be a function, got " .. type(middleware))
+      assert(type(middleware) == "function", "Middleware must be a function, got "..type(middleware))
       handler = middleware(handler)
     end
     return handler

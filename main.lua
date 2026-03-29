@@ -16,7 +16,7 @@ local lustache = require("lustache")
 
 
 local function read_all(file)
-  local f = assert(io.open(file, "rb"), tostring(file) .. " is not found.")
+  local f = assert(io.open(file, "rb"), tostring(file).." is not found.")
   local content = f:read("*all")
   f:close()
   return content
