@@ -5,8 +5,7 @@ Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astr
 - [Middleware](middleware.md): Introducing pattern for middleware.
 - [Routes grouping](routing.md): DSL to register a group of routes in one place.
 - [Templating with Lustache](lustache.md): Full overview of Mustache templates in pure Lua.
-- [SQL](sql.lua): Create sql statements with named parameters. 
-
+- [LugSQL](lugsql.md): Turns parameterized SQL into Lua functions.
 
 Check out [main.lua](main.lua) for the app example.
 

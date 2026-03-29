@@ -11,53 +11,68 @@ end
 return function(db)
   local M = {}
 
+  function M.create_tables()
+    return db:execute([[CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  active INTEGER DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS guestbook (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  message TEXT NOT NULL,
+  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+]])
+    end
+
+  function M.drop_tables()
+    return db:execute([[DROP TABLE IF EXISTS guestbook;
+DROP TABLE IF EXISTS users;
+
+]])
+    end
+
+  ---@param args { name: string, active: number }
+  function M.insert_user(args)
+    local order = { 'name', 'active' }
+    return db:execute([[INSERT INTO users (name, active) VALUES (?1, ?2);
+
+]], parse_args(args, order))
+    end
+
   --- Fetch a single user by id
   ---@param args { id: number }
   function M.get_user(args)
     local order = { 'id' }
-    return db:query_one([[SELECT * FROM users WHERE id = ?1
+    return db:query_one([[SELECT * FROM users WHERE id = ?1;
+
 ]], parse_args(args, order))
     end
 
   ---@param args { name: string, id: number }
   function M.update_user_name(args)
     local order = { 'name', 'id' }
-    return db:execute([[UPDATE users SET name = ?1 WHERE id = ?2
+    return db:execute([[UPDATE users SET name = ?1 WHERE id = ?2;
+
 ]], parse_args(args, order))
     end
 
   function M.list_active_users()
-    return db:query_all([[SELECT * FROM users WHERE active = 1
-]])
-    end
+    return db:query_all([[SELECT * FROM users WHERE active = 1;
 
-  function M.create_guestbook_table()
-    return db:execute([[CREATE TABLE IF NOT EXISTS guestbook (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name VARCHAR(30),
-  message VARCHAR(200),
-  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-]])
-    end
-
-  function M.drop_guestbook_table()
-    return db:execute([[DROP TABLE IF EXISTS guestbook;
 ]])
     end
 
   ---@param args { name: string, message: string }
   function M.save_message(args)
     local order = { 'name', 'message' }
-    return db:execute([[INSERT INTO guestbook
-(name, message)
+    return db:execute([[INSERT INTO guestbook (name, message)
 VALUES (?1, ?2);
-]], parse_args(args, order))
-    end
 
-  function M.get_messages()
-    return db:query_all([[SELECT * FROM guestbook;
-]])
+]], parse_args(args, order))
     end
 
   ---@param args { name: string }

@@ -1,6 +1,3 @@
--- generate.lua <input.sql> [output.lua]
--- Reads annotated SQL file and writes a Lua module.
-
 require("utils")
 
 local function trim(s)
@@ -13,7 +10,7 @@ end
 
 local function parse_parameters(sql)
   local types = {}
-  local allowed_types = { string = true, number = true, boolean = true }
+  local allowed_types = { string = true, number = true }
 
   local cleaned = sql:gsub(":([%a_][%w_]*):([%a_]+)", function(name, typ)
     if allowed_types[typ] then
