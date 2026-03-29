@@ -15,7 +15,7 @@ return function(db)
   ---@param args { id: number }
   function M.get_user(args)
     local order = { 'id' }
-    return db:query_all([[SELECT * FROM users WHERE id = ?1
+    return db:query_one([[SELECT * FROM users WHERE id = ?1
 ]], parse_args(args, order))
     end
 
@@ -32,7 +32,7 @@ return function(db)
     end
 
   function M.create_guestbook_table()
-    return db:execute([[CREATE TABLE guestbook (
+    return db:execute([[CREATE TABLE IF NOT EXISTS guestbook (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name VARCHAR(30),
   message VARCHAR(200),

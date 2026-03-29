@@ -1,6 +1,6 @@
 -- :name get_user
 -- :doc Fetch a single user by id
--- :query-one
+-- :query_one
 SELECT * FROM users WHERE id = :id:number
 
 -- :name update_user_name
@@ -8,12 +8,12 @@ SELECT * FROM users WHERE id = :id:number
 UPDATE users SET name = :name:string WHERE id = :id:number
 
 -- :name list_active_users
--- :query-all
+-- :query_all
 SELECT * FROM users WHERE active = 1
 
 -- :name create_guestbook_table
 -- :execute
-CREATE TABLE guestbook (
+CREATE TABLE IF NOT EXISTS guestbook (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name VARCHAR(30),
   message VARCHAR(200),

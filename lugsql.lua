@@ -1,5 +1,3 @@
-#!/usr/bin/env lua
-
 -- generate.lua <input.sql> [output.lua]
 -- Reads annotated SQL file and writes a Lua module.
 
@@ -173,15 +171,20 @@ end
   return table.concat(lines, "\n")
 end
 
-local input_file = "queries.sql"
-local output_file = "sql.lua"
+return function (input_file)
+  -- Derive output file by replacing extension (or adding .lua)
+  local output_file = input_file:gsub("%.sql$", "") .. ".lua"
+  -- If the input may have no .sql extension, you could simply do:
+  -- local output_file = input_file .. ".lua"
 
+  local queries = read_queries(input_file)
+  local lua_code = generate_module(queries)
 
-local queries = read_queries(input_file)
-local lua_code = generate_module(queries)
-
-local out = io.open(output_file, "w")
-if not out then error("Cannot write " .. output_file) end
-out:write(lua_code)
-out:close()
-print("Generated " .. output_file .. " with " .. #queries .. " queries.")
+  local out = io.open(output_file, "w")
+  if not out then
+    error("Cannot write " .. output_file)
+  end
+  out:write(lua_code)
+  out:close()
+  print("Generated " .. output_file .. " with " .. #queries .. " queries.")
+end
