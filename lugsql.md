@@ -24,7 +24,7 @@ SELECT * FROM users WHERE id = :id:number;
 
 running
 ```lua
-require("lugsql")("sql/queries.sql")
+require("lugsql")("sql/queries.sql", "sqlite")
 ```
 
 will generate an `sql/queries.lua` file:
@@ -36,7 +36,8 @@ return function(db)
   ---@param args { id: number }
   function M.get_user(args)
     local order = { 'id' }
-    local ok, result = pcall(db.query_one, db, [[SELECT * FROM users WHERE id = ?1;
+    local ok, result = pcall(db.query_one, db, [[
+SELECT * FROM users WHERE id = ?1;
 ]], parse_args(args, order))
     return ok, result
   end
@@ -63,7 +64,7 @@ local ok, result = queries.get_user({id=1})
 
 ```lua
 -- test.lua
-require("lugsql")("sql/queries.sql")
+require("lugsql")("sql/queries.sql", "sqlite")
 
 local driver = require("database")
 local db = driver.new("sqlite", "db.sqlite")

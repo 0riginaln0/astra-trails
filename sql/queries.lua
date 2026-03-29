@@ -7,32 +7,30 @@ local function parse_args(args, order)
   return params
 end
 
-
 return function(db)
   local M = {}
 
   function M.create_tables()
-    local ok, result = pcall(db.execute, db, [[CREATE TABLE IF NOT EXISTS users (
+    local ok, result = pcall(db.execute, db, [[
+CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   active INTEGER DEFAULT 1
 );
-
 CREATE TABLE IF NOT EXISTS guestbook (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   message TEXT NOT NULL,
   timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 ]])
     return ok, result
   end
 
   function M.drop_tables()
-    local ok, result = pcall(db.execute, db, [[DROP TABLE IF EXISTS guestbook;
+    local ok, result = pcall(db.execute, db, [[
+DROP TABLE IF EXISTS guestbook;
 DROP TABLE IF EXISTS users;
-
 ]])
     return ok, result
   end
@@ -40,8 +38,8 @@ DROP TABLE IF EXISTS users;
   ---@param args { name: string, active: number }
   function M.insert_user(args)
     local order = { 'name', 'active' }
-    local ok, result = pcall(db.execute, db, [[INSERT INTO users (name, active) VALUES (?1, ?2);
-
+    local ok, result = pcall(db.execute, db, [[
+INSERT INTO users (name, active) VALUES (?1, ?2);
 ]], parse_args(args, order))
     return ok, result
   end
@@ -50,8 +48,8 @@ DROP TABLE IF EXISTS users;
   ---@param args { id: number }
   function M.get_user(args)
     local order = { 'id' }
-    local ok, result = pcall(db.query_one, db, [[SELECT * FROM users WHERE id = ?1;
-
+    local ok, result = pcall(db.query_one, db, [[
+SELECT * FROM users WHERE id = ?1;
 ]], parse_args(args, order))
     return ok, result
   end
@@ -59,15 +57,15 @@ DROP TABLE IF EXISTS users;
   ---@param args { name: string, id: number }
   function M.update_user_name(args)
     local order = { 'name', 'id' }
-    local ok, result = pcall(db.execute, db, [[UPDATE users SET name = ?1 WHERE id = ?2;
-
+    local ok, result = pcall(db.execute, db, [[
+UPDATE users SET name = ?1 WHERE id = ?2;
 ]], parse_args(args, order))
     return ok, result
   end
 
   function M.list_active_users()
-    local ok, result = pcall(db.query_all, db, [[SELECT * FROM users WHERE active = 1;
-
+    local ok, result = pcall(db.query_all, db, [[
+SELECT * FROM users WHERE active = 1;
 ]])
     return ok, result
   end
@@ -75,9 +73,9 @@ DROP TABLE IF EXISTS users;
   ---@param args { name: string, message: string }
   function M.save_message(args)
     local order = { 'name', 'message' }
-    local ok, result = pcall(db.execute, db, [[INSERT INTO guestbook (name, message)
+    local ok, result = pcall(db.execute, db, [[
+INSERT INTO guestbook (name, message)
 VALUES (?1, ?2);
-
 ]], parse_args(args, order))
     return ok, result
   end
@@ -85,10 +83,12 @@ VALUES (?1, ?2);
   ---@param args { name: string }
   function M.get_messages_by_name(args)
     local order = { 'name' }
-    local ok, result = pcall(db.query_all, db, [[SELECT id, message, timestamp
+    local ok, result = pcall(db.query_all, db, [[
+SELECT id, message, timestamp
 FROM guestbook
 WHERE name = ?1
-ORDER BY timestamp DESC;]], parse_args(args, order))
+ORDER BY timestamp DESC;
+]], parse_args(args, order))
     return ok, result
   end
 
