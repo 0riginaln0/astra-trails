@@ -35,20 +35,24 @@ CREATE TABLE guestbook (
 );
 ]]
 
+---@type fun(args: table): string, table
 local drop_guestbook_table = SQL[[
 DROP TABLE IF EXISTS guestbook;
 ]]
 
+---@type fun(args: {name: string, message: string}): string, table
 local save_message = SQL[[
 INSERT INTO guestbook
 (name, message)
 VALUES (:name, :message);
 ]]
 
+---@type fun(args: table): string, table
 local get_messages = SQL[[
 SELECT * FROM guestbook;
 ]]
 
+---@type fun(args: {name: string}): string, table
 local get_messages_by_name = SQL[[
 SELECT id, message, timestamp
 FROM guestbook
