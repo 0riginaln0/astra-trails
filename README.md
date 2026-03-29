@@ -45,8 +45,8 @@ Routes(server) {
   { POST, "/guestbook", post_guestbook_form },
 
   scope "/api" {
-    { POST, "/guestbook", post_api_guestbook },
     { GET,  "/guestbook", get_api_guestbook },
+    { POST, "/guestbook", post_api_guestbook },
   },
 
   { GET, "/health", function() return { status = "UP" } end },
