@@ -81,15 +81,15 @@ print("User 1:", user.name, "active:", user.active) -- User 1: Alice   active: 1
 
 local ok, result = queries.get_user {id=44}
 if not ok then
-    print(result) --[[
-    runtime error: Error executing the query: RowNotFound
-    stack traceback:
-        [C]: in local 'poll'
-        [string "?"]:28: in main chunk
-        [C]: in global 'pcall'
-        [string "sql/queries.lua"]:53: in field 'get_user'
-        [string "test.lua"]:17: in main chunk
-    ]]
+  print(result) --[[
+  runtime error: Error executing the query: RowNotFound
+  stack traceback:
+      [C]: in local 'poll'
+      [string "?"]:28: in main chunk
+      [C]: in global 'pcall'
+      [string "sql/queries.lua"]:53: in field 'get_user'
+      [string "test.lua"]:17: in main chunk
+  ]]
 end
 
 queries.update_user_name { id = 1, name = "Robert" }
