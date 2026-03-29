@@ -64,6 +64,8 @@ local function read_queries(filename)
       if current then current.type = "query_all" end
     elseif starts_with(trimmed, "-- :execute") then
       if current then current.type = "execute" end
+    elseif starts_with(trimmed, "-- :doc") then
+      if current then current.doc = trimmed:match("^%-%- %:doc%s+(.*)") end
     elseif starts_with(trimmed, "--") then
       -- ignore other comments
     else
@@ -143,6 +145,9 @@ end
       error("Unknown type for " .. func_name)
     end
 
+    if q.doc then
+      table.insert(lines, string.format("  --- %s", q.doc))
+    end
     if #order == 0 then
       table.insert(lines, string.format("  function M.%s()", func_name))
       table.insert(lines, string.format("    return db:%s(%s)", method, sql_str))

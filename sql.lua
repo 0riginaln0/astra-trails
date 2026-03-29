@@ -11,6 +11,7 @@ end
 return function(db)
   local M = {}
 
+  --- Fetch a single user by id
   ---@param args { id: number }
   function M.get_user(args)
     local order = { 'id' }
