@@ -1,31 +1,16 @@
 
 ```lua
 Routes(server) {
-    base_middleware = ctx,
-    { "GET",         "/",       homepage },
-    { "POST",        "/",       add_homepage_info },
-    { "GET",         "/hi",     just_hi },
-    { "STATIC_FILE", "/main",   "main.lua" },
-    { "STATIC_DIR",  "/public", "public" },
-
-    scope "/api" {
-        { "GET", "", api_description },
-        
-        scope "/v1" {
-            { "GET", "/favlangs", favlangs },
-        },
-
-        scope "/v2" {
-            base_middleware = html,
-            { "GET", "/favlangs", favlangs2 },
-        },
-    },
-
-    fallback = function(req, res)
-        return "Sorry, it's 404"
-    end
+  base_middleware = ctx,
+  { "GET", "/", homepage },
+  scope "/api" {
+    { "GET",  "/todos", todos },
+    { "POST", "/todos", post_todo },
+  }
+  scope {
+     base_middleware = auth,
+     { "GET", "/admin", dashboard },
+  }
 }
-
 ```
-
 Read more about why we can drop parenthesis while calling `Routes` and `scope` functions here: [Writing a DSL in Lua](https://leafo.net/guides/dsl-in-lua.html)
