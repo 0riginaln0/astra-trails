@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
+    <title>API Client</title>
     <script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
 </head>
-
 <body>
+
     <label>Protocol:</label>
-        <input type="radio" name="protocol" value="http" checked> http
-        <input type="radio" name="protocol" value="https"> https
+    <input type="radio" name="protocol" value="http" checked> http
+    <input type="radio" name="protocol" value="https"> https
     <br><br>
 
     <label for="domain">Domain:</label>
@@ -23,13 +24,15 @@
                   set path to #path's value
                   set full_url to `${protocol}://${domain}${path}`
                   fetch `${full_url}` as text
-                  put it into #result">
+                  if #result's shadowRoot is null then
+                    call #result.attachShadow({mode: 'open'})
+                  end
+                  set #result's shadowRoot.innerHTML to it
+                  ">
         Send request!
     </button>
 
-    <br>
+    <div id="result">Click button to see response...</div>
 
-    <code id="result">Click button to see response...</code>
 </body>
-
 </html>
