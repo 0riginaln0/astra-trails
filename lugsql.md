@@ -57,12 +57,13 @@ local ok, result = queries.get_user({id=1})
 ```
 
 Also you can use LugSQL like a CLI app:
-```shell
-astra run lugsql.lua sql/queries.sql
 ```
+   astra run lugsql.lua <path to sql file> [dialect]
 
-```shell
-astra run lugsql.lua sql/queries.sql postgres
+ Arguments:
+   <path>           Path to the SQL file to generate a Lua module from
+   [dialect]        Optional: Database dialect (sqlite|postgres)
+                    Defaults to "sqlite" if not specified
 ```
 
 
