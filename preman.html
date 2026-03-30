@@ -1,15 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
 </head>
+
 <body>
-    <input type="text" id="url" value="http://127.0.0.1:8080/health">
-    
-    <button _="on click
-               log 'ass'
-               fetch `${#url.value}` as text
-               put it into #result">
+    <label>Protocol:</label>
+        <input type="radio" name="protocol" value="http" checked> http
+        <input type="radio" name="protocol" value="https"> https
+    <br><br>
+
+    <label for="domain">Domain:</label>
+    <input type="text" id="domain" value="127.0.0.1:8080" style="width: 200px;"><br><br>
+
+    <label for="path">Path:</label>
+    <input type="text" id="path" value="/health" style="width: 200px;"><br><br>
+
+    <button _="on click  
+                  set protocol to the value of <input[name='protocol']:checked/>  
+                  set domain to #domain's value  
+                  set path to #path's value  
+                  set full_url to `${protocol}://${domain}${path}`
+                  log full_url 
+                  fetch `${full_url}` as text  
+                  put it into #result">
         Send request!
     </button>
 
@@ -17,4 +32,5 @@
 
     <code id="result">Click button to see response...</code>
 </body>
+
 </html>
