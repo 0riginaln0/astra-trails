@@ -39,7 +39,7 @@ local homepage_html = read_all("views/homepage.html")
 local function homepage() return homepage_html end
 
 
-local tier_list_template = read_all("templates/tier-list.html")
+local tier_list_template = read_all("views/tier-list.html")
 local function tier_list(req)
   local q = req:queries()
   local params = {
