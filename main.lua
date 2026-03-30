@@ -24,7 +24,7 @@ require("lugsql")("sql/queries.sql", "sqlite")
 
 local db = require("database").new("sqlite", "db.sqlite")
 local queries = require("sql.queries")(db)
-queries.drop_tables()
+-- queries.drop_tables()
 queries.create_tables()
 
 
