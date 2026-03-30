@@ -40,7 +40,6 @@ Routes(server) {
     { GET, "/tier-list", tier_list },
   },
 
-
   { GET,  "/guestbook", html(guestbook_page) },
   { POST, "/guestbook", post_guestbook_form },
 
