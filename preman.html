@@ -17,13 +17,12 @@
     <label for="path">Path:</label>
     <input type="text" id="path" value="/health" style="width: 200px;"><br><br>
 
-    <button _="on click  
-                  set protocol to the value of <input[name='protocol']:checked/>  
-                  set domain to #domain's value  
-                  set path to #path's value  
+    <button _="on click
+                  set protocol to the value of <input[name='protocol']:checked/>
+                  set domain to #domain's value
+                  set path to #path's value
                   set full_url to `${protocol}://${domain}${path}`
-                  log full_url 
-                  fetch `${full_url}` as text  
+                  fetch `${full_url}` as text
                   put it into #result">
         Send request!
     </button>
