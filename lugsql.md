@@ -61,6 +61,10 @@ Also you can use LugSQL like a CLI app:
 astra run lugsql.lua sql/queries.sql
 ```
 
+```shell
+astra run lugsql.lua sql/queries.sql postgres
+```
+
 
 ## Full example:
 
