@@ -28,19 +28,12 @@ queries.drop_tables()
 queries.create_tables()
 
 
-local function read_all(file)
-  local f = assert(io.open(file, "rb"), tostring(file) .. " is not found.")
-  local content = f:read("*all")
-  f:close()
-  return content
-end
+local views = require("cache-dir")("views", {hotreload = true})
 
 
-local homepage_html = read_all("views/homepage.html")
-local function homepage() return homepage_html end
+local function homepage() return views["homepage.html"] end
 
 
-local tier_list_template = read_all("views/tier-list.html")
 local function tier_list(req)
   local q = req:queries()
   local params = {
@@ -53,7 +46,7 @@ local function tier_list(req)
     e = q.e,
     f = q.f
   }
-  return lustache:render(tier_list_template, params)
+  return lustache:render(views["tier-list.html"], params)
 end
 
 
@@ -92,7 +85,6 @@ local function get_api_guestbook(rq, rp)
   return result
 end
 
-local guestbook_html = read_all("views/guestbook.html")
 
 local function guestbook_page(req)
   local ok, messages = queries.get_messages()
@@ -103,7 +95,7 @@ local function guestbook_page(req)
     messages = messages, -- list of { name, message }
     no_messages = #messages == 0
   }
-  return lustache:render(guestbook_html, view)
+  return lustache:render(views["guestbook.html"], view)
 end
 
 ---@param rq HTTPServerRequest
