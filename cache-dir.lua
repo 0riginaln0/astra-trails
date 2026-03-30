@@ -1,6 +1,11 @@
 local fs = require("fs")
 
-local function cache_dir(folder_path, opts)
+
+--- Caches files in a directory and optionally hot-reloads them when modified
+---@param dir_path string
+---@param opts {hotreload: boolean}
+---@return table cache table for accessing file contents.
+local function cache_dir(dir_path, opts)
   local hotreload = opts.hotreload
   local cache = {}
   local file_metadata = {}
@@ -15,7 +20,7 @@ local function cache_dir(folder_path, opts)
   local proxy = {}
   setmetatable(proxy, {
     __index = function(_, file_name)
-      local file_path = folder_path..fs.get_separator()..file_name
+      local file_path = dir_path..fs.get_separator()..file_name
       if not fs.exists(file_path) then error("File not found: "..file_path) end
 
       if not cache[file_path] or
