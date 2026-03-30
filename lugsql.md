@@ -61,9 +61,9 @@ Also you can use LugSQL like a CLI app:
 astra run lugsql.lua <path to sql file> [dialect]
 
 Arguments:
-  <path>           Path to the SQL file to generate a Lua module from
-  [dialect]        Optional: Database dialect (sqlite|postgres)
-                    Defaults to "sqlite" if not specified
+  <path>     Path to the SQL file to generate a Lua module from
+  [dialect]  Optional: Database dialect (sqlite|postgres)
+             Defaults to "sqlite" if not specified
 ```
 
 
