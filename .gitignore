@@ -2,3 +2,6 @@
 **/.luarc.json
 **/tlconfig.lua
 **/.emmyrc.json
+db.sqlite
+db.sqlite-shm
+db.sqlite-wal
