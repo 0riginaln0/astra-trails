@@ -13,10 +13,9 @@ local html = middleware.html
 local logger = middleware.console_logger
 local ctx = middleware.context
 
-local sanitize_html = require("web_sanitize").sanitize_html
-
 
 local lustache = require("lustache")
+local escape_html = require("utils").excape_html
 
 
 require("lugsql")("sql/queries.sql", "sqlite")
@@ -104,7 +103,7 @@ local guestbook_html = read_all("views/guestbook.html")
 local function guestbook_page(req)
   local ok, messages = queries.get_messages()
   if not ok then
-    return "<h1>Error loading guestbook</h1><p>"..sanitize_html(messages).."</p>"
+    return "<h1>Error loading guestbook</h1><p>"..escape_html(messages).."</p>"
   end
   local view = {
     messages = messages, -- list of { name, message }
@@ -134,7 +133,7 @@ local function post_guestbook_form(rq, rp)
   local ok, err = queries.save_message(record)
   if not ok then
     rp:set_status_code(sc.BAD_REQUEST)
-    return "<h1>Error</h1><p>"..sanitize_html(err).."</p><a href='/guestbook'>Go back</a>"
+    return "<h1>Error</h1><p>"..escape_html(err).."</p><a href='/guestbook'>Go back</a>"
   end
 
   rp:set_status_code(sc.SEE_OTHER)

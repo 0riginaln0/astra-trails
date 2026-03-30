@@ -60,4 +60,17 @@ function pp(...args)
   io.write("\n")
 end
 
+local html_escape_characters = {
+  ["&"] = "&amp;",
+  ["<"] = "&lt;",
+  [">"] = "&gt;",
+  ['"'] = "&quot;",
+  ["'"] = "&#39;",
+  ["/"] = "&#x2F;"
+}
+
+function utils.excape_html(str)
+  return string.gsub(str, '[&<>"\'/]', function(s) return html_escape_characters[s] end)
+end
+
 return utils
