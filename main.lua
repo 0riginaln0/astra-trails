@@ -92,7 +92,7 @@ local function guestbook_page(req)
     return "<h1>Error loading guestbook</h1><p>" .. escape_html(messages) .. "</p>"
   end
   local view = {
-    messages = messages, -- list of { name, message }
+    messages = messages, -- list of { name = "str", message = "str"}
     no_messages = #messages == 0
   }
   return lustache:render(views["guestbook.html"], view)
