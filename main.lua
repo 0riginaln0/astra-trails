@@ -15,7 +15,7 @@ local ctx = middleware.context
 
 
 local lustache = require("lustache")
-local escape_html = require("utils").excape_html
+local escape_html = require("utils").escape_html
 
 
 require("lugsql")("sql/queries.sql", "sqlite")

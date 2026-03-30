@@ -69,7 +69,7 @@ local html_escape_characters = {
   ["/"] = "&#x2F;"
 }
 
-function utils.excape_html(str)
+function utils.escape_html(str)
   return string.gsub(str, '[&<>"\'/]', function(s) return html_escape_characters[s] end)
 end
 
