@@ -5,7 +5,7 @@ local validation = require("validation")
 
 local routing = require("routing")
 local Routes, scope = routing.Routes, routing.scope
-local GET, POST = routing.GET, routing.POST
+local GET, POST, STATIC_FILE = routing.GET, routing.POST, routing.STATIC_FILE
 
 
 local middleware = require("middleware")
@@ -145,6 +145,8 @@ Routes(server) {
   },
 
   { GET, "/health", function() return { status = "UP" } end },
+
+  { STATIC_FILE, "/preman", "preman.html" },
 
   fallback = chain { html } (function() return "Page not Found" end)
 }
