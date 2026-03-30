@@ -1,13 +1,111 @@
-<p>Query example:</p>
+<!DOCTYPE html>
+<html>
 
-<pre><code>/tier-list?name=Snowflake Shapes&s=Stellar Dendrites&a=Sectored Plates, Fernlike Stellar Dendrites&b=Needles, Columns with Plates&c=Simple Prisms, Rimed Crystals&d=Capped Columns, Bullet Rosettes&e=Irregular Crystals&f=Triangular Crystals, Split Plates and Stars</code></pre>
+<head>
+    <title>Tier List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
 
-<h1 id="Tier-list-of-name">Tier list of {{ name }}:</h1>
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
 
-<p>S: {{ s }}</p>
-<p>A: {{ a }}</p>
-<p>B: {{ b }}</p>
-<p>C: {{ c }}</p>
-<p>D: {{ d }}</p>
-<p>E: {{ e }}</p>
-<p>F: {{ f }}</p>
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .tier-s {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        /* Red */
+        .tier-a {
+            color: #e67e22;
+            font-weight: bold;
+        }
+
+        /* Orange */
+        .tier-b {
+            color: #f1c40f;
+            font-weight: bold;
+        }
+
+        /* Yellow */
+        .tier-c {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+
+        /* Green */
+        .tier-d {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        /* Blue */
+        .tier-e {
+            color: #9b59b6;
+            font-weight: bold;
+        }
+
+        /* Purple */
+        .tier-f {
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+
+        /* Gray */
+    </style>
+</head>
+
+<body>
+    <p>Query example:</p>
+    <p><a
+            href="/tier-list?name=Snowflake Shapes&s=Stellar Dendrites&a=Sectored Plates, Fernlike Stellar Dendrites&b=Needles, Columns with Plates&c=Simple Prisms, Rimed Crystals&d=Capped Columns, Bullet Rosettes&e=Irregular Crystals&f=Triangular Crystals, Split Plates and Stars">
+            /tier-list?name=Snowflake Shapes&s=Stellar Dendrites&a=Sectored Plates, Fernlike Stellar
+            Dendrites&b=Needles, Columns with Plates&c=Simple Prisms, Rimed Crystals&d=Capped Columns, Bullet
+            Rosettes&e=Irregular Crystals&f=Triangular Crystals, Split Plates and Stars
+        </a></p>
+
+    <h1 id="Tier-list-of-name">Tier list of {{ name }}:</h1>
+
+    <p><span class="tier-s">S:</span> {{ s }}</p>
+    <p><span class="tier-a">A:</span> {{ a }}</p>
+    <p><span class="tier-b">B:</span> {{ b }}</p>
+    <p><span class="tier-c">C:</span> {{ c }}</p>
+    <p><span class="tier-d">D:</span> {{ d }}</p>
+    <p><span class="tier-e">E:</span> {{ e }}</p>
+    <p><span class="tier-f">F:</span> {{ f }}</p>
+</body>
+
+</html>
