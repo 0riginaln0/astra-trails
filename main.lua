@@ -1,5 +1,6 @@
 local server = require("http").server:new()
 local sc = require("http").status_codes
+local validation = require("validation")
 
 
 local routing = require("routing")
@@ -28,7 +29,7 @@ queries.create_tables()
 
 
 local function read_all(file)
-  local f = assert(io.open(file, "rb"), tostring(file).." is not found.")
+  local f = assert(io.open(file, "rb"), tostring(file) .. " is not found.")
   local content = f:read("*all")
   f:close()
   return content
@@ -61,30 +62,23 @@ end
 local function post_api_guestbook(rq, rp)
   local b = rq:body():json()
 
-  if b.message == nil or b.message == "" then
+  local ok, err = validation.validate_table(b, {
+    message = "string",
+    name = { "string", required = false },
+  })
+  if not ok then
     rp:set_status_code(sc.BAD_REQUEST)
-    return { error = "Message can't be empty" }
-  end
-  if type(b.message) ~= "string" then
-    rp:set_status_code(sc.BAD_REQUEST)
-    return { error = "Message must be a string" }
+    return { error = err }
   end
 
-  if b.name == nil then
-    b.name = "Anonymous"
-  elseif type(b.name) ~= "string" then
-    b.name = tostring(b.name)
-  end
+  if b.name == nil then b.name = "Anonymous" end
 
-  local record = {
-    name = b.name,
-    message = b.message,
-  }
-  local ok, result = queries.save_message(record)
+  local ok, result = queries.save_message { name = b.name, message = b.message, }
   if not ok then
     rp:set_status_code(sc.BAD_REQUEST)
     return { error = result }
   end
+
   return { status = "success" }
 end
 
@@ -103,7 +97,7 @@ local guestbook_html = read_all("views/guestbook.html")
 local function guestbook_page(req)
   local ok, messages = queries.get_messages()
   if not ok then
-    return "<h1>Error loading guestbook</h1><p>"..escape_html(messages).."</p>"
+    return "<h1>Error loading guestbook</h1><p>" .. escape_html(messages) .. "</p>"
   end
   local view = {
     messages = messages, -- list of { name, message }
@@ -128,12 +122,10 @@ local function post_guestbook_form(rq, rp)
     return "<h1>Error</h1><p>Message cannot be empty.</p><a href='/guestbook'>Go back</a>"
   end
 
-  local record = { name = name, message = message }
-
-  local ok, err = queries.save_message(record)
+  local ok, err = queries.save_message({ name = name, message = message })
   if not ok then
     rp:set_status_code(sc.BAD_REQUEST)
-    return "<h1>Error</h1><p>"..escape_html(err).."</p><a href='/guestbook'>Go back</a>"
+    return "<h1>Error</h1><p>" .. escape_html(err) .. "</p><a href='/guestbook'>Go back</a>"
   end
 
   rp:set_status_code(sc.SEE_OTHER)
