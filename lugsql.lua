@@ -1,3 +1,12 @@
+-- To run lugsql as a CLI:
+--
+--   astra run lugsql.lua <path to sql file> [dialect]
+--
+-- Arguments:
+--   <path>           Path to the SQL file to generate a Lua module from
+--   [dialect]        Optional: Database dialect (sqlite|postgres)
+--                    Defaults to "sqlite" if not specified
+
 require("utils")
 
 local placeholder = {
@@ -177,7 +186,8 @@ end
 
 ---@param input_file string
 ---@param dialect "sqlite"|"postgres"
-return function(input_file, dialect)
+local function run_lugsql(input_file, dialect)
+  dialect = dialect or "sqlite"
   local output_file = input_file:gsub("%.sql$", "")..".lua"
 
   local queries = read_queries(input_file)
@@ -191,3 +201,9 @@ return function(input_file, dialect)
   out:close()
   print("Generated "..output_file.." with "..#queries.." queries.")
 end
+
+if arg then
+  run_lugsql(arg[1], arg[2])
+end
+
+return run_lugsql
