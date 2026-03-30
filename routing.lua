@@ -78,22 +78,18 @@ function r.Routes(server)
   end
 
   -- The callable that receives the top‑level DSL block.
-  local callable = setmetatable({}, {
-    __call = function(_, block)
-      -- Start with empty prefix and the base middleware (if any)
-      process_block(block, "", block.base_middleware)
+  return function(block)
+    -- Start with empty prefix and the base middleware (if any)
+    process_block(block, "", block.base_middleware)
 
-      if block.fallback then
-        if block.base_middleware then
-          server:fallback(block.base_middleware(block.fallback))
-        else
-          server:fallback(block.fallback)
-        end
+    if block.fallback then
+      if block.base_middleware then
+        server:fallback(block.base_middleware(block.fallback))
+      else
+        server:fallback(block.fallback)
       end
     end
-  })
-
-  return callable
+  end
 end
 
 return r
