@@ -56,7 +56,7 @@ local queries = require("sql.queries")(db)
 local ok, result = queries.get_user({id=1})
 ```
 
-Also you can use LugSQL like a CLI app:
+Also you can use LugSQL as a CLI app:
 ```
 astra run lugsql.lua <path> [dialect]
 
