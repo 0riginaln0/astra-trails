@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>API Client</title>
     <script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
 </head>
+
 <body>
 
     <label>Protocol:</label>
@@ -24,15 +26,19 @@
                   set path to #path's value
                   set full_url to `${protocol}://${domain}${path}`
                   fetch `${full_url}` as text
-                  if #result's shadowRoot is null then
-                    call #result.attachShadow({mode: 'open'})
-                  end
                   set #result's shadowRoot.innerHTML to it
                   ">
         Send request!
     </button>
 
-    <div id="result">Click button to see response...</div>
+    <div id="result" 
+         _="init js(me)
+                  me.attachShadow({ mode: 'open' })
+                  me.shadowRoot.innerHTML = 'Click button to see response...'
+                 end
+                 ">
+    </div>
 
 </body>
+
 </html>
