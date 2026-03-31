@@ -20,30 +20,98 @@
     <br><br>
 
     <label for="domain">Domain:</label>
-    <input type="text" id="domain" value="127.0.0.1:8080" style="width: 200px;"><br><br>
+    <input type="text" id="domain" value="127.0.0.1:8080" style="width: 200px;">
+    <br><br>
 
     <label for="path">Path:</label>
-    <input type="text" id="path" value="/health" style="width: 200px;"><br><br>
+    <input type="text" id="path" value="/health" style="width: 200px;">
+    <br><br>
+
+    <label>HTTP Method:</label>
+    <select id="method" style="width: 100px;">
+      <option value="GET" selected>GET</option>
+      <option value="POST">POST</option>
+      <option value="PUT">PUT</option>
+      <option value="PATCH">PATCH</option>
+      <option value="DELETE">DELETE</option>
+      <option value="HEAD">HEAD</option>
+      <option value="OPTIONS">OPTIONS</option>
+    </select>
+    <br><br>
+
+    <script type="text/hyperscript">
+        js
+            // Define a helper function to build the metadata HTML.
+            // It takes the response metadata and the original request URL,
+            // returns an HTML string.
+            function buildResponseMetaHtml(status, statusText, ok, redirected, type, finalUrl, requestUrl) {
+                return `
+                    <strong>Request URL:</strong> ${escapeHtml(requestUrl)}<br>
+                    <strong>Final URL:</strong> ${escapeHtml(finalUrl)}<br>
+                    <strong>Status:</strong> ${status} ${escapeHtml(statusText)}<br>
+                    <strong>OK:</strong> ${ok}<br>
+                    <strong>Redirected:</strong> ${redirected}<br>
+                    <strong>Type:</strong> ${escapeHtml(type)}
+                `;
+            }
+
+            // Simple helper to prevent XSS when inserting metadata (though hyperscript already escapes by default,
+            // it's good practice when building raw HTML strings).
+            function escapeHtml(str) {
+                if (typeof str !== 'string') return str;
+                return str.replace(/[&<>]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
+                });
+            }
+
+            // Expose only the function we need in hyperscript.
+            return { buildResponseMetaHtml };
+        end
+    </script>
 
     <button _="on click
+                  -- Get input values
                   set protocol to the value of <input[name='protocol']:checked/>
                   set domain to #domain's value
                   set path to #path's value
                   set full_url to `${protocol}://${domain}${path}`
-                  fetch `${full_url}` as text
-                  set #result's shadowRoot.innerHTML to it
-                  ">
+
+                  -- Perform fetch
+                  fetch `${full_url}` as response with method: `${#method's value}`
+                  set resp to it
+
+                set statusCode to resp.status
+                set statusText to resp.statusText
+                set ok to resp.ok
+                set redirected to resp.redirected
+                set respType to resp.type
+                set finalUrl to resp.url
+                
+                set metaHtml to buildResponseMetaHtml(statusCode, statusText, ok, redirected, respType, finalUrl, full_url)
+                put metaHtml into #response-meta's innerHTML
+               
+
+                  put resp into #result's shadowRoot.innerHTML
+               catch error
+                  log 'check check'
+                  put the errors's message into #results's shadowRoot.innerHTML
+               end">
         Send request!
     </button>
 
+    <div id="response-meta">
+        No request sent yet.
+    </div>
+
     <div id="result" 
-         _="init js(me)
-                  me.attachShadow({ mode: 'open' })
-                  me.shadowRoot.innerHTML = 'Click button to see response...'
-                 end
-                 ">
+         _="init
+              attachShadow({ mode: 'open' }) on me
+              put 'Click button to see response...' into my shadowRoot's innerHTML
+              ">
     </div>
 
 </body>
-
 </html>
