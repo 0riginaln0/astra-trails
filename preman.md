@@ -15,10 +15,6 @@ Routes(server) {
 
 ## TBD
 
-- [ ] HTTP Methods besides GET.
-
 - [ ] Fields for request body inputs.
-
-- [ ] Show output when request fails
 
 - [ ] Parametrized defaults

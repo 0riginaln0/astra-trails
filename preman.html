@@ -62,9 +62,11 @@
                     try {
                         // clone to avoid consuming the original response
                         map.body = await response.clone().json();
+                        map.body_type = "json"
                     } catch (e) {
                         try {
                             map.body = await response.clone().text();
+                            map.body_type = "text"
                         } catch (e) {
                             map.body = null;
                         }
@@ -72,36 +74,66 @@
     
                     return map;
                 }
-    
-                // Expose the functions we need in hyperscript
-                return { responseToMap };
+
+                function formatMetadataHtml(map) {
+                    return `
+                        <div class="meta-row"><strong>Status:</strong> ${map.status} ${escapeHtml(map.statusText)}</div>
+                        <div class="meta-row"><strong>OK:</strong> ${map.ok}</div>
+                        <div class="meta-row"><strong>Redirected:</strong> ${map.redirected}</div>
+                        <div class="meta-row"><strong>Type:</strong> ${escapeHtml(map.type)}</div>
+                        <div class="meta-row"><strong>URL:</strong> ${escapeHtml(map.url)}</div>
+                    `;
+                }
+
+                // Simple XSS prevention
+                function escapeHtml(str) {
+                    if (typeof str !== 'string') return str;
+                    return str.replace(/[&<>]/g, function(m) {
+                        if (m === '&') return '&amp;';
+                        if (m === '<') return '&lt;';
+                        if (m === '>') return '&gt;';
+                        return m;
+                    });
+                }
+
+                return { responseToMap, formatMetadataHtml, escapeHtml };
             end
         </script>
     
     <!-- Button: all heavy lifting done by JS functions -->
     <button _="on click
-                    -- Build URL
                     set protocol to the value of <input[name='protocol']:checked/>
                     set domain to #domain's value
                     set path to #path's value
                     set full_url to `${protocol}://${domain}${path}`
     
-                    -- Perform fetch
                     fetch `${full_url}` as response with method: `${#method's value}`
                     set resp to it
                     call responseToMap(resp)
                     set map to it
-                    log map
-                    set viewType to the value of <input[name='viewType']:checked />
 
-                    set body to map.body as HTML
+                    set metaHtml to formatMetadataHtml(map)
+                    put metaHtml into #response-meta's innerHTML
+
+                    if map.body_type is 'json' then                
+                        set body to map.body as JSON
+                    else
+                        set body to map.body as HTML
+                    end
+
                     put body into #result's shadowRoot.innerHTML
+
                     catch error
-                        -- Show error in both areas
                         put `Error occurred: ${error.message}` into #result's shadowRoot.innerHTML
                     end">
         Send request!
     </button>
+
+    <div id="response-meta">
+        No request sent yet.
+    </div>
+
+    <div>-------------------------------------------------</div>
 
     <div id="result" 
          _="init
