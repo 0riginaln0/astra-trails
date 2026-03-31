@@ -40,71 +40,68 @@
     <br><br>
 
     <script type="text/hyperscript">
-        js
-            // Define a helper function to build the metadata HTML.
-            // It takes the response metadata and the original request URL,
-            // returns an HTML string.
-            function buildResponseMetaHtml(status, statusText, ok, redirected, type, finalUrl, requestUrl) {
-                return `
-                    <strong>Request URL:</strong> ${escapeHtml(requestUrl)}<br>
-                    <strong>Final URL:</strong> ${escapeHtml(finalUrl)}<br>
-                    <strong>Status:</strong> ${status} ${escapeHtml(statusText)}<br>
-                    <strong>OK:</strong> ${ok}<br>
-                    <strong>Redirected:</strong> ${redirected}<br>
-                    <strong>Type:</strong> ${escapeHtml(type)}
-                `;
-            }
-
-            // Simple helper to prevent XSS when inserting metadata (though hyperscript already escapes by default,
-            // it's good practice when building raw HTML strings).
-            function escapeHtml(str) {
-                if (typeof str !== 'string') return str;
-                return str.replace(/[&<>]/g, function(m) {
-                    if (m === '&') return '&amp;';
-                    if (m === '<') return '&lt;';
-                    if (m === '>') return '&gt;';
-                    return m;
-                });
-            }
-
-            // Expose only the function we need in hyperscript.
-            return { buildResponseMetaHtml };
-        end
-    </script>
-
+            js
+                async function responseToMap(response) {
+                    const map = {
+                        status: response.status,
+                        statusText: response.statusText,
+                        ok: response.ok,
+                        redirected: response.redirected,
+                        type: response.type,
+                        url: response.url,
+                        headers: {},
+                        body: null,
+                    };
+    
+                    const headers = response.headers;
+                    headers.forEach((value, key) => {
+                        map.headers[key] = value;
+                    });
+    
+                    // Extract body: try JSON first, fallback to text, null if none
+                    try {
+                        // clone to avoid consuming the original response
+                        map.body = await response.clone().json();
+                    } catch (e) {
+                        try {
+                            map.body = await response.clone().text();
+                        } catch (e) {
+                            map.body = null;
+                        }
+                    }
+    
+                    return map;
+                }
+    
+                // Expose the functions we need in hyperscript
+                return { responseToMap };
+            end
+        </script>
+    
+    <!-- Button: all heavy lifting done by JS functions -->
     <button _="on click
-                  -- Get input values
-                  set protocol to the value of <input[name='protocol']:checked/>
-                  set domain to #domain's value
-                  set path to #path's value
-                  set full_url to `${protocol}://${domain}${path}`
+                    -- Build URL
+                    set protocol to the value of <input[name='protocol']:checked/>
+                    set domain to #domain's value
+                    set path to #path's value
+                    set full_url to `${protocol}://${domain}${path}`
+    
+                    -- Perform fetch
+                    fetch `${full_url}` as response with method: `${#method's value}`
+                    set resp to it
+                    call responseToMap(resp)
+                    set map to it
+                    log map
+                    set viewType to the value of <input[name='viewType']:checked />
 
-                  -- Perform fetch
-                  fetch `${full_url}` as response with method: `${#method's value}`
-                  set resp to it
-
-                set statusCode to resp.status
-                set statusText to resp.statusText
-                set ok to resp.ok
-                set redirected to resp.redirected
-                set respType to resp.type
-                set finalUrl to resp.url
-                
-                set metaHtml to buildResponseMetaHtml(statusCode, statusText, ok, redirected, respType, finalUrl, full_url)
-                put metaHtml into #response-meta's innerHTML
-               
-
-                  put resp into #result's shadowRoot.innerHTML
-               catch error
-                  log 'check check'
-                  put the errors's message into #results's shadowRoot.innerHTML
-               end">
+                    set body to map.body as HTML
+                    put body into #result's shadowRoot.innerHTML
+                    catch error
+                        -- Show error in both areas
+                        put `Error occurred: ${error.message}` into #result's shadowRoot.innerHTML
+                    end">
         Send request!
     </button>
-
-    <div id="response-meta">
-        No request sent yet.
-    </div>
 
     <div id="result" 
          _="init
