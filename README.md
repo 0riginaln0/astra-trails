@@ -6,7 +6,6 @@ Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astr
 - [Routes grouping](routing.md): DSL to register a group of routes in one place.
 - [Templating with Lustache](lustache.md): Full overview of Mustache templates in pure Lua.
 - [LugSQL](lugsql.md): Turns parameterized SQL into Lua functions.
-- [Preman](preman.md): Single-file HTML API client. Grug-approved.
 
 Check out [main.lua](main.lua) for an app example.
 
@@ -23,8 +22,7 @@ Generated sql/queries.lua with 9 queries.
         GET /api/guestbook
        POST /api/guestbook
         GET /health
-STATIC_FILE /preman
- STATIC_DIR /static
+STATIC_FILE /api-testing-utility
 Server uses:    Lua 5.5
 Running on http://127.0.0.1:8080
 ```
@@ -53,9 +51,8 @@ Routes(server) {
 
   { GET, "/health", function() return { status = "UP" } end },
 
-  { STATIC_FILE, "/preman", "preman.html" },
-  { STATIC_DIR,  "/static", "static" },
-  
+  { STATIC_FILE, "/api-testing-utility", "api_testing_utility.html" },
+
   fallback = chain { html } (function() return "Page not Found" end)
 }
 

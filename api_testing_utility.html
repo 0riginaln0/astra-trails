@@ -1,0 +1,474 @@
+<!-- Vendored from https://github.com/DigiSoch/API_testing_utility -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            min-height: 100px;
+            font-family: monospace;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        #responseHeaders, #responseBody {
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+
+        .form-field {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .field-key, .field-value {
+            flex: 1;
+        }
+
+        .field-type {
+            width: 100px;
+        }
+
+        .field-file {
+            flex: 1;
+        }
+
+        .menu-bar {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .saved-tests {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background: white;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+            transition: right 0.3s;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .saved-tests.open {
+            right: 0;
+        }
+
+        .test-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .test-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .test-item .delete-btn {
+            float: right;
+            color: red;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="menu-bar">
+            <button onclick="saveCurrentTest()">Save Test Case</button>
+            <button onclick="toggleSavedTests()">Show Saved Tests</button>
+            <button onclick="createNewTest()">New Test</button>
+            <button onclick="exportTests()">Export All Tests</button>
+            <input type="file" id="importFile" style="display: none;" onchange="importTests(event)">
+            <button onclick="document.getElementById('importFile').click()">Import Tests</button>
+        </div>
+
+        <h1>API Tester</h1>
+        
+        <div class="input-group">
+            <label for="method">Method:</label>
+            <select id="method">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="PATCH">PATCH</option>
+                <option value="DELETE">DELETE</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="url">URL:</label>
+            <input type="text" id="url" placeholder="Enter API URL">
+        </div>
+
+        <div class="input-group">
+            <label for="headers">Headers (JSON format):</label>
+            <textarea id="headers" placeholder='{"Content-Type": "application/json"}'></textarea>
+        </div>
+
+        <div class="input-group">
+            <label>Request Type:</label>
+            <select id="requestType" onchange="toggleRequestInputs()">
+                <option value="json">JSON</option>
+                <option value="formData">Form Data</option>
+            </select>
+        </div>
+
+        <div id="jsonInput" class="input-group">
+            <label for="body">Request Body (JSON format):</label>
+            <textarea id="body" placeholder='{"key": "value"}'></textarea>
+        </div>
+
+        <div id="formDataInput" class="input-group" style="display: none;">
+            <label>Form Data:</label>
+            <div id="formFields">
+                <div class="form-field">
+                    <input type="text" class="field-key" placeholder="Key">
+                    <select class="field-type">
+                        <option value="text">Text</option>
+                        <option value="file">File</option>
+                    </select>
+                    <input type="text" class="field-value" placeholder="Value">
+                    <input type="file" class="field-file" style="display: none;">
+                    <button type="button" onclick="removeFormField(this)">Remove</button>
+                </div>
+            </div>
+            <button type="button" onclick="addFormField()">Add Field</button>
+        </div>
+
+        <button onclick="sendRequest()">Send Request</button>
+
+        <div class="response">
+            <h3>Response</h3>
+            <div>
+                <strong>Status:</strong> <span id="status"></span>
+            </div>
+            <div>
+                <strong>Headers:</strong>
+                <pre id="responseHeaders"></pre>
+            </div>
+            <div>
+                <strong>Body:</strong>
+                <pre id="responseBody"></pre>
+            </div>
+        </div>
+
+        <div class="saved-tests" id="savedTests">
+            <h3>Saved Test Cases</h3>
+            <div id="testsList"></div>
+        </div>
+    </div>
+
+    <script>
+        function toggleRequestInputs() {
+            const requestType = document.getElementById('requestType').value;
+            document.getElementById('jsonInput').style.display = 
+                requestType === 'json' ? 'block' : 'none';
+            document.getElementById('formDataInput').style.display = 
+                requestType === 'formData' ? 'block' : 'none';
+        }
+
+        function addFormField() {
+            const formFields = document.getElementById('formFields');
+            const newField = document.createElement('div');
+            newField.className = 'form-field';
+            newField.innerHTML = `
+                <input type="text" class="field-key" placeholder="Key">
+                <select class="field-type" onchange="toggleFieldInput(this)">
+                    <option value="text">Text</option>
+                    <option value="file">File</option>
+                </select>
+                <input type="text" class="field-value" placeholder="Value">
+                <input type="file" class="field-file" style="display: none;">
+                <button type="button" onclick="removeFormField(this)">Remove</button>
+            `;
+            formFields.appendChild(newField);
+        }
+
+        function removeFormField(button) {
+            button.parentElement.remove();
+        }
+
+        function toggleFieldInput(select) {
+            const fieldValue = select.parentElement.querySelector('.field-value');
+            const fieldFile = select.parentElement.querySelector('.field-file');
+            
+            if (select.value === 'file') {
+                fieldValue.style.display = 'none';
+                fieldFile.style.display = 'block';
+            } else {
+                fieldValue.style.display = 'block';
+                fieldFile.style.display = 'none';
+            }
+        }
+
+        async function sendRequest() {
+            const method = document.getElementById('method').value;
+            const url = document.getElementById('url').value;
+            const requestType = document.getElementById('requestType').value;
+            let headers = {};
+            let body = null;
+
+            try {
+                headers = JSON.parse(document.getElementById('headers').value || '{}');
+            } catch (e) {
+                alert('Invalid headers JSON format');
+                return;
+            }
+
+            if (requestType === 'json') {
+                try {
+                    const bodyText = document.getElementById('body').value;
+                    if (bodyText) {
+                        body = JSON.stringify(JSON.parse(bodyText));
+                    }
+                } catch (e) {
+                    alert('Invalid body JSON format');
+                    return;
+                }
+            } else {
+                const formData = new FormData();
+                const formFields = document.querySelectorAll('.form-field');
+                
+                for (const field of formFields) {
+                    const key = field.querySelector('.field-key').value;
+                    const type = field.querySelector('.field-type').value;
+                    
+                    if (!key) continue;
+
+                    if (type === 'file') {
+                        const fileInput = field.querySelector('.field-file');
+                        if (fileInput.files.length > 0) {
+                            formData.append(key, fileInput.files[0]);
+                        }
+                    } else {
+                        const value = field.querySelector('.field-value').value;
+                        formData.append(key, value);
+                    }
+                }
+                body = formData;
+                // Remove Content-Type header for FormData as browser will set it automatically
+                delete headers['Content-Type'];
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: headers,
+                    body: body
+                });
+
+                // Display status
+                document.getElementById('status').textContent = 
+                    `${response.status} ${response.statusText}`;
+
+                // Display headers
+                const responseHeaders = {};
+                response.headers.forEach((value, key) => {
+                    responseHeaders[key] = value;
+                });
+                document.getElementById('responseHeaders').textContent = 
+                    JSON.stringify(responseHeaders, null, 2);
+
+                // Display body
+                try {
+                    const responseBody = await response.json();
+                    document.getElementById('responseBody').textContent = 
+                        JSON.stringify(responseBody, null, 2);
+                } catch (e) {
+                    const textBody = await response.text();
+                    document.getElementById('responseBody').textContent = textBody;
+                }
+            } catch (error) {
+                document.getElementById('status').textContent = 'Error';
+                document.getElementById('responseBody').textContent = error.message;
+            }
+        }
+
+        function createNewTest() {
+            document.getElementById('method').value = 'GET';
+            document.getElementById('url').value = '';
+            document.getElementById('headers').value = '';
+            document.getElementById('body').value = '';
+            document.getElementById('requestType').value = 'json';
+            toggleRequestInputs();
+        }
+
+        function saveCurrentTest() {
+            const testName = prompt('Enter a name for this test case:');
+            if (!testName) return;
+
+            const testCase = {
+                name: testName,
+                method: document.getElementById('method').value,
+                url: document.getElementById('url').value,
+                headers: document.getElementById('headers').value,
+                requestType: document.getElementById('requestType').value,
+                body: document.getElementById('body').value,
+                formData: Array.from(document.querySelectorAll('.form-field')).map(field => ({
+                    key: field.querySelector('.field-key').value,
+                    type: field.querySelector('.field-type').value,
+                    value: field.querySelector('.field-value').value
+                }))
+            };
+
+            let savedTests = JSON.parse(localStorage.getItem('apiTests') || '[]');
+            savedTests.push(testCase);
+            localStorage.setItem('apiTests', JSON.stringify(savedTests));
+            updateTestsList();
+        }
+
+        function loadTest(test) {
+            document.getElementById('method').value = test.method;
+            document.getElementById('url').value = test.url;
+            document.getElementById('headers').value = test.headers;
+            document.getElementById('requestType').value = test.requestType;
+            document.getElementById('body').value = test.body;
+            
+            // Clear existing form fields
+            const formFields = document.getElementById('formFields');
+            formFields.innerHTML = '';
+            
+            // Recreate form fields if they exist
+            if (test.formData) {
+                test.formData.forEach(field => {
+                    const newField = document.createElement('div');
+                    newField.className = 'form-field';
+                    newField.innerHTML = `
+                        <input type="text" class="field-key" value="${field.key}" placeholder="Key">
+                        <select class="field-type">
+                            <option value="text" ${field.type === 'text' ? 'selected' : ''}>Text</option>
+                            <option value="file" ${field.type === 'file' ? 'selected' : ''}>File</option>
+                        </select>
+                        <input type="text" class="field-value" value="${field.value}" placeholder="Value">
+                        <input type="file" class="field-file" style="display: none;">
+                        <button type="button" onclick="removeFormField(this)">Remove</button>
+                    `;
+                    formFields.appendChild(newField);
+                });
+            }
+
+            toggleRequestInputs();
+        }
+
+        function deleteTest(index) {
+            if (!confirm('Are you sure you want to delete this test case?')) return;
+            
+            let savedTests = JSON.parse(localStorage.getItem('apiTests') || '[]');
+            savedTests.splice(index, 1);
+            localStorage.setItem('apiTests', JSON.stringify(savedTests));
+            updateTestsList();
+        }
+
+        function updateTestsList() {
+            const testsList = document.getElementById('testsList');
+            const savedTests = JSON.parse(localStorage.getItem('apiTests') || '[]');
+            
+            testsList.innerHTML = savedTests.map((test, index) => `
+                <div class="test-item">
+                    <span onclick="loadTest(${JSON.stringify(test)})">${test.name}</span>
+                    <span class="delete-btn" onclick="event.stopPropagation(); deleteTest(${index})">×</span>
+                </div>
+            `).join('');
+        }
+
+        function toggleSavedTests() {
+            const sidebar = document.getElementById('savedTests');
+            sidebar.classList.toggle('open');
+            updateTestsList();
+        }
+
+        function exportTests() {
+            const savedTests = localStorage.getItem('apiTests') || '[]';
+            const blob = new Blob([savedTests], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'api-tests.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importTests(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const tests = JSON.parse(e.target.result);
+                    localStorage.setItem('apiTests', JSON.stringify(tests));
+                    updateTestsList();
+                    alert('Tests imported successfully!');
+                } catch (error) {
+                    alert('Error importing tests: Invalid file format');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        updateTestsList();
+    </script>
+</body>
+</html> 
