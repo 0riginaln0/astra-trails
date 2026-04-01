@@ -1,140 +1,449 @@
-<!-- Vendored from https://github.com/DigiSoch/API_testing_utility -->
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Tester</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>API Tester — Adaptive & Responsive</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+        /* ---------- GLOBAL THEME ---------- */
+        /* One color scheme for both dark/light — uses system colors + adaptive semi-transparent layers */
+        :root {
+            color-scheme: dark light;
         }
 
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        /* Reset & base */
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
-        textarea {
-            min-height: 100px;
-            font-family: monospace;
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            padding: 1rem;
+            background: Canvas;
+            /* native background (light or dark) */
+            color: CanvasText;
+            /* native text color (high contrast) */
+            transition: background 0.2s ease, color 0.2s ease;
         }
 
+        /* Main container — responsive max-width + centering */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ---------- TYPOGRAPHY ---------- */
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 1rem 0 1.5rem 0;
+            letter-spacing: -0.01em;
+            border-left: 4px solid currentColor;
+            padding-left: 0.75rem;
+            opacity: 0.85;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            opacity: 0.9;
+        }
+
+        /* ---------- MENU BAR (flex wrap, responsive) ---------- */
+        .menu-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid currentColor;
+            border-bottom-width: 1px;
+            border-bottom-style: solid;
+            border-bottom-color: currentColor;
+            opacity: 0.25;
+        }
+
+        /* Buttons inside menu-bar get extra spacing */
+        .menu-bar button {
+            margin: 0;
+        }
+
+        /* ---------- FORM GROUPS (label above input, clean spacing) ---------- */
+        .input-group {
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+            opacity: 0.85;
+        }
+
+        /* Universal input, select, textarea styling — adaptive border & background */
+        input,
+        select,
+        textarea,
         button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem 0.85rem;
+            border-radius: 12px;
+            border: 1px solid currentColor;
+            border-color: currentColor;
+            background: currentColor;
+            background-color: color-mix(in srgb, currentColor 8%, transparent);
+            color: CanvasText;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        /* Slight focus enhancement */
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: currentColor;
+            background-color: color-mix(in srgb, currentColor 12%, transparent);
+            box-shadow: 0 0 0 2px color-mix(in srgb, currentColor 20%, transparent);
+            outline: none;
+        }
+
+        /* Specific textarea sizing */
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.45;
+        }
+
+        /* Headers textarea & body textarea – even larger on desktop */
+        #headers,
+        #body {
+            min-height: 130px;
+        }
+
+        /* ---------- BUTTONS (unified, adaptive) ---------- */
+        button {
+            background: color-mix(in srgb, currentColor 12%, transparent);
+            border: 1px solid currentColor;
+            border-color: color-mix(in srgb, currentColor 40%, transparent);
+            color: CanvasText;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
             cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            backdrop-filter: blur(2px);
+            letter-spacing: 0.2px;
         }
 
         button:hover {
-            background-color: #45a049;
+            background: color-mix(in srgb, currentColor 22%, transparent);
+            border-color: currentColor;
+            transform: translateY(-1px);
         }
 
+        button:active {
+            transform: translateY(1px);
+            background: color-mix(in srgb, currentColor 28%, transparent);
+        }
+
+        /* Special primary-like send button */
+        .send-request-btn {
+            background: color-mix(in srgb, currentColor 20%, transparent);
+            font-weight: 600;
+            margin: 0.5rem 0 1rem 0;
+            width: auto;
+            min-width: 160px;
+        }
+
+        /* ---------- RESPONSE BLOCK (clean, readable) ---------- */
         .response {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
+            margin-top: 2rem;
+            padding: 1.25rem;
+            border-radius: 20px;
+            background: color-mix(in srgb, currentColor 4%, transparent);
+            border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+        }
+
+        .response h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .response pre {
+            background: color-mix(in srgb, currentColor 6%, transparent);
+            padding: 1rem;
+            border-radius: 16px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            margin: 0.75rem 0;
+            border-left: 3px solid currentColor;
         }
 
         #responseHeaders,
         #responseBody {
-            white-space: pre-wrap;
+            margin: 0.5rem 0;
+        }
+
+        /* Status badge */
+        #status {
+            font-weight: 600;
+            background: color-mix(in srgb, currentColor 8%, transparent);
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            display: inline-block;
             font-family: monospace;
+        }
+
+        /* ---------- FORM DATA FIELDS (dynamic rows) ---------- */
+        #formFields {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
         }
 
         .form-field {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+            flex-wrap: wrap;
             align-items: center;
+            gap: 0.75rem;
+            background: color-mix(in srgb, currentColor 3%, transparent);
+            padding: 0.75rem;
+            border-radius: 20px;
+            transition: background 0.1s;
         }
 
-        .field-key,
-        .field-value {
-            flex: 1;
+        .form-field input,
+        .form-field select,
+        .form-field button {
+            flex: 1 1 auto;
+            min-width: 100px;
         }
 
-        .field-type {
-            width: 100px;
+        .form-field .field-key {
+            flex: 1.2;
+            min-width: 100px;
         }
 
+        .form-field .field-type {
+            flex: 0.8;
+            min-width: 90px;
+        }
+
+        .form-field .field-value,
+        .form-field .field-file {
+            flex: 1.5;
+        }
+
+        .form-field button {
+            flex: 0.4;
+            min-width: 70px;
+            background: color-mix(in srgb, currentColor 8%, transparent);
+            padding: 0.5rem 0.8rem;
+        }
+
+        /* file input specific styling */
         .field-file {
-            flex: 1;
+            padding: 0.5rem;
         }
 
-        .menu-bar {
-            background-color: #f0f0f0;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+        /* button to add new field */
+        #formDataInput>button {
+            margin-top: 0.5rem;
+            width: auto;
         }
 
+        /* ---------- SAVED TESTS (slide-out panel, adaptive) ---------- */
         .saved-tests {
             position: fixed;
             top: 0;
-            right: -300px;
-            width: 300px;
-            height: 100%;
-            background: white;
-            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-            transition: right 0.3s;
-            padding: 20px;
-            box-sizing: border-box;
+            right: 0;
+            width: min(90%, 360px);
+            height: 100vh;
+            background: Canvas;
+            border-left: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            z-index: 1000;
+            padding: 1.5rem 1rem;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .saved-tests.open {
-            right: 0;
+            transform: translateX(0);
         }
 
+        /* Header inside saved panel */
+        .saved-tests h3 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+            padding-bottom: 0.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        #testsList {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        /* Test item row */
         .test-item {
-            padding: 10px;
-            border: 1px solid #ddd;
-            margin-bottom: 10px;
-            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: color-mix(in srgb, currentColor 5%, transparent);
+            padding: 0.75rem 1rem;
+            border-radius: 40px;
             cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
         }
 
         .test-item:hover {
-            background-color: #f5f5f5;
+            background: color-mix(in srgb, currentColor 12%, transparent);
+            transform: translateX(-3px);
         }
 
-        .test-item .delete-btn {
-            float: right;
-            color: red;
+        .test-item span:first-child {
+            font-weight: 500;
+            word-break: break-word;
+            max-width: 80%;
+        }
+
+        .delete-btn {
+            font-size: 1.6rem;
+            line-height: 1;
+            font-weight: 400;
+            color: CanvasText;
+            opacity: 0.6;
+            padding: 0 0.4rem;
+            transition: opacity 0.2s, transform 0.1s;
             cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+            color: color-mix(in srgb, red 70%, CanvasText);
+        }
+
+        /* ---------- UTILITY / RESPONSIVE TWEAKS ---------- */
+        /* On mobile: slightly smaller paddings, bigger buttons area */
+        @media (max-width: 640px) {
+            body {
+                padding: 0.85rem;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+                margin: 0.75rem 0 1.2rem;
+            }
+
+            button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .menu-bar {
+                gap: 0.6rem;
+            }
+
+            .form-field {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .form-field input,
+            .form-field select,
+            .form-field button {
+                width: 100%;
+            }
+
+            .response pre {
+                font-size: 0.8rem;
+                padding: 0.75rem;
+            }
+
+            .saved-tests {
+                width: 85%;
+                padding: 1.2rem;
+            }
+        }
+
+        /* Better desktop form layout (optional inline tweaks for wide screens) */
+        @media (min-width: 768px) {
+            .input-group {
+                margin-bottom: 1.25rem;
+            }
+
+            textarea {
+                min-height: 110px;
+            }
+
+            #headers,
+            #body {
+                min-height: 140px;
+            }
+        }
+
+        /* Small additional fix for select dropdown arrow consistency */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat: no-repeat;
+            background-position: right 0.8rem center;
+            background-size: 1.1rem;
+            padding-right: 2rem;
+        }
+
+        /* Custom file input alignment */
+        input[type="file"] {
+            padding: 0.5rem;
+            background: color-mix(in srgb, currentColor 3%, transparent);
+        }
+
+        /* subtle scrollbar (optional) */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: color-mix(in srgb, currentColor 5%, transparent);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: color-mix(in srgb, currentColor 30%, transparent);
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -142,18 +451,18 @@
 <body>
     <div class="container">
         <div class="menu-bar">
-            <button onclick="saveCurrentTest()">Save Test Case</button>
-            <button onclick="toggleSavedTests()">Show Saved Tests</button>
-            <button onclick="createNewTest()">New Test</button>
-            <button onclick="exportTests()">Export All Tests</button>
+            <button onclick="saveCurrentTest()">💾 Save Test Case</button>
+            <button onclick="toggleSavedTests()">📂 Show Saved Tests</button>
+            <button onclick="createNewTest()">✨ New Test</button>
+            <button onclick="exportTests()">📤 Export All Tests</button>
             <input type="file" id="importFile" style="display: none;" onchange="importTests(event)">
-            <button onclick="document.getElementById('importFile').click()">Import Tests</button>
+            <button onclick="document.getElementById('importFile').click()">📥 Import Tests</button>
         </div>
 
-        <h1>API Tester</h1>
+        <h1>🌐 API Tester</h1>
 
         <div class="input-group">
-            <label for="method">Method:</label>
+            <label for="method">📌 Method:</label>
             <select id="method">
                 <option value="GET">GET</option>
                 <option value="POST">POST</option>
@@ -164,17 +473,18 @@
         </div>
 
         <div class="input-group">
-            <label for="url">URL:</label>
-            <input type="text" id="url" placeholder="Enter API URL">
+            <label for="url">🔗 URL:</label>
+            <input type="text" id="url" placeholder="https://api.example.com/endpoint">
         </div>
 
         <div class="input-group">
-            <label for="headers">Headers (JSON format):</label>
-            <textarea id="headers" placeholder='{"Content-Type": "application/json"}'></textarea>
+            <label for="headers">📋 Headers (JSON format):</label>
+            <textarea id="headers"
+                placeholder='{"Content-Type": "application/json", "Authorization": "Bearer token"}'></textarea>
         </div>
 
         <div class="input-group">
-            <label>Request Type:</label>
+            <label>📦 Request Type:</label>
             <select id="requestType" onchange="toggleRequestInputs()">
                 <option value="json">JSON</option>
                 <option value="formData">Form Data</option>
@@ -182,46 +492,43 @@
         </div>
 
         <div id="jsonInput" class="input-group">
-            <label for="body">Request Body (JSON format):</label>
-            <textarea id="body" placeholder='{"key": "value"}'></textarea>
+            <label for="body">📝 Request Body (JSON format):</label>
+            <textarea id="body" placeholder='{"key": "value", "nested": {"field": true}}'></textarea>
         </div>
 
         <div id="formDataInput" class="input-group" style="display: none;">
-            <label>Form Data:</label>
+            <label>📎 Form Data (multipart/form-data):</label>
             <div id="formFields">
                 <div class="form-field">
                     <input type="text" class="field-key" placeholder="Key">
-                    <select class="field-type">
+                    <select class="field-type" onchange="toggleFieldInput(this)">
                         <option value="text">Text</option>
                         <option value="file">File</option>
                     </select>
                     <input type="text" class="field-value" placeholder="Value">
                     <input type="file" class="field-file" style="display: none;">
-                    <button type="button" onclick="removeFormField(this)">Remove</button>
+                    <button type="button" onclick="removeFormField(this)">✖ Remove</button>
                 </div>
             </div>
-            <button type="button" onclick="addFormField()">Add Field</button>
+            <button type="button" onclick="addFormField()">+ Add Field</button>
         </div>
 
-        <button onclick="sendRequest()">Send Request</button>
+        <button class="send-request-btn" onclick="sendRequest()">🚀 Send Request</button>
 
         <div class="response">
-            <h3>Response</h3>
-            <div>
-                <strong>Status:</strong> <span id="status"></span>
-            </div>
-            <div>
-                <strong>Headers:</strong>
+            <h3>📡 Response</h3>
+            <div><strong>Status:</strong> <span id="status">—</span></div>
+            <div><strong>Headers:</strong>
                 <pre id="responseHeaders"></pre>
             </div>
-            <div>
-                <strong>Body:</strong>
+            <div><strong>Body:</strong>
                 <pre id="responseBody"></pre>
             </div>
         </div>
 
         <div class="saved-tests" id="savedTests">
-            <h3>Saved Test Cases</h3>
+            <h3>📁 Saved Test Cases <span style="font-size:0.8rem; cursor:pointer;"
+                    onclick="toggleSavedTests()">✕</span></h3>
             <div id="testsList"></div>
         </div>
     </div>
@@ -240,15 +547,15 @@
             const newField = document.createElement('div');
             newField.className = 'form-field';
             newField.innerHTML = `
-                <input type="text" class="field-key" placeholder="Key">
-                <select class="field-type" onchange="toggleFieldInput(this)">
-                    <option value="text">Text</option>
-                    <option value="file">File</option>
-                </select>
-                <input type="text" class="field-value" placeholder="Value">
-                <input type="file" class="field-file" style="display: none;">
-                <button type="button" onclick="removeFormField(this)">Remove</button>
-            `;
+            <input type="text" class="field-key" placeholder="Key">
+            <select class="field-type" onchange="toggleFieldInput(this)">
+                <option value="text">Text</option>
+                <option value="file">File</option>
+            </select>
+            <input type="text" class="field-value" placeholder="Value">
+            <input type="file" class="field-file" style="display: none;">
+            <button type="button" onclick="removeFormField(this)">✖ Remove</button>
+        `;
             formFields.appendChild(newField);
         }
 
@@ -257,12 +564,14 @@
         }
 
         function toggleFieldInput(select) {
-            const fieldValue = select.parentElement.querySelector('.field-value');
-            const fieldFile = select.parentElement.querySelector('.field-file');
+            const fieldDiv = select.parentElement;
+            const fieldValue = fieldDiv.querySelector('.field-value');
+            const fieldFile = fieldDiv.querySelector('.field-file');
 
             if (select.value === 'file') {
                 fieldValue.style.display = 'none';
                 fieldFile.style.display = 'block';
+                fieldFile.required = false;
             } else {
                 fieldValue.style.display = 'block';
                 fieldFile.style.display = 'none';
@@ -275,6 +584,11 @@
             const requestType = document.getElementById('requestType').value;
             let headers = {};
             let body = null;
+
+            if (!url.trim()) {
+                alert('Please enter a URL');
+                return;
+            }
 
             try {
                 headers = JSON.parse(document.getElementById('headers').value || '{}');
@@ -314,7 +628,6 @@
                     }
                 }
                 body = formData;
-                // Remove Content-Type header for FormData as browser will set it automatically
                 delete headers['Content-Type'];
             }
 
@@ -325,29 +638,24 @@
                     body: body
                 });
 
-                // Display status
-                document.getElementById('status').textContent =
-                    `${response.status} ${response.statusText}`;
+                document.getElementById('status').textContent = `${response.status} ${response.statusText}`;
 
-                // Display headers
                 const responseHeaders = {};
                 response.headers.forEach((value, key) => {
                     responseHeaders[key] = value;
                 });
-                document.getElementById('responseHeaders').textContent =
-                    JSON.stringify(responseHeaders, null, 2);
+                document.getElementById('responseHeaders').textContent = JSON.stringify(responseHeaders, null, 2);
 
-                // Display body
-                try {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
                     const responseBody = await response.json();
-                    document.getElementById('responseBody').textContent =
-                        JSON.stringify(responseBody, null, 2);
-                } catch (e) {
+                    document.getElementById('responseBody').textContent = JSON.stringify(responseBody, null, 2);
+                } else {
                     const textBody = await response.text();
-                    document.getElementById('responseBody').textContent = textBody;
+                    document.getElementById('responseBody').textContent = textBody || '(empty response)';
                 }
             } catch (error) {
-                document.getElementById('status').textContent = 'Error';
+                document.getElementById('status').textContent = '❌ Network Error';
                 document.getElementById('responseBody').textContent = error.message;
             }
         }
@@ -359,11 +667,33 @@
             document.getElementById('body').value = '';
             document.getElementById('requestType').value = 'json';
             toggleRequestInputs();
+            // reset form fields
+            const formFieldsContainer = document.getElementById('formFields');
+            formFieldsContainer.innerHTML = `
+            <div class="form-field">
+                <input type="text" class="field-key" placeholder="Key">
+                <select class="field-type" onchange="toggleFieldInput(this)">
+                    <option value="text">Text</option>
+                    <option value="file">File</option>
+                </select>
+                <input type="text" class="field-value" placeholder="Value">
+                <input type="file" class="field-file" style="display: none;">
+                <button type="button" onclick="removeFormField(this)">✖ Remove</button>
+            </div>
+        `;
         }
 
         function saveCurrentTest() {
             const testName = prompt('Enter a name for this test case:');
             if (!testName) return;
+
+            const formDataFields = [];
+            document.querySelectorAll('#formFields .form-field').forEach(field => {
+                const key = field.querySelector('.field-key').value;
+                const type = field.querySelector('.field-type').value;
+                const value = field.querySelector('.field-value').value;
+                formDataFields.push({ key, type, value });
+            });
 
             const testCase = {
                 name: testName,
@@ -372,17 +702,14 @@
                 headers: document.getElementById('headers').value,
                 requestType: document.getElementById('requestType').value,
                 body: document.getElementById('body').value,
-                formData: Array.from(document.querySelectorAll('.form-field')).map(field => ({
-                    key: field.querySelector('.field-key').value,
-                    type: field.querySelector('.field-type').value,
-                    value: field.querySelector('.field-value').value
-                }))
+                formData: formDataFields
             };
 
             let savedTests = JSON.parse(localStorage.getItem('apiTests') || '[]');
             savedTests.push(testCase);
             localStorage.setItem('apiTests', JSON.stringify(savedTests));
             updateTestsList();
+            alert(`✅ Test "${testName}" saved!`);
         }
 
         function loadTest(test) {
@@ -391,36 +718,54 @@
             document.getElementById('headers').value = test.headers;
             document.getElementById('requestType').value = test.requestType;
             document.getElementById('body').value = test.body;
+            toggleRequestInputs();
 
-            // Clear existing form fields
-            const formFields = document.getElementById('formFields');
-            formFields.innerHTML = '';
+            const formFieldsContainer = document.getElementById('formFields');
+            formFieldsContainer.innerHTML = '';
 
-            // Recreate form fields if they exist
-            if (test.formData) {
+            if (test.formData && test.formData.length) {
                 test.formData.forEach(field => {
                     const newField = document.createElement('div');
                     newField.className = 'form-field';
                     newField.innerHTML = `
-                        <input type="text" class="field-key" value="${field.key}" placeholder="Key">
-                        <select class="field-type">
-                            <option value="text" ${field.type === 'text' ? 'selected' : ''}>Text</option>
-                            <option value="file" ${field.type === 'file' ? 'selected' : ''}>File</option>
-                        </select>
-                        <input type="text" class="field-value" value="${field.value}" placeholder="Value">
-                        <input type="file" class="field-file" style="display: none;">
-                        <button type="button" onclick="removeFormField(this)">Remove</button>
-                    `;
-                    formFields.appendChild(newField);
+                    <input type="text" class="field-key" value="${escapeHtml(field.key)}" placeholder="Key">
+                    <select class="field-type" onchange="toggleFieldInput(this)">
+                        <option value="text" ${field.type === 'text' ? 'selected' : ''}>Text</option>
+                        <option value="file" ${field.type === 'file' ? 'selected' : ''}>File</option>
+                    </select>
+                    <input type="text" class="field-value" value="${escapeHtml(field.value)}" placeholder="Value">
+                    <input type="file" class="field-file" style="display: none;">
+                    <button type="button" onclick="removeFormField(this)">✖ Remove</button>
+                `;
+                    formFieldsContainer.appendChild(newField);
+                    const selectEl = newField.querySelector('.field-type');
+                    if (selectEl.value === 'file') {
+                        const textVal = newField.querySelector('.field-value');
+                        const fileInput = newField.querySelector('.field-file');
+                        if (textVal) textVal.style.display = 'none';
+                        if (fileInput) fileInput.style.display = 'block';
+                    }
                 });
+            } else {
+                // default empty field
+                const defaultField = document.createElement('div');
+                defaultField.className = 'form-field';
+                defaultField.innerHTML = `
+                <input type="text" class="field-key" placeholder="Key">
+                <select class="field-type" onchange="toggleFieldInput(this)">
+                    <option value="text">Text</option>
+                    <option value="file">File</option>
+                </select>
+                <input type="text" class="field-value" placeholder="Value">
+                <input type="file" class="field-file" style="display: none;">
+                <button type="button" onclick="removeFormField(this)">✖ Remove</button>
+            `;
+                formFieldsContainer.appendChild(defaultField);
             }
-
-            toggleRequestInputs();
         }
 
         function deleteTest(index) {
-            if (!confirm('Are you sure you want to delete this test case?')) return;
-
+            if (!confirm('Permanently delete this test case?')) return;
             let savedTests = JSON.parse(localStorage.getItem('apiTests') || '[]');
             savedTests.splice(index, 1);
             localStorage.setItem('apiTests', JSON.stringify(savedTests));
@@ -431,7 +776,6 @@
             const testsList = document.getElementById('testsList');
             const savedTests = JSON.parse(localStorage.getItem('apiTests') || '[]');
 
-            // Helper to escape HTML (prevents XSS from test names)
             const escapeHtml = (str) => {
                 if (!str) return '';
                 return str.replace(/[&<>]/g, function (m) {
@@ -439,36 +783,30 @@
                     if (m === '<') return '&lt;';
                     if (m === '>') return '&gt;';
                     return m;
-                }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function (c) {
-                    return c;
                 });
             };
 
-            // Build list with data-index
             testsList.innerHTML = savedTests.map((test, index) => `
             <div class="test-item" data-index="${index}">
                 <span>${escapeHtml(test.name)}</span>
-                <span class="delete-btn" data-index="${index}">×</span>
+                <span class="delete-btn" data-index="${index}">✕</span>
             </div>
-            `).join('');
+        `).join('');
 
-            // Attach click listeners for loading tests
-            const items = testsList.querySelectorAll('.test-item');
-            items.forEach(item => {
+            document.querySelectorAll('.test-item').forEach(item => {
                 item.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('delete-btn')) return; // prevent loading when clicking delete
-                    const index = parseInt(item.dataset.index);
-                    loadTest(savedTests[index]);
+                    if (e.target.classList.contains('delete-btn')) return;
+                    const idx = parseInt(item.dataset.index);
+                    loadTest(savedTests[idx]);
+                    toggleSavedTests();  // auto-close sidebar after load on mobile/desktop
                 });
             });
 
-            // Attach click listeners for delete buttons
-            const deleteBtns = testsList.querySelectorAll('.delete-btn');
-            deleteBtns.forEach(btn => {
+            document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const index = parseInt(btn.dataset.index);
-                    deleteTest(index);
+                    const idx = parseInt(btn.dataset.index);
+                    deleteTest(idx);
                 });
             });
         }
@@ -476,7 +814,9 @@
         function toggleSavedTests() {
             const sidebar = document.getElementById('savedTests');
             sidebar.classList.toggle('open');
-            updateTestsList();
+            if (sidebar.classList.contains('open')) {
+                updateTestsList();
+            }
         }
 
         function exportTests() {
@@ -485,7 +825,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'api-tests.json';
+            a.download = `api-tests-${new Date().toISOString().slice(0, 19)}.json`;
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -493,22 +833,28 @@
         function importTests(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function (e) {
                 try {
                     const tests = JSON.parse(e.target.result);
-                    localStorage.setItem('apiTests', JSON.stringify(tests));
-                    updateTestsList();
-                    alert('Tests imported successfully!');
+                    if (Array.isArray(tests)) {
+                        localStorage.setItem('apiTests', JSON.stringify(tests));
+                        updateTestsList();
+                        alert(`✅ Imported ${tests.length} test cases.`);
+                    } else {
+                        throw new Error('Invalid format');
+                    }
                 } catch (error) {
-                    alert('Error importing tests: Invalid file format');
+                    alert('Error: file must be a valid JSON array of test cases.');
                 }
             };
             reader.readAsText(file);
+            event.target.value = '';
         }
 
+        // initial load
         updateTestsList();
+        toggleRequestInputs();
     </script>
 </body>
 
