@@ -12,7 +12,7 @@ Check out [main.lua](main.lua) for an app example.
 Run it with:
 
 ```sh
-$ astra run main.lua 
+$ astra run main.lua
 Generated sql/queries.lua with 9 queries.
         GET /
         GET /hello
@@ -22,7 +22,8 @@ Generated sql/queries.lua with 9 queries.
         GET /api/guestbook
        POST /api/guestbook
         GET /health
-STATIC_FILE /api-testing-utility
+STATIC_FILE /api-client
+ STATIC_DIR /static
 Server uses:    Lua 5.5
 Running on http://127.0.0.1:8080
 ```
