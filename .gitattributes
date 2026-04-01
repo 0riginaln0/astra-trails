@@ -1,2 +1,2 @@
 *.yue linguist-language=MoonScript
-static/* linguist-vendored
+api_testing_utility.html linguist-vendored
