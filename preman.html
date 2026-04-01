@@ -9,83 +9,124 @@
     :root {
       color-scheme: dark light;
     }
+
+    .request-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .request-main {
+      flex: 0 0 auto;
+    }
+
+    .request-options {
+      flex: 0 0 auto;
+    }
+
+    .request-main>div {
+      margin-bottom: 0.5rem;
+    }
+
+    .request-main input[type="text"] {
+      width: 200px;
+    }
+
+    button {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    fieldset {
+      margin: 0;
+    }
   </style>
 </head>
 
 <body>
 
-  <label>Protocol:</label>
-  <input type="radio" name="protocol" value="http" checked> http
-  <input type="radio" name="protocol" value="https"> https
-  <br><br>
+  <div class="request-row">
+    <div class="request-main">
+      <div>
+        <label>Protocol:</label>
+        <input type="radio" name="protocol" value="http" checked> http
+        <input type="radio" name="protocol" value="https"> https
+      </div>
 
-  <label for="domain">Domain:</label>
-  <input type="text" id="domain" value="127.0.0.1:8080" style="width: 200px;">
-  <br><br>
+      <div>
+        <label for="domain">Domain:</label>
+        <input type="text" id="domain" value="127.0.0.1:8080" style="width: 200px;">
+      </div>
 
-  <label for="path">Path:</label>
-  <input type="text" id="path" value="/health" style="width: 200px;">
-  <br><br>
+      <div>
+        <label for="path">Path:</label>
+        <input type="text" id="path" value="/health" style="width: 200px;">
+      </div>
 
-  <label>HTTP Method:</label>
-  <select id="method" style="width: 100px;">
-    <option value="GET" selected>GET</option>
-    <option value="POST">POST</option>
-    <option value="PUT">PUT</option>
-    <option value="PATCH">PATCH</option>
-    <option value="DELETE">DELETE</option>
-    <option value="HEAD">HEAD</option>
-    <option value="OPTIONS">OPTIONS</option>
-  </select>
-  <br><br>
+      <div>
+        <label>HTTP Method:</label>
+        <select id="method" style="width: 100px;">
+          <option value="GET" selected>GET</option>
+          <option value="POST">POST</option>
+          <option value="PUT">PUT</option>
+          <option value="PATCH">PATCH</option>
+          <option value="DELETE">DELETE</option>
+          <option value="HEAD">HEAD</option>
+          <option value="OPTIONS">OPTIONS</option>
+        </select>
+      </div>
+    </div>
 
-  <!-- additional fetch options -->
-  <fieldset>
-    <legend>Additional fetch options (RequestInit)</legend>
+    <div class="request-options">
+      <fieldset>
+        <legend>Additional fetch options (RequestInit)</legend>
 
-    <label for="headers-json">Headers (JSON):</label><br>
-    <textarea id="headers-json" rows="3" cols="60" placeholder='{ "Content-Type": "application/json" }'>{}</textarea>
-    <br><br>
+        <label for="headers-json">Headers (JSON):</label><br>
+        <textarea id="headers-json" rows="3" cols="60"
+          placeholder='{ "Content-Type": "application/json" }'>{}</textarea>
+        <br><br>
 
-    <label for="request-body">Request body (raw string):</label><br>
-    <textarea id="request-body" rows="4" cols="60" placeholder='Optional payload'></textarea>
-    <br><br>
+        <label for="request-body">Request body (raw string):</label><br>
+        <textarea id="request-body" rows="4" cols="60" placeholder='Optional payload'></textarea>
+        <br><br>
 
-    <label for="mode">mode:</label>
-    <select id="mode">
-      <option value="cors" selected>cors</option>
-      <option value="no-cors">no-cors</option>
-      <option value="same-origin">same-origin</option>
-    </select>
+        <label for="mode">mode:</label>
+        <select id="mode">
+          <option value="cors" selected>cors</option>
+          <option value="no-cors">no-cors</option>
+          <option value="same-origin">same-origin</option>
+        </select>
 
-    <label for="credentials">credentials:</label>
-    <select id="credentials">
-      <option value="same-origin" selected>same-origin</option>
-      <option value="include">include</option>
-      <option value="omit">omit</option>
-    </select>
+        <label for="credentials">credentials:</label>
+        <select id="credentials">
+          <option value="same-origin" selected>same-origin</option>
+          <option value="include">include</option>
+          <option value="omit">omit</option>
+        </select>
 
-    <label for="cache">cache:</label>
-    <select id="cache">
-      <option value="default" selected>default</option>
-      <option value="no-cache">no-cache</option>
-      <option value="reload">reload</option>
-      <option value="force-cache">force-cache</option>
-      <option value="only-if-cached">only-if-cached</option>
-    </select>
+        <label for="cache">cache:</label>
+        <select id="cache">
+          <option value="default" selected>default</option>
+          <option value="no-cache">no-cache</option>
+          <option value="reload">reload</option>
+          <option value="force-cache">force-cache</option>
+          <option value="only-if-cached">only-if-cached</option>
+        </select>
 
-    <label for="redirect">redirect:</label>
-    <select id="redirect">
-      <option value="follow" selected>follow</option>
-      <option value="error">error</option>
-      <option value="manual">manual</option>
-    </select>
-  </fieldset>
-  <br><br>
+        <label for="redirect">redirect:</label>
+        <select id="redirect">
+          <option value="follow" selected>follow</option>
+          <option value="error">error</option>
+          <option value="manual">manual</option>
+        </select>
+      </fieldset>
+    </div>
+  </div>
 
-  <!-- Button: calls the JS function that uses plain fetch -->
-  <button _="on click call sendRequestWithOptions()">
-    Send request (with advanced options)
+  <button id="sendBtn" _="on click call sendRequest()">
+    Send request
   </button>
 
   <div id="response-meta">
@@ -100,164 +141,105 @@
             ">
   </div>
 
-
-
   <script type="text/hyperscript">
-            js
-            // helper: escape HTML
-            function escapeHtml(str) {
-                if (typeof str !== 'string') return str;
-                return str.replace(/[&<>]/g, function(m) {
-                    if (m === '&') return '&amp;';
-                    if (m === '<') return '&lt;';
-                    if (m === '>') return '&gt;';
-                    return m;
-                });
+    js
+      function escapeHtml(str) {
+        if (typeof str !== 'string') return str;
+        return str.replace(/[&<>]/g, function(m) {
+          if (m === '&') return '&amp;';
+          if (m === '<') return '&lt;';
+          if (m === '>') return '&gt;';
+          return m;
+        });
+      }
+
+      function formatMetadataHtml(response) {
+        let headersStr = '';
+        response.headers.forEach((value, key) => {
+          headersStr += `<div class="meta-row"><strong>${escapeHtml(key)}:</strong> ${escapeHtml(value)}</div>`;
+        });
+        return `
+          <div class="meta-row"><strong>Status:</strong> ${response.status} ${escapeHtml(response.statusText)}</div>
+          <div class="meta-row"><strong>OK:</strong> ${response.ok}</div>
+          <div class="meta-row"><strong>Redirected:</strong> ${response.redirected}</div>
+          <div class="meta-row"><strong>Type:</strong> ${escapeHtml(response.type)}</div>
+          <div class="meta-row"><strong>URL:</strong> ${escapeHtml(response.url)}</div>
+          <div class="meta-row"><strong>Headers:</strong> ${headersStr}</div>
+        `;
+      }
+
+      async function sendRequest() {
+        const protocol = document.querySelector('input[name="protocol"]:checked').value;
+        const domain = document.getElementById('domain').value;
+        const path = document.getElementById('path').value;
+        const fullUrl = `${protocol}://${domain}${path}`;
+
+        const method = document.getElementById('method').value;
+
+        let headers = {};
+        const headersText = document.getElementById('headers-json').value;
+        if (headersText.trim()) {
+          try {
+            headers = JSON.parse(headersText);
+            if (typeof headers !== 'object' || Array.isArray(headers)) {
+              throw new Error('Headers must be a JSON object');
             }
+          } catch (e) {
+            document.getElementById('result').shadowRoot.innerHTML = `Headers error: ${e.message}`;
+            return;
+          }
+        }
 
-            // convert response to map with metadata + body
-            async function responseToMap(response) {
-                const map = {
-                    status: response.status,
-                    statusText: response.statusText,
-                    ok: response.ok,
-                    redirected: response.redirected,
-                    type: response.type,
-                    url: response.url,
-                    headers: [],
-                    body: null,
-                    body_type: null
-                };
+        let body = document.getElementById('request-body').value;
+        if (method === 'GET' || method === 'HEAD') {
+          body = undefined;
+        } else {
+          body = body || undefined;
+        }
 
-                // collect headers
-                const headers = response.headers;
-                headers.forEach((value, key) => {
-                    map.headers.push([key, value]);
-                });
+        const mode = document.getElementById('mode').value;
+        const credentials = document.getElementById('credentials').value;
+        const cache = document.getElementById('cache').value;
+        const redirect = document.getElementById('redirect').value;
 
-                // clone to preserve original response for body reading
-                const cloned = response.clone();
-                try {
-                    const jsonBody = await cloned.json();
-                    map.body = `<code>${JSON.stringify(jsonBody, null, 2)}</code>`;
-                    map.body_type = "json";
-                } catch (e) {
-                    try {
-                        const textBody = await cloned.text();
-                        map.body = textBody;
-                        map.body_type = "text";
-                    } catch (e2) {
-                        map.body = null;
-                        map.body_type = "none";
-                    }
-                }
-                return map;
-            }
+        const fetchOptions = {
+          method,
+          headers,
+          mode,
+          credentials,
+          cache,
+          redirect
+        };
+        if (body !== undefined) fetchOptions.body = body;
 
-            function formatMetadataHtml(map) {
-                let headersStr = '';
-                map.headers.forEach(([key, value]) => {
-                    headersStr += `<div class="meta-row"><strong>${escapeHtml(key)}:</strong> ${escapeHtml(value)}</div>`;
-                });
-                return `
-                    <div class="meta-row"><strong>Status:</strong> ${map.status} ${escapeHtml(map.statusText)}</div>
-                    <div class="meta-row"><strong>OK:</strong> ${map.ok}</div>
-                    <div class="meta-row"><strong>Redirected:</strong> ${map.redirected}</div>
-                    <div class="meta-row"><strong>Type:</strong> ${escapeHtml(map.type)}</div>
-                    <div class="meta-row"><strong>URL:</strong> ${escapeHtml(map.url)}</div>
-                    <div class="meta-row"><strong>Headers:</strong> ${headersStr}</div>
-                `;
-            }
+        const metaDiv = document.getElementById('response-meta');
+        const resultDiv = document.getElementById('result');
+        metaDiv.innerHTML = 'Sending request...';
+        resultDiv.shadowRoot.innerHTML = 'Waiting for response...';
 
-            // main function that reads UI, builds fetch options, sends request, and updates DOM
-            async function sendRequestWithOptions() {
-                // get URL parts
-                const protocol = document.querySelector('input[name="protocol"]:checked').value;
-                const domain = document.getElementById('domain').value;
-                const path = document.getElementById('path').value;
-                const fullUrl = `${protocol}://${domain}${path}`;
+        try {
+          const response = await fetch(fullUrl, fetchOptions);
+          const metaHtml = formatMetadataHtml(response);
+          metaDiv.innerHTML = metaHtml;
 
-                // get basic method
-                const method = document.getElementById('method').value;
-
-                // parse headers JSON
-                let headers = {};
-                const headersText = document.getElementById('headers-json').value;
-                if (headersText.trim()) {
-                    try {
-                        headers = JSON.parse(headersText);
-                        if (typeof headers !== 'object' || Array.isArray(headers)) {
-                            throw new Error('Headers must be a JSON object');
-                        }
-                    } catch (e) {
-                        document.getElementById('result').shadowRoot.innerHTML = `Headers error: ${e.message}`;
-                        return;
-                    }
-                }
-
-                // get other options
-                let body = document.getElementById('request-body').value;
-                const mode = document.getElementById('mode').value;
-                const credentials = document.getElementById('credentials').value;
-                const cache = document.getElementById('cache').value;
-                const redirect = document.getElementById('redirect').value;
-
-                // For GET and HEAD, body must be omitted (HTTP spec prohibits a body)
-                if (method === 'GET' || method === 'HEAD') {
-                    body = undefined;
-                    // optional: notify user if they tried to set a body
-                    if (document.getElementById('request-body').value.trim() !== '') {
-                        console.warn(`Body ignored for ${method} request (HTTP does not allow a body).`);
-                        // could show a small warning in UI, but not required
-                    }
-                } else {
-                    // for other methods, use body if provided, otherwise undefined
-                    body = body || undefined;
-                }
-
-                // build fetch options object
-                const fetchOptions = {
-                    method,
-                    headers,
-                    mode,
-                    credentials,
-                    cache,
-                    redirect
-                };
-                if (body !== undefined) {
-                    fetchOptions.body = body;
-                }
-
-                // clear previous output
-                const resultDiv = document.getElementById('result');
-                const metaDiv = document.getElementById('response-meta');
-                metaDiv.innerHTML = 'Sending request...';
-                resultDiv.shadowRoot.innerHTML = 'Waiting for response...';
-
-                try {
-                    // perform fetch
-                    const response = await fetch(fullUrl, fetchOptions);
-                    const map = await responseToMap(response);
-                    const metaHtml = formatMetadataHtml(map);
-                    metaDiv.innerHTML = metaHtml;
-
-                    // display body
-                    if (map.body_type === 'json') {
-                        resultDiv.shadowRoot.innerHTML = map.body;
-                    } else if (map.body_type === 'text') {
-                        resultDiv.shadowRoot.innerHTML = `<pre>${escapeHtml(map.body)}</pre>`;
-                    } else {
-                        resultDiv.shadowRoot.innerHTML = '(No body)';
-                    }
-                } catch (error) {
-                    metaDiv.innerHTML = `Error: ${error.message}`;
-                    resultDiv.shadowRoot.innerHTML = `Request failed: ${error.message}`;
-                }
-            }
-
-            return { sendRequestWithOptions, responseToMap, formatMetadataHtml, escapeHtml };
-        end
-    </script>
+          // Attempt to parse as JSON, fallback to raw text (which may be HTML)
+          let bodyContent = '';
+          const contentType = response.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const json = await response.json();
+            bodyContent = `<code>${JSON.stringify(json, null, 2)}</code>`;
+          } else {
+            // For text/html, plain text, etc. – insert raw (will render HTML)
+            bodyContent = await response.text();
+          }
+          resultDiv.shadowRoot.innerHTML = bodyContent;
+        } catch (error) {
+          metaDiv.innerHTML = `Error: ${error.message}`;
+          resultDiv.shadowRoot.innerHTML = `Request failed: ${error.message}`;
+        }
+      }
+    end
+  </script>
 </body>
 
 </html>
