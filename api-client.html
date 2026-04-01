@@ -7,12 +7,10 @@
     <title>API Tester — Adaptive & Responsive</title>
     <style>
         /* ---------- GLOBAL THEME ---------- */
-        /* One color scheme for both dark/light — uses system colors + adaptive semi-transparent layers */
         :root {
             color-scheme: dark light;
         }
 
-        /* Reset & base */
         * {
             margin: 0;
             padding: 0;
@@ -24,13 +22,10 @@
             line-height: 1.5;
             padding: 1rem;
             background: Canvas;
-            /* native background (light or dark) */
             color: CanvasText;
-            /* native text color (high contrast) */
             transition: background 0.2s ease, color 0.2s ease;
         }
 
-        /* Main container — responsive max-width + centering */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -55,7 +50,7 @@
             opacity: 0.9;
         }
 
-        /* ---------- MENU BAR (flex wrap, responsive) ---------- */
+        /* ---------- MENU BAR — more visible border ---------- */
         .menu-bar {
             display: flex;
             flex-wrap: wrap;
@@ -66,16 +61,11 @@
             border-bottom: 1px solid currentColor;
             border-bottom-width: 1px;
             border-bottom-style: solid;
-            border-bottom-color: currentColor;
-            opacity: 0.25;
+            border-bottom-color: color-mix(in srgb, currentColor 40%, transparent);
+            /* Increased opacity */
         }
 
-        /* Buttons inside menu-bar get extra spacing */
-        .menu-bar button {
-            margin: 0;
-        }
-
-        /* ---------- FORM GROUPS (label above input, clean spacing) ---------- */
+        /* ---------- FORM GROUPS ---------- */
         .input-group {
             margin-bottom: 1.5rem;
             display: flex;
@@ -90,7 +80,6 @@
             opacity: 0.85;
         }
 
-        /* Universal input, select, textarea styling — adaptive border & background */
         input,
         select,
         textarea,
@@ -106,42 +95,37 @@
             padding: 0.75rem 0.85rem;
             border-radius: 12px;
             border: 1px solid currentColor;
-            border-color: currentColor;
-            background: currentColor;
+            border-color: color-mix(in srgb, currentColor 40%, transparent);
             background-color: color-mix(in srgb, currentColor 8%, transparent);
             color: CanvasText;
             transition: all 0.2s ease;
             outline: none;
         }
 
-        /* Slight focus enhancement */
         input:focus,
         select:focus,
         textarea:focus {
             border-color: currentColor;
             background-color: color-mix(in srgb, currentColor 12%, transparent);
             box-shadow: 0 0 0 2px color-mix(in srgb, currentColor 20%, transparent);
-            outline: none;
         }
 
-        /* Specific textarea sizing */
         textarea {
             min-height: 120px;
             resize: vertical;
             line-height: 1.45;
         }
 
-        /* Headers textarea & body textarea – even larger on desktop */
         #headers,
         #body {
             min-height: 130px;
         }
 
-        /* ---------- BUTTONS (unified, adaptive) ---------- */
+        /* ---------- BUTTONS — MUCH MORE VISIBLE (higher contrast) ---------- */
         button {
-            background: color-mix(in srgb, currentColor 12%, transparent);
-            border: 1px solid currentColor;
-            border-color: color-mix(in srgb, currentColor 40%, transparent);
+            background: color-mix(in srgb, currentColor 20%, transparent);
+            /* was 12% → much more solid */
+            border: 1px solid color-mix(in srgb, currentColor 60%, transparent);
             color: CanvasText;
             padding: 0.6rem 1.2rem;
             border-radius: 40px;
@@ -153,26 +137,31 @@
         }
 
         button:hover {
-            background: color-mix(in srgb, currentColor 22%, transparent);
+            background: color-mix(in srgb, currentColor 32%, transparent);
+            /* stronger hover */
             border-color: currentColor;
             transform: translateY(-1px);
         }
 
         button:active {
             transform: translateY(1px);
-            background: color-mix(in srgb, currentColor 28%, transparent);
+            background: color-mix(in srgb, currentColor 40%, transparent);
         }
 
-        /* Special primary-like send button */
         .send-request-btn {
-            background: color-mix(in srgb, currentColor 20%, transparent);
+            background: color-mix(in srgb, currentColor 28%, transparent);
             font-weight: 600;
             margin: 0.5rem 0 1rem 0;
             width: auto;
             min-width: 160px;
+            border-color: currentColor;
         }
 
-        /* ---------- RESPONSE BLOCK (clean, readable) ---------- */
+        .send-request-btn:hover {
+            background: color-mix(in srgb, currentColor 40%, transparent);
+        }
+
+        /* ---------- RESPONSE BLOCK ---------- */
         .response {
             margin-top: 2rem;
             padding: 1.25rem;
@@ -200,22 +189,16 @@
             border-left: 3px solid currentColor;
         }
 
-        #responseHeaders,
-        #responseBody {
-            margin: 0.5rem 0;
-        }
-
-        /* Status badge */
         #status {
             font-weight: 600;
-            background: color-mix(in srgb, currentColor 8%, transparent);
+            background: color-mix(in srgb, currentColor 12%, transparent);
             padding: 0.2rem 0.7rem;
             border-radius: 40px;
             display: inline-block;
             font-family: monospace;
         }
 
-        /* ---------- FORM DATA FIELDS (dynamic rows) ---------- */
+        /* ---------- FORM DATA FIELDS ---------- */
         #formFields {
             display: flex;
             flex-direction: column;
@@ -259,22 +242,20 @@
         .form-field button {
             flex: 0.4;
             min-width: 70px;
-            background: color-mix(in srgb, currentColor 8%, transparent);
+            background: color-mix(in srgb, currentColor 18%, transparent);
             padding: 0.5rem 0.8rem;
         }
 
-        /* file input specific styling */
         .field-file {
             padding: 0.5rem;
         }
 
-        /* button to add new field */
         #formDataInput>button {
             margin-top: 0.5rem;
             width: auto;
         }
 
-        /* ---------- SAVED TESTS (slide-out panel, adaptive) ---------- */
+        /* ---------- SAVED TESTS PANEL ---------- */
         .saved-tests {
             position: fixed;
             top: 0;
@@ -282,8 +263,8 @@
             width: min(90%, 360px);
             height: 100vh;
             background: Canvas;
-            border-left: 1px solid color-mix(in srgb, currentColor 20%, transparent);
-            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+            border-left: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.2);
             transform: translateX(100%);
             transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             z-index: 1000;
@@ -298,12 +279,11 @@
             transform: translateX(0);
         }
 
-        /* Header inside saved panel */
         .saved-tests h3 {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+            border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent);
             padding-bottom: 0.6rem;
             margin-bottom: 0.5rem;
         }
@@ -314,21 +294,20 @@
             gap: 0.65rem;
         }
 
-        /* Test item row */
         .test-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: color-mix(in srgb, currentColor 5%, transparent);
+            background: color-mix(in srgb, currentColor 8%, transparent);
             padding: 0.75rem 1rem;
             border-radius: 40px;
             cursor: pointer;
             transition: all 0.2s;
-            border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+            border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
         }
 
         .test-item:hover {
-            background: color-mix(in srgb, currentColor 12%, transparent);
+            background: color-mix(in srgb, currentColor 18%, transparent);
             transform: translateX(-3px);
         }
 
@@ -343,7 +322,7 @@
             line-height: 1;
             font-weight: 400;
             color: CanvasText;
-            opacity: 0.6;
+            opacity: 0.7;
             padding: 0 0.4rem;
             transition: opacity 0.2s, transform 0.1s;
             cursor: pointer;
@@ -355,8 +334,7 @@
             color: color-mix(in srgb, red 70%, CanvasText);
         }
 
-        /* ---------- UTILITY / RESPONSIVE TWEAKS ---------- */
-        /* On mobile: slightly smaller paddings, bigger buttons area */
+        /* ---------- RESPONSIVE ---------- */
         @media (max-width: 640px) {
             body {
                 padding: 0.85rem;
@@ -398,7 +376,6 @@
             }
         }
 
-        /* Better desktop form layout (optional inline tweaks for wide screens) */
         @media (min-width: 768px) {
             .input-group {
                 margin-bottom: 1.25rem;
@@ -414,7 +391,6 @@
             }
         }
 
-        /* Small additional fix for select dropdown arrow consistency */
         select {
             appearance: none;
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
@@ -424,13 +400,11 @@
             padding-right: 2rem;
         }
 
-        /* Custom file input alignment */
         input[type="file"] {
             padding: 0.5rem;
             background: color-mix(in srgb, currentColor 3%, transparent);
         }
 
-        /* subtle scrollbar (optional) */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -571,7 +545,6 @@
             if (select.value === 'file') {
                 fieldValue.style.display = 'none';
                 fieldFile.style.display = 'block';
-                fieldFile.required = false;
             } else {
                 fieldValue.style.display = 'block';
                 fieldFile.style.display = 'none';
@@ -667,7 +640,6 @@
             document.getElementById('body').value = '';
             document.getElementById('requestType').value = 'json';
             toggleRequestInputs();
-            // reset form fields
             const formFieldsContainer = document.getElementById('formFields');
             formFieldsContainer.innerHTML = `
             <div class="form-field">
@@ -747,7 +719,6 @@
                     }
                 });
             } else {
-                // default empty field
                 const defaultField = document.createElement('div');
                 defaultField.className = 'form-field';
                 defaultField.innerHTML = `
@@ -798,7 +769,7 @@
                     if (e.target.classList.contains('delete-btn')) return;
                     const idx = parseInt(item.dataset.index);
                     loadTest(savedTests[idx]);
-                    toggleSavedTests();  // auto-close sidebar after load on mobile/desktop
+                    toggleSavedTests();
                 });
             });
 
@@ -852,7 +823,6 @@
             event.target.value = '';
         }
 
-        // initial load
         updateTestsList();
         toggleRequestInputs();
     </script>
