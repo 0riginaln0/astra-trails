@@ -23,9 +23,10 @@ local function parse_parameters(sql)
   local allowed_types = { string = true, number = true }
 
   local cleaned = sql:gsub(":([%a_][%w_]*):([%a_]+)", function(name, typ)
+    pprint("AAA", name, typ)
     if allowed_types[typ] then
       types[name] = typ
-      return ":"..name
+      return ":"..name..":"
     else
       return ":"..name..":"..typ
     end
@@ -105,7 +106,7 @@ end
 local function SQL(str, dialect)
   local order = {}
   local seen = {}
-  for name in str:gmatch(":(%w+)") do
+  for name in str:gmatch(":(%w+):") do
     if not seen[name] then
       seen[name] = true
       order[#order + 1] = name
@@ -115,7 +116,7 @@ local function SQL(str, dialect)
   local pos = {}
   for i, name in ipairs(order) do pos[name] = i end
 
-  local sql = str:gsub(":(%w+)", function(name)
+  local sql = str:gsub(":(%w+):", function(name)
     return placeholder[dialect]..pos[name]
   end)
 
