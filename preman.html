@@ -49,13 +49,13 @@
                         redirected: response.redirected,
                         type: response.type,
                         url: response.url,
-                        headers: {},
+                        headers: [],
                         body: null,
                     };
     
                     const headers = response.headers;
                     headers.forEach((value, key) => {
-                        map.headers[key] = value;
+                        map.headers.push([key, value]);
                     });
     
                     // Extract body: try JSON first, fallback to text, null if none
@@ -76,12 +76,17 @@
                 }
 
                 function formatMetadataHtml(map) {
+                    let headersStr = '';
+                    map.headers.forEach(([key, value]) => {
+                        headersStr += `<div class="meta-row"><strong>${escapeHtml(key)}:</strong> ${escapeHtml(value)}</div>`;
+                    });
                     return `
                         <div class="meta-row"><strong>Status:</strong> ${map.status} ${escapeHtml(map.statusText)}</div>
                         <div class="meta-row"><strong>OK:</strong> ${map.ok}</div>
                         <div class="meta-row"><strong>Redirected:</strong> ${map.redirected}</div>
                         <div class="meta-row"><strong>Type:</strong> ${escapeHtml(map.type)}</div>
                         <div class="meta-row"><strong>URL:</strong> ${escapeHtml(map.url)}</div>
+                        <div class="meta-row"><strong>Headers:</strong> ${headersStr}</div>
                     `;
                 }
 
