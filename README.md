@@ -22,7 +22,7 @@ Generated sql/queries.lua with 9 queries.
         GET /api/guestbook
        POST /api/guestbook
         GET /health
-STATIC_FILE /api-client
+STATIC_FILE /preman
  STATIC_DIR /static
 Server uses:    Lua 5.5
 Running on http://127.0.0.1:8080
@@ -52,8 +52,8 @@ Routes(server) {
 
   { GET, "/health", function() return { status = "UP" } end },
 
-  { STATIC_FILE, "/api-client", "api-client.html" },
-  { STATIC_DIR,  "/static",     "static" },
+  { STATIC_FILE, "/preman", "preman.html" },
+  { STATIC_DIR,  "/static", "static" },
 
   fallback = chain { html } (function() return "Page not Found" end)
 }

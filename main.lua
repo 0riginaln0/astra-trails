@@ -149,8 +149,8 @@ Routes(server) {
 
   { GET, "/health", function() return { status = "UP" } end },
 
-  { STATIC_FILE, "/api-client", "api-client.html" },
-  { STATIC_DIR,  "/static",     "static" },
+  { STATIC_FILE, "/preman", "preman.html" },
+  { STATIC_DIR,  "/static", "static" },
 
   fallback = chain { html } (function() return "Page not Found" end)
 }

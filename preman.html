@@ -1,423 +1,87 @@
+<!-- Forked from https://github.com/DigiSoch/API_testing_utility -->
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>API Tester — Adaptive & Responsive</title>
+    <title>Preman</title>
     <style>
-        /* ---------- GLOBAL THEME ---------- */
         :root {
             color-scheme: dark light;
+            --sidebar-bg: canvas;
+            --sidebar-header-bg: color-mix(in srgb, currentColor 10%, transparent);
+            --sidebar-shadow: rgba(0, 0, 0, 0.1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --sidebar-shadow: rgba(255, 255, 255, 0.1);
+                --sidebar-header-bg: color-mix(in srgb, currentColor 30%, transparent);
+            }
         }
 
-        body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.5;
-            padding: 1rem;
-            background: Canvas;
-            color: CanvasText;
-            transition: background 0.2s ease, color 0.2s ease;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        /* ---------- TYPOGRAPHY ---------- */
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin: 1rem 0 1.5rem 0;
-            letter-spacing: -0.01em;
-            border-left: 4px solid currentColor;
-            padding-left: 0.75rem;
-            opacity: 0.85;
-        }
-
-        h3 {
-            font-size: 1.25rem;
-            font-weight: 500;
-            margin-bottom: 0.75rem;
-            opacity: 0.9;
-        }
-
-        /* ---------- MENU BAR — more visible border ---------- */
-        .menu-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid currentColor;
-            border-bottom-width: 1px;
-            border-bottom-style: solid;
-            border-bottom-color: color-mix(in srgb, currentColor 40%, transparent);
-            /* Increased opacity */
-        }
-
-        /* ---------- FORM GROUPS ---------- */
-        .input-group {
-            margin-bottom: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        label {
-            font-weight: 500;
-            font-size: 0.9rem;
-            letter-spacing: 0.3px;
-            opacity: 0.85;
-        }
-
-        input,
-        select,
-        textarea,
-        button {
-            font-family: inherit;
-            font-size: 0.95rem;
-        }
-
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 0.75rem 0.85rem;
-            border-radius: 12px;
-            border: 1px solid currentColor;
-            border-color: color-mix(in srgb, currentColor 40%, transparent);
-            background-color: color-mix(in srgb, currentColor 8%, transparent);
-            color: CanvasText;
-            transition: all 0.2s ease;
-            outline: none;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: currentColor;
-            background-color: color-mix(in srgb, currentColor 12%, transparent);
-            box-shadow: 0 0 0 2px color-mix(in srgb, currentColor 20%, transparent);
-        }
-
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-            line-height: 1.45;
-        }
-
-        #headers,
-        #body {
-            min-height: 130px;
-        }
-
-        /* ---------- BUTTONS — MUCH MORE VISIBLE (higher contrast) ---------- */
-        button {
-            background: color-mix(in srgb, currentColor 20%, transparent);
-            /* was 12% → much more solid */
-            border: 1px solid color-mix(in srgb, currentColor 60%, transparent);
-            color: CanvasText;
-            padding: 0.6rem 1.2rem;
-            border-radius: 40px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            backdrop-filter: blur(2px);
-            letter-spacing: 0.2px;
-        }
-
-        button:hover {
-            background: color-mix(in srgb, currentColor 32%, transparent);
-            /* stronger hover */
-            border-color: currentColor;
-            transform: translateY(-1px);
-        }
-
-        button:active {
-            transform: translateY(1px);
-            background: color-mix(in srgb, currentColor 40%, transparent);
-        }
-
-        .send-request-btn {
-            background: color-mix(in srgb, currentColor 28%, transparent);
-            font-weight: 600;
-            margin: 0.5rem 0 1rem 0;
-            width: auto;
-            min-width: 160px;
-            border-color: currentColor;
-        }
-
-        .send-request-btn:hover {
-            background: color-mix(in srgb, currentColor 40%, transparent);
-        }
-
-        /* ---------- RESPONSE BLOCK ---------- */
-        .response {
-            margin-top: 2rem;
-            padding: 1.25rem;
-            border-radius: 20px;
-            background: color-mix(in srgb, currentColor 4%, transparent);
-            border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
-        }
-
-        .response h3 {
-            margin-top: 0;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        .response pre {
-            background: color-mix(in srgb, currentColor 6%, transparent);
-            padding: 1rem;
-            border-radius: 16px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-break: break-word;
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            font-size: 0.85rem;
-            margin: 0.75rem 0;
-            border-left: 3px solid currentColor;
-        }
-
-        #status {
-            font-weight: 600;
-            background: color-mix(in srgb, currentColor 12%, transparent);
-            padding: 0.2rem 0.7rem;
-            border-radius: 40px;
-            display: inline-block;
-            font-family: monospace;
-        }
-
-        /* ---------- FORM DATA FIELDS ---------- */
-        #formFields {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            margin-bottom: 1rem;
-        }
-
-        .form-field {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 0.75rem;
-            background: color-mix(in srgb, currentColor 3%, transparent);
-            padding: 0.75rem;
-            border-radius: 20px;
-            transition: background 0.1s;
-        }
-
-        .form-field input,
-        .form-field select,
-        .form-field button {
-            flex: 1 1 auto;
-            min-width: 100px;
-        }
-
-        .form-field .field-key {
-            flex: 1.2;
-            min-width: 100px;
-        }
-
-        .form-field .field-type {
-            flex: 0.8;
-            min-width: 90px;
-        }
-
-        .form-field .field-value,
-        .form-field .field-file {
-            flex: 1.5;
-        }
-
-        .form-field button {
-            flex: 0.4;
-            min-width: 70px;
-            background: color-mix(in srgb, currentColor 18%, transparent);
-            padding: 0.5rem 0.8rem;
-        }
-
-        .field-file {
-            padding: 0.5rem;
-        }
-
-        #formDataInput>button {
-            margin-top: 0.5rem;
-            width: auto;
-        }
-
-        /* ---------- SAVED TESTS PANEL ---------- */
-        .saved-tests {
+        .saved-tests {  
             position: fixed;
             top: 0;
-            right: 0;
-            width: min(90%, 360px);
-            height: 100vh;
-            background: Canvas;
-            border-left: 1px solid color-mix(in srgb, currentColor 30%, transparent);
-            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.2);
-            transform: translateX(100%);
-            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background: var(--sidebar-bg);
+            transition: right 0.3s ease-in-out;
+            box-shadow: -2px 0 5px var(--sidebar-shadow);
             z-index: 1000;
-            padding: 1.5rem 1rem;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
         }
 
         .saved-tests.open {
-            transform: translateX(0);
+            right: 0;
         }
 
         .saved-tests h3 {
+            padding: 10px;
+            margin: 0;
+            background: var(--sidebar-header-bg);
+            color: canvastext;
+            cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent);
-            padding-bottom: 0.6rem;
-            margin-bottom: 0.5rem;
         }
 
-        #testsList {
-            display: flex;
-            flex-direction: column;
-            gap: 0.65rem;
+        textarea {
+            min-width: 333px;
+            min-height: 99px;
         }
 
-        .test-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: color-mix(in srgb, currentColor 8%, transparent);
-            padding: 0.75rem 1rem;
-            border-radius: 40px;
+        #url {
+            width: auto;
+            min-width: 333px;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        
+        #testsList .test-item {
+            display: block;
+            padding: 8px 12px;
+            margin: 4px 8px;
+            border-radius: 4px;
+            background: var(--sidebar-header-bg);
+            color: canvastext;
             cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+            transition: background 0.2s;
         }
 
-        .test-item:hover {
-            background: color-mix(in srgb, currentColor 18%, transparent);
-            transform: translateX(-3px);
+        #testsList .test-item:hover {
+            background: color-mix(in srgb, currentColor 20%, transparent);
         }
 
-        .test-item span:first-child {
-            font-weight: 500;
-            word-break: break-word;
-            max-width: 80%;
-        }
-
-        .delete-btn {
-            font-size: 1.6rem;
-            line-height: 1;
-            font-weight: 400;
-            color: CanvasText;
-            opacity: 0.7;
-            padding: 0 0.4rem;
-            transition: opacity 0.2s, transform 0.1s;
-            cursor: pointer;
-        }
-
-        .delete-btn:hover {
-            opacity: 1;
-            transform: scale(1.1);
-            color: color-mix(in srgb, red 70%, CanvasText);
-        }
-
-        /* ---------- RESPONSIVE ---------- */
-        @media (max-width: 640px) {
-            body {
-                padding: 0.85rem;
-            }
-
-            h1 {
-                font-size: 1.6rem;
-                margin: 0.75rem 0 1.2rem;
-            }
-
-            button {
-                padding: 0.5rem 1rem;
-                font-size: 0.9rem;
-            }
-
-            .menu-bar {
-                gap: 0.6rem;
-            }
-
-            .form-field {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .form-field input,
-            .form-field select,
-            .form-field button {
-                width: 100%;
-            }
-
-            .response pre {
-                font-size: 0.8rem;
-                padding: 0.75rem;
-            }
-
-            .saved-tests {
-                width: 85%;
-                padding: 1.2rem;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .input-group {
-                margin-bottom: 1.25rem;
-            }
-
-            textarea {
-                min-height: 110px;
-            }
-
-            #headers,
-            #body {
-                min-height: 140px;
-            }
-        }
-
-        select {
-            appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
-            background-repeat: no-repeat;
-            background-position: right 0.8rem center;
-            background-size: 1.1rem;
-            padding-right: 2rem;
-        }
-
-        input[type="file"] {
-            padding: 0.5rem;
-            background: color-mix(in srgb, currentColor 3%, transparent);
-        }
-
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: color-mix(in srgb, currentColor 5%, transparent);
-            border-radius: 8px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: color-mix(in srgb, currentColor 30%, transparent);
-            border-radius: 8px;
+        #testsList .test-item .delete-btn {
+            float: right;
+            margin-left: 8px;
+            color: inherit;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -433,10 +97,10 @@
             <button onclick="document.getElementById('importFile').click()">📥 Import Tests</button>
         </div>
 
-        <h1>🌐 API Tester</h1>
+        <h1>API Client</h1>
 
         <div class="input-group">
-            <label for="method">📌 Method:</label>
+            <label for="method">Method:</label>
             <select id="method">
                 <option value="GET">GET</option>
                 <option value="POST">POST</option>
@@ -447,18 +111,20 @@
         </div>
 
         <div class="input-group">
-            <label for="url">🔗 URL:</label>
+            <label for="url">URL:</label>
+            <br>
             <input type="text" id="url" placeholder="https://api.example.com/endpoint">
         </div>
 
         <div class="input-group">
-            <label for="headers">📋 Headers (JSON format):</label>
+            <label for="headers">Headers (JSON format):</label>
+            <br>
             <textarea id="headers"
                 placeholder='{"Content-Type": "application/json", "Authorization": "Bearer token"}'></textarea>
         </div>
 
         <div class="input-group">
-            <label>📦 Request Type:</label>
+            <label>Request Type:</label>
             <select id="requestType" onchange="toggleRequestInputs()">
                 <option value="json">JSON</option>
                 <option value="formData">Form Data</option>
@@ -466,12 +132,13 @@
         </div>
 
         <div id="jsonInput" class="input-group">
-            <label for="body">📝 Request Body (JSON format):</label>
+            <label for="body">Request Body (JSON format):</label>
+            <br>
             <textarea id="body" placeholder='{"key": "value", "nested": {"field": true}}'></textarea>
         </div>
 
         <div id="formDataInput" class="input-group" style="display: none;">
-            <label>📎 Form Data (multipart/form-data):</label>
+            <label>Form Data (multipart/form-data):</label>
             <div id="formFields">
                 <div class="form-field">
                     <input type="text" class="field-key" placeholder="Key">
@@ -487,10 +154,10 @@
             <button type="button" onclick="addFormField()">+ Add Field</button>
         </div>
 
-        <button class="send-request-btn" onclick="sendRequest()">🚀 Send Request</button>
+        <button class="send-request-btn" onclick="sendRequest()">Send Request</button>
 
         <div class="response">
-            <h3>📡 Response</h3>
+            <h3>Response</h3>
             <div><strong>Status:</strong> <span id="status">—</span></div>
             <div><strong>Headers:</strong>
                 <pre id="responseHeaders"></pre>
@@ -541,7 +208,6 @@
             const fieldDiv = select.parentElement;
             const fieldValue = fieldDiv.querySelector('.field-value');
             const fieldFile = fieldDiv.querySelector('.field-file');
-
             if (select.value === 'file') {
                 fieldValue.style.display = 'none';
                 fieldFile.style.display = 'block';
@@ -583,13 +249,10 @@
             } else {
                 const formData = new FormData();
                 const formFields = document.querySelectorAll('.form-field');
-
                 for (const field of formFields) {
                     const key = field.querySelector('.field-key').value;
                     const type = field.querySelector('.field-type').value;
-
                     if (!key) continue;
-
                     if (type === 'file') {
                         const fileInput = field.querySelector('.field-file');
                         if (fileInput.files.length > 0) {
@@ -605,20 +268,11 @@
             }
 
             try {
-                const response = await fetch(url, {
-                    method: method,
-                    headers: headers,
-                    body: body
-                });
-
+                const response = await fetch(url, { method, headers, body });
                 document.getElementById('status').textContent = `${response.status} ${response.statusText}`;
-
                 const responseHeaders = {};
-                response.headers.forEach((value, key) => {
-                    responseHeaders[key] = value;
-                });
+                response.headers.forEach((value, key) => { responseHeaders[key] = value; });
                 document.getElementById('responseHeaders').textContent = JSON.stringify(responseHeaders, null, 2);
-
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
                     const responseBody = await response.json();
@@ -658,7 +312,6 @@
         function saveCurrentTest() {
             const testName = prompt('Enter a name for this test case:');
             if (!testName) return;
-
             const formDataFields = [];
             document.querySelectorAll('#formFields .form-field').forEach(field => {
                 const key = field.querySelector('.field-key').value;
@@ -666,7 +319,6 @@
                 const value = field.querySelector('.field-value').value;
                 formDataFields.push({ key, type, value });
             });
-
             const testCase = {
                 name: testName,
                 method: document.getElementById('method').value,
@@ -676,7 +328,6 @@
                 body: document.getElementById('body').value,
                 formData: formDataFields
             };
-
             let savedTests = JSON.parse(localStorage.getItem('apiTests') || '[]');
             savedTests.push(testCase);
             localStorage.setItem('apiTests', JSON.stringify(savedTests));
@@ -691,10 +342,8 @@
             document.getElementById('requestType').value = test.requestType;
             document.getElementById('body').value = test.body;
             toggleRequestInputs();
-
             const formFieldsContainer = document.getElementById('formFields');
             formFieldsContainer.innerHTML = '';
-
             if (test.formData && test.formData.length) {
                 test.formData.forEach(field => {
                     const newField = document.createElement('div');
@@ -746,7 +395,6 @@
         function updateTestsList() {
             const testsList = document.getElementById('testsList');
             const savedTests = JSON.parse(localStorage.getItem('apiTests') || '[]');
-
             const escapeHtml = (str) => {
                 if (!str) return '';
                 return str.replace(/[&<>]/g, function (m) {
@@ -756,14 +404,12 @@
                     return m;
                 });
             };
-
             testsList.innerHTML = savedTests.map((test, index) => `
             <div class="test-item" data-index="${index}">
                 <span>${escapeHtml(test.name)}</span>
                 <span class="delete-btn" data-index="${index}">✕</span>
             </div>
         `).join('');
-
             document.querySelectorAll('.test-item').forEach(item => {
                 item.addEventListener('click', (e) => {
                     if (e.target.classList.contains('delete-btn')) return;
@@ -772,7 +418,6 @@
                     toggleSavedTests();
                 });
             });
-
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -785,9 +430,7 @@
         function toggleSavedTests() {
             const sidebar = document.getElementById('savedTests');
             sidebar.classList.toggle('open');
-            if (sidebar.classList.contains('open')) {
-                updateTestsList();
-            }
+            if (sidebar.classList.contains('open')) updateTestsList();
         }
 
         function exportTests() {
