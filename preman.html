@@ -63,6 +63,7 @@
                         // clone to avoid consuming the original response
                         map.body = await response.clone().json();
                         map.body_type = "json"
+                        map.body = `<code>${JSON.stringify(map.body, null, 2)}</code>`
                     } catch (e) {
                         try {
                             map.body = await response.clone().text();
@@ -120,8 +121,8 @@
                     set metaHtml to formatMetadataHtml(map)
                     put metaHtml into #response-meta's innerHTML
 
-                    if map.body_type is 'json' then                
-                        set body to map.body as JSON
+                    if map.body_type is 'json' then
+                        set body to map.body
                     else
                         set body to map.body as HTML
                     end

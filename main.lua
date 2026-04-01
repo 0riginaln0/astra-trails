@@ -1,7 +1,7 @@
 local server = require("http").server:new()
 local sc = require("http").status_codes
 local validation = require("validation")
-
+local serde = require("serde")
 
 local routing = require("routing")
 local Routes, scope = routing.Routes, routing.scope
@@ -24,7 +24,7 @@ require("lugsql")("sql/queries.sql", "sqlite")
 
 local db = require("database").new("sqlite", "db.sqlite")
 local queries = require("sql.queries")(db)
--- queries.drop_tables()
+queries.drop_tables()
 queries.create_tables()
 
 
@@ -76,13 +76,16 @@ local function post_api_guestbook(rq, rp)
 end
 
 
+---@param rq HTTPServerRequest
+---@param rp HTTPServerResponse
 local function get_api_guestbook(rq, rp)
   local ok, result = queries.get_messages()
   if not ok then
     rp:set_status_code(sc.BAD_REQUEST)
     return { error = result }
   end
-  return result
+  rp:set_header('content-type', 'application/json')
+  return serde.json.encode(result)
 end
 
 

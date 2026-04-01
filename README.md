@@ -6,7 +6,7 @@ Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astr
 - [Routes grouping](routing.md): DSL to register a group of routes in one place.
 - [Templating with Lustache](lustache.md): Full overview of Mustache templates in pure Lua.
 - [LugSQL](lugsql.md): Turns parameterized SQL into Lua functions.
-- [Preman](preman.md): Single‑file HTML API client. Grug‑approved.
+- [Preman](preman.md): Single-file HTML API client. Grug-approved.
 
 Check out [main.lua](main.lua) for an app example.
 
