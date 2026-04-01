@@ -2,151 +2,262 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Preman</title>
-    <script src="/static/_hyperscript.min.js"></script>
-    <style>
-        :root {
-            color-scheme: dark light;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Preman</title>
+  <script src="/static/_hyperscript.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark light;
+    }
+  </style>
 </head>
 
 <body>
 
-    <label>Protocol:</label>
-    <input type="radio" name="protocol" value="http" checked> http
-    <input type="radio" name="protocol" value="https"> https
+  <label>Protocol:</label>
+  <input type="radio" name="protocol" value="http" checked> http
+  <input type="radio" name="protocol" value="https"> https
+  <br><br>
+
+  <label for="domain">Domain:</label>
+  <input type="text" id="domain" value="127.0.0.1:8080" style="width: 200px;">
+  <br><br>
+
+  <label for="path">Path:</label>
+  <input type="text" id="path" value="/health" style="width: 200px;">
+  <br><br>
+
+  <label>HTTP Method:</label>
+  <select id="method" style="width: 100px;">
+    <option value="GET" selected>GET</option>
+    <option value="POST">POST</option>
+    <option value="PUT">PUT</option>
+    <option value="PATCH">PATCH</option>
+    <option value="DELETE">DELETE</option>
+    <option value="HEAD">HEAD</option>
+    <option value="OPTIONS">OPTIONS</option>
+  </select>
+  <br><br>
+
+  <!-- additional fetch options -->
+  <fieldset>
+    <legend>Additional fetch options (RequestInit)</legend>
+
+    <label for="headers-json">Headers (JSON):</label><br>
+    <textarea id="headers-json" rows="3" cols="60" placeholder='{ "Content-Type": "application/json" }'>{}</textarea>
     <br><br>
 
-    <label for="domain">Domain:</label>
-    <input type="text" id="domain" value="127.0.0.1:8080" style="width: 200px;">
+    <label for="request-body">Request body (raw string):</label><br>
+    <textarea id="request-body" rows="4" cols="60" placeholder='Optional payload'></textarea>
     <br><br>
 
-    <label for="path">Path:</label>
-    <input type="text" id="path" value="/health" style="width: 200px;">
-    <br><br>
-
-    <label>HTTP Method:</label>
-    <select id="method" style="width: 100px;">
-      <option value="GET" selected>GET</option>
-      <option value="POST">POST</option>
-      <option value="PUT">PUT</option>
-      <option value="PATCH">PATCH</option>
-      <option value="DELETE">DELETE</option>
-      <option value="HEAD">HEAD</option>
-      <option value="OPTIONS">OPTIONS</option>
+    <label for="mode">mode:</label>
+    <select id="mode">
+      <option value="cors" selected>cors</option>
+      <option value="no-cors">no-cors</option>
+      <option value="same-origin">same-origin</option>
     </select>
-    <br><br>
 
-    <script type="text/hyperscript">
-            js
-                async function responseToMap(response) {
-                    const map = {
-                        status: response.status,
-                        statusText: response.statusText,
-                        ok: response.ok,
-                        redirected: response.redirected,
-                        type: response.type,
-                        url: response.url,
-                        headers: [],
-                        body: null,
-                    };
-    
-                    const headers = response.headers;
-                    headers.forEach((value, key) => {
-                        map.headers.push([key, value]);
-                    });
-    
-                    // Extract body: try JSON first, fallback to text, null if none
-                    try {
-                        // clone to avoid consuming the original response
-                        map.body = await response.clone().json();
-                        map.body_type = "json"
-                        map.body = `<code>${JSON.stringify(map.body, null, 2)}</code>`
-                    } catch (e) {
-                        try {
-                            map.body = await response.clone().text();
-                            map.body_type = "text"
-                        } catch (e) {
-                            map.body = null;
-                        }
-                    }
-    
-                    return map;
-                }
+    <label for="credentials">credentials:</label>
+    <select id="credentials">
+      <option value="same-origin" selected>same-origin</option>
+      <option value="include">include</option>
+      <option value="omit">omit</option>
+    </select>
 
-                function formatMetadataHtml(map) {
-                    let headersStr = '';
-                    map.headers.forEach(([key, value]) => {
-                        headersStr += `<div class="meta-row"><strong>${escapeHtml(key)}:</strong> ${escapeHtml(value)}</div>`;
-                    });
-                    return `
-                        <div class="meta-row"><strong>Status:</strong> ${map.status} ${escapeHtml(map.statusText)}</div>
-                        <div class="meta-row"><strong>OK:</strong> ${map.ok}</div>
-                        <div class="meta-row"><strong>Redirected:</strong> ${map.redirected}</div>
-                        <div class="meta-row"><strong>Type:</strong> ${escapeHtml(map.type)}</div>
-                        <div class="meta-row"><strong>URL:</strong> ${escapeHtml(map.url)}</div>
-                        <div class="meta-row"><strong>Headers:</strong> ${headersStr}</div>
-                    `;
-                }
+    <label for="cache">cache:</label>
+    <select id="cache">
+      <option value="default" selected>default</option>
+      <option value="no-cache">no-cache</option>
+      <option value="reload">reload</option>
+      <option value="force-cache">force-cache</option>
+      <option value="only-if-cached">only-if-cached</option>
+    </select>
 
-                // Simple XSS prevention
-                function escapeHtml(str) {
-                    if (typeof str !== 'string') return str;
-                    return str.replace(/[&<>]/g, function(m) {
-                        if (m === '&') return '&amp;';
-                        if (m === '<') return '&lt;';
-                        if (m === '>') return '&gt;';
-                        return m;
-                    });
-                }
+    <label for="redirect">redirect:</label>
+    <select id="redirect">
+      <option value="follow" selected>follow</option>
+      <option value="error">error</option>
+      <option value="manual">manual</option>
+    </select>
+  </fieldset>
+  <br><br>
 
-                return { responseToMap, formatMetadataHtml, escapeHtml };
-            end
-        </script>
-    
-    <!-- Button: all heavy lifting done by JS functions -->
-    <button _="on click
-                    set protocol to the value of <input[name='protocol']:checked/>
-                    set domain to #domain's value
-                    set path to #path's value
-                    set full_url to `${protocol}://${domain}${path}`
-    
-                    fetch `${full_url}` as response with method: `${#method's value}`
-                    set resp to it
-                    call responseToMap(resp)
-                    set map to it
+  <!-- Button: calls the JS function that uses plain fetch -->
+  <button _="on click call sendRequestWithOptions()">
+    Send request (with advanced options)
+  </button>
 
-                    set metaHtml to formatMetadataHtml(map)
-                    put metaHtml into #response-meta's innerHTML
+  <div id="response-meta">
+    No request sent yet.
+  </div>
 
-                    if map.body_type is 'json' then
-                        set body to map.body
-                    else
-                        set body to map.body as HTML
-                    end
+  <div>-------------------------------------------------</div>
 
-                    put body into #result's shadowRoot.innerHTML
-
-                    catch error
-                        put `Error occurred: ${error.message}` into #result's shadowRoot.innerHTML
-                    end">
-        Send request!
-    </button>
-
-    <div id="response-meta">
-        No request sent yet.
-    </div>
-
-    <div>-------------------------------------------------</div>
-
-    <div id="result" 
-         _="init
+  <div id="result" _="init
               attachShadow({ mode: 'open' }) on me
               put 'Click button to see response...' into my shadowRoot's innerHTML
-              ">
-    </div>
+            ">
+  </div>
 
+
+
+  <script type="text/hyperscript">
+            js
+            // helper: escape HTML
+            function escapeHtml(str) {
+                if (typeof str !== 'string') return str;
+                return str.replace(/[&<>]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
+                });
+            }
+
+            // convert response to map with metadata + body
+            async function responseToMap(response) {
+                const map = {
+                    status: response.status,
+                    statusText: response.statusText,
+                    ok: response.ok,
+                    redirected: response.redirected,
+                    type: response.type,
+                    url: response.url,
+                    headers: [],
+                    body: null,
+                    body_type: null
+                };
+
+                // collect headers
+                const headers = response.headers;
+                headers.forEach((value, key) => {
+                    map.headers.push([key, value]);
+                });
+
+                // clone to preserve original response for body reading
+                const cloned = response.clone();
+                try {
+                    const jsonBody = await cloned.json();
+                    map.body = `<code>${JSON.stringify(jsonBody, null, 2)}</code>`;
+                    map.body_type = "json";
+                } catch (e) {
+                    try {
+                        const textBody = await cloned.text();
+                        map.body = textBody;
+                        map.body_type = "text";
+                    } catch (e2) {
+                        map.body = null;
+                        map.body_type = "none";
+                    }
+                }
+                return map;
+            }
+
+            function formatMetadataHtml(map) {
+                let headersStr = '';
+                map.headers.forEach(([key, value]) => {
+                    headersStr += `<div class="meta-row"><strong>${escapeHtml(key)}:</strong> ${escapeHtml(value)}</div>`;
+                });
+                return `
+                    <div class="meta-row"><strong>Status:</strong> ${map.status} ${escapeHtml(map.statusText)}</div>
+                    <div class="meta-row"><strong>OK:</strong> ${map.ok}</div>
+                    <div class="meta-row"><strong>Redirected:</strong> ${map.redirected}</div>
+                    <div class="meta-row"><strong>Type:</strong> ${escapeHtml(map.type)}</div>
+                    <div class="meta-row"><strong>URL:</strong> ${escapeHtml(map.url)}</div>
+                    <div class="meta-row"><strong>Headers:</strong> ${headersStr}</div>
+                `;
+            }
+
+            // main function that reads UI, builds fetch options, sends request, and updates DOM
+            async function sendRequestWithOptions() {
+                // get URL parts
+                const protocol = document.querySelector('input[name="protocol"]:checked').value;
+                const domain = document.getElementById('domain').value;
+                const path = document.getElementById('path').value;
+                const fullUrl = `${protocol}://${domain}${path}`;
+
+                // get basic method
+                const method = document.getElementById('method').value;
+
+                // parse headers JSON
+                let headers = {};
+                const headersText = document.getElementById('headers-json').value;
+                if (headersText.trim()) {
+                    try {
+                        headers = JSON.parse(headersText);
+                        if (typeof headers !== 'object' || Array.isArray(headers)) {
+                            throw new Error('Headers must be a JSON object');
+                        }
+                    } catch (e) {
+                        document.getElementById('result').shadowRoot.innerHTML = `Headers error: ${e.message}`;
+                        return;
+                    }
+                }
+
+                // get other options
+                let body = document.getElementById('request-body').value;
+                const mode = document.getElementById('mode').value;
+                const credentials = document.getElementById('credentials').value;
+                const cache = document.getElementById('cache').value;
+                const redirect = document.getElementById('redirect').value;
+
+                // For GET and HEAD, body must be omitted (HTTP spec prohibits a body)
+                if (method === 'GET' || method === 'HEAD') {
+                    body = undefined;
+                    // optional: notify user if they tried to set a body
+                    if (document.getElementById('request-body').value.trim() !== '') {
+                        console.warn(`Body ignored for ${method} request (HTTP does not allow a body).`);
+                        // could show a small warning in UI, but not required
+                    }
+                } else {
+                    // for other methods, use body if provided, otherwise undefined
+                    body = body || undefined;
+                }
+
+                // build fetch options object
+                const fetchOptions = {
+                    method,
+                    headers,
+                    mode,
+                    credentials,
+                    cache,
+                    redirect
+                };
+                if (body !== undefined) {
+                    fetchOptions.body = body;
+                }
+
+                // clear previous output
+                const resultDiv = document.getElementById('result');
+                const metaDiv = document.getElementById('response-meta');
+                metaDiv.innerHTML = 'Sending request...';
+                resultDiv.shadowRoot.innerHTML = 'Waiting for response...';
+
+                try {
+                    // perform fetch
+                    const response = await fetch(fullUrl, fetchOptions);
+                    const map = await responseToMap(response);
+                    const metaHtml = formatMetadataHtml(map);
+                    metaDiv.innerHTML = metaHtml;
+
+                    // display body
+                    if (map.body_type === 'json') {
+                        resultDiv.shadowRoot.innerHTML = map.body;
+                    } else if (map.body_type === 'text') {
+                        resultDiv.shadowRoot.innerHTML = `<pre>${escapeHtml(map.body)}</pre>`;
+                    } else {
+                        resultDiv.shadowRoot.innerHTML = '(No body)';
+                    }
+                } catch (error) {
+                    metaDiv.innerHTML = `Error: ${error.message}`;
+                    resultDiv.shadowRoot.innerHTML = `Request failed: ${error.message}`;
+                }
+            }
+
+            return { sendRequestWithOptions, responseToMap, formatMetadataHtml, escapeHtml };
+        end
+    </script>
 </body>
+
 </html>
