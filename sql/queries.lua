@@ -7,6 +7,13 @@ local function parse_args(args, order)
   return params
 end
 
+local function assert_args(args, order, func_name)
+  assert(args ~= nil, "No args passed in `"..func_name.."`.")
+  for i, name in ipairs(order) do
+    assert(args[name] ~= nil, "Missing argument `"..name.."` in query `"..func_name.."`" )
+  end
+end
+
 return function(db)
   local M = {}
 
@@ -38,6 +45,7 @@ DROP TABLE IF EXISTS users;
   ---@param args { name: string, active: number }
   function M.insert_user(args)
     local order = { 'name', 'active' }
+    assert_args(args, order, 'insert_user')
     local ok, result = pcall(db.execute, db, [[
 INSERT INTO users (name, active) VALUES (?1, ?2);
 ]], parse_args(args, order))
@@ -48,6 +56,7 @@ INSERT INTO users (name, active) VALUES (?1, ?2);
   ---@param args { id: number }
   function M.get_user(args)
     local order = { 'id' }
+    assert_args(args, order, 'get_user')
     local ok, result = pcall(db.query_one, db, [[
 SELECT * FROM users WHERE id = ?1;
 ]], parse_args(args, order))
@@ -57,6 +66,7 @@ SELECT * FROM users WHERE id = ?1;
   ---@param args { name: string, id: number }
   function M.update_user_name(args)
     local order = { 'name', 'id' }
+    assert_args(args, order, 'update_user_name')
     local ok, result = pcall(db.execute, db, [[
 UPDATE users SET name = ?1 WHERE id = ?2;
 ]], parse_args(args, order))
@@ -73,6 +83,7 @@ SELECT * FROM users WHERE active = 1;
   ---@param args { name: string, message: string }
   function M.save_message(args)
     local order = { 'name', 'message' }
+    assert_args(args, order, 'save_message')
     local ok, result = pcall(db.execute, db, [[
 INSERT INTO guestbook (name, message)
 VALUES (?1, ?2);
@@ -83,6 +94,7 @@ VALUES (?1, ?2);
   ---@param args { name: string }
   function M.get_messages_by_name(args)
     local order = { 'name' }
+    assert_args(args, order, 'get_messages_by_name')
     local ok, result = pcall(db.query_all, db, [[
 SELECT id, message, timestamp
 FROM guestbook

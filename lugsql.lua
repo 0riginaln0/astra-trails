@@ -135,6 +135,13 @@ local function parse_args(args, order)
   return params
 end
 
+local function assert_args(args, order, func_name)
+  assert(args ~= nil, "No args passed in `"..func_name.."`.")
+  for i, name in ipairs(order) do
+    assert(args[name] ~= nil, "Missing argument `"..name.."` in query `"..func_name.."`" )
+  end
+end
+
 return function(db)
   local M = {}
 ]])
@@ -171,6 +178,7 @@ return function(db)
       table.insert(lines, string.format("  ---@param args { %s }", table.concat(parts, ", ")))
       table.insert(lines, string.format("  function M.%s(args)", func_name))
       table.insert(lines, string.format("    local order = %s", table:to_string(order)))
+      table.insert(lines, string.format("    assert_args(args, order, '%s')", func_name))
       table.insert(lines, string.format("    local ok, result = pcall(db.%s, db, %s, parse_args(args, order))", method, sql_str))
       table.insert(lines, string.format("    return ok, result"))
     end
