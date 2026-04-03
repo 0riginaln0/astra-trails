@@ -51,7 +51,7 @@ class App < Roda
 end
 ```
 
-Astra equivalent (Lua)
+Trails equivalent (Lua)
 
 ```lua
 Routes(server) {
@@ -79,7 +79,7 @@ Routes(server) {
 }
 ```
 
-Astra equivalent (MoonScript/YueScript)
+Trails equivalent (MoonScript/YueScript)
 
 ```moonscript
 Routes(server) {
