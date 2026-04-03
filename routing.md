@@ -85,20 +85,20 @@ Trails equivalent (MoonScript/YueScript)
 Routes(server) {
   middleware: ctx
 
-  { GET, "/", (_, rp) -> rp\redirect_to("/hello") }
+  [ GET, "/", (_, rp) -> rp\redirect_to("/hello") ]
 
   scope("/hello") {
     middleware: (next_handler) -> (rq, rp, ctx) ->
       ctx.greeting = "Hello"
       next_handler(rq, rp, ctx)
 
-    { GET, "/world", (_, _, ctx) -> "#{ctx.greeting} world!" }
+    [ GET, "/world", (_, _, ctx) -> "#{ctx.greeting} world!" ]
 
-    { GET, "", (_, _, ctx) -> "#{ctx.greeting}!" }
+    [ GET, "", (_, _, ctx) -> "#{ctx.greeting}!" ]
 
-    { POST, "", (_, rp, ctx) ->
+    [ POST, "", (_, rp, ctx) ->
       print "Someone said #{ctx.greeting}!"
-      rp\redirect_to("/hello") }
+      rp\redirect_to("/hello") ]
   }
 }
 ```
