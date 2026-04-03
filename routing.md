@@ -94,7 +94,7 @@ Routes(server) {
 
   { GET, "/", (_, rp) -> rp\redirect_to("/hello") }
 
-  scope "/hello", {
+  scope("/hello") {
     base_middleware: (next_handler) -> (rq, rp, ctx) ->
       ctx.greeting = "Hello"
       next_handler(rq, rp, ctx)
