@@ -101,7 +101,7 @@ Routes(server) {
 
     { GET, "/world", (_, _, ctx) -> "#{ctx.greeting} world!" }
 
-    { GET, "", (_, _, ctx) -> "#{ctx.greeting} !" }
+    { GET, "", (_, _, ctx) -> "#{ctx.greeting}!" }
 
     { POST, "", (_, rp, ctx) ->
       print "Someone said #{ctx.greeting}!"
