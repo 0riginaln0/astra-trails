@@ -126,22 +126,38 @@ end
 
 Trails
 ```moonscript
+server = require("http").server.new!
+:Routes, :scope, :GET, :POST = require("routing")
+context: ctx, :chain = require("middleware")
+
+not_found = (next_handler) -> (rq, rp, ctx) ->
+  ok, result = pcall(next_handler, rq, rp, ctx)
+  if ok
+    return result
+  if result.status == 404
+    rp\set_status_code(404)
+    result.message
+
+Employee = {
+  [1]: {name: "Bob"}
+  [2]: {name: "Boba"}
+  [3]: {name: "Bobab"}
+}
+
 Routes(server) {
-  middleware: ctx access_check
+  middleware: chain [ctx, not_found]
 
   scope("/employee/{employee_id}") {
     middleware: (next_handler) -> (rq, rp, ctx) ->
       employee_id = rq\params().employee_id
 
       if type(employee_id) ~= "number"
-        rp\set_status_code(404)
-        return "Employee not found"
+        error status: 404, message: "Employee not found. id is not a number"
 
       ctx.employee = Employee[employee_id]
       
       unless ctx.employee
-        rp\set_status_code(404)
-        return "Employee not found"
+        error status: 404, message: "Employee not found"
       
       next_handler(rq, rp, ctx)
        
@@ -152,4 +168,6 @@ Routes(server) {
       rp\redirect_to(rq\uri()) }
   }
 }
+
+server\run!
 ```
