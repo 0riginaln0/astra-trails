@@ -32,12 +32,12 @@ Short snippet:
 
 ```lua
 Routes(server) {
-  base_middleware = chain { ctx, logger },
+  middleware = chain { ctx, logger },
 
   { GET,  "/",          html(homepage) },
 
   scope {
-    base_middleware = html,
+    middleware = html,
     { GET, "/hello",     function() return "hello world" end },
     { GET, "/tier-list", tier_list },
   },

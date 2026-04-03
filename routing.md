@@ -1,14 +1,14 @@
 
 ```lua
 Routes(server) {
-  base_middleware = ctx,
+  middleware = ctx,
   { "GET", "/", homepage },
   scope "/api" {
     { "GET",  "/todos", todos },
     { "POST", "/todos", post_todo },
   }
   scope {
-     base_middleware = auth,
+     middleware = auth,
      { "GET", "/admin", dashboard },
   }
 }
@@ -55,12 +55,12 @@ Trails equivalent (Lua)
 
 ```lua
 Routes(server) {
-  base_middleware = ctx,
+  middleware = ctx,
 
   { GET, "/", function(_, rp) rp:redirect_to("/hello") end },
 
   scope "/hello" {
-    base_middleware = function(next_handler)
+    middleware = function(next_handler)
       return function(rq, rp, ctx)
         ctx.greeting = 'Hello'
         return next_handler(rq, rp, ctx)
@@ -83,12 +83,12 @@ Trails equivalent (MoonScript/YueScript)
 
 ```moonscript
 Routes(server) {
-  base_middleware: ctx
+  middleware: ctx
 
   { GET, "/", (_, rp) -> rp\redirect_to("/hello") }
 
   scope("/hello") {
-    base_middleware: (next_handler) -> (rq, rp, ctx) ->
+    middleware: (next_handler) -> (rq, rp, ctx) ->
       ctx.greeting = "Hello"
       next_handler(rq, rp, ctx)
 

@@ -9,12 +9,12 @@ local logger = require("middleware").console_logger
 local chain = require("middleware").chain
 
 Routes(server) {
-  base_middleware = ctx,
+  middleware = ctx,
 
   { GET, "/", function(rq, rp) rp:redirect_to("/hello") end },
 
   scope "/hello" {
-    base_middleware = function(next_handler)
+    middleware = function(next_handler)
       return function(rq, rp, ctx)
         ctx.greeting = 'Hello'
         return next_handler(rq, rp, ctx)

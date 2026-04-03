@@ -49,13 +49,13 @@ function r.Routes(server)
     for _, entry in ipairs(block) do
       if entry._scope then
         -- Nested scope: recursively process its inner block.
-        if not entry.block.base_middleware then
+        if not entry.block.middleware then
           process_block(entry.block, current_prefix..entry._scope, current_middleware)
         else
           if current_middleware then
-            process_block(entry.block, current_prefix..entry._scope, chain({ current_middleware, entry.block.base_middleware }))
+            process_block(entry.block, current_prefix..entry._scope, chain({ current_middleware, entry.block.middleware }))
           else
-            process_block(entry.block, current_prefix..entry._scope, entry.block.base_middleware)
+            process_block(entry.block, current_prefix..entry._scope, entry.block.middleware)
           end
         end
       else
@@ -80,11 +80,11 @@ function r.Routes(server)
   -- The callable that receives the top‑level DSL block.
   return function(block)
     -- Start with empty prefix and the base middleware (if any)
-    process_block(block, "", block.base_middleware)
+    process_block(block, "", block.middleware)
 
     if block.fallback then
-      if block.base_middleware then
-        server:fallback(block.base_middleware(block.fallback))
+      if block.middleware then
+        server:fallback(block.middleware(block.fallback))
       else
         server:fallback(block.fallback)
       end
