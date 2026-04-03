@@ -102,3 +102,54 @@ Routes(server) {
   }
 }
 ```
+
+Roda 2
+
+```ruby
+Roda.route do |r|
+  access_check!(r.ip)
+  r.on "employee", Integer do |employee_id|
+    next unless employee = Employee[employee_id]
+
+    r.is "name" do
+      r.get do
+        "Hello #{employee.name}"
+      end
+
+      r.post do
+        employee.update(name: r.params['name'])
+        r.redireect
+      end
+    end
+end
+```
+
+Trails
+```moonscript
+Routes(server) {
+  middleware: ctx access_check
+
+  scope("/employee/{employee_id}") {
+    middleware: (next_handler) -> (rq, rp, ctx) ->
+      employee_id = rq\params().employee_id
+
+      if type(employee_id) ~= "number"
+        rp\set_status_code(404)
+        return "Employee not found"
+
+      ctx.employee = Employee[employee_id]
+      
+      unless ctx.employee
+        rp\set_status_code(404)
+        return "Employee not found"
+      
+      next_handler(rq, rp, ctx)
+       
+    { GET, "/name", (_, _, ctx) -> "Hello #{ctx.employee.name}" }
+
+    { POST, "/name", (rq, rp, ctx) ->
+      ctx.employee.name = rq\queries()['name']
+      rp\redirect_to(rq\uri()) }
+  }
+}
+```
