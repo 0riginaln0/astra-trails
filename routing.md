@@ -73,7 +73,7 @@ Routes(server) {
 
     { POST, "", function(_, rp, ctx)
       print("Someone said "..ctx.greeting.."!")
-      rp:redirect_to("/hello")
+      rp:redirect_to(rq:uri())
     end }
   },
 }
@@ -98,7 +98,7 @@ Routes(server) {
 
     { POST, "", (_, rp, ctx) ->
       print "Someone said #{ctx.greeting}!"
-      rp\redirect_to("/hello") }
+      rp\redirect_to(rq\uri()) }
   }
 }
 ```
