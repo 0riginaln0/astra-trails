@@ -9,7 +9,9 @@ Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astr
 
 Check out [main.lua](main.lua) for an app example.
 
-Run it with:
+```sh
+$ astra export
+```
 
 ```sh
 $ astra run main.lua 
