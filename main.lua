@@ -128,7 +128,11 @@ local function post_guestbook_form(rq, rp)
   return ""
 end
 
-Routes(server) {
+local today_app = Routes {
+  { GET, "/today", function() return "Today is "..os.date() end}
+}
+
+local app = Routes {
   middleware = chain { ctx, logger },
 
   { GET, "/", html(homepage) },
@@ -152,8 +156,18 @@ Routes(server) {
   { STATIC_FILE, "/preman", "preman.html" },
   { STATIC_DIR,  "/static", "static" },
 
+  today_app,
+
+  scope "/games" {
+    scope "/guess_number" {
+      require("guess_number_game")
+    }
+  },
+
   fallback = chain { html } (function() return "Page not Found" end)
 }
+
+app(server)
 
 require("print-server-info")(server)
 server:run()

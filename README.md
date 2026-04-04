@@ -12,7 +12,7 @@ Check out [main.lua](main.lua) for an app example.
 Run it with:
 
 ```sh
-$ astra run main.lua
+$ astra run main.lua 
 Generated sql/queries.lua with 9 queries.
         GET /
         GET /hello
@@ -24,17 +24,24 @@ Generated sql/queries.lua with 9 queries.
         GET /health
 STATIC_FILE /preman
  STATIC_DIR /static
+        GET /today
+        GET /games/guess_number
+       POST /games/guess_number
 Server uses:    Lua 5.5
 Running on http://127.0.0.1:8080
 ```
 
-Short snippet:
+A (not so) short snippet:
 
 ```lua
-Routes(server) {
+local today_app = Routes {
+  { GET, "/today", function() return "Today is "..os.date() end}
+}
+
+local app = Routes {
   middleware = chain { ctx, logger },
 
-  { GET,  "/",          html(homepage) },
+  { GET, "/", html(homepage) },
 
   scope {
     middleware = html,
@@ -55,8 +62,18 @@ Routes(server) {
   { STATIC_FILE, "/preman", "preman.html" },
   { STATIC_DIR,  "/static", "static" },
 
+  today_app,
+
+  scope "/games" {
+    scope "/guess_number" {
+      require("guess_number_game")
+    }
+  },
+
   fallback = chain { html } (function() return "Page not Found" end)
 }
+
+app(server)
 
 require("print-server-info")(server)
 server:run()

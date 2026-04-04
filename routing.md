@@ -1,6 +1,10 @@
 
 ```lua
-Routes(server) {
+local subapp = Routes {
+  -- ...
+}
+
+local app = Routes {
   middleware = ctx,
   { "GET", "/", homepage },
   scope "/api" {
@@ -8,13 +12,16 @@ Routes(server) {
     { "POST", "/todos", post_todo },
   }
   scope {
-     middleware = auth,
-     { "GET", "/admin", dashboard },
+    middleware = auth,
+    { "GET", "/admin", dashboard },
   }
+
+  subapp,
 }
 ```
 Read more about why we can drop parenthesis while calling `Routes` and `scope` functions here: [Writing a DSL in Lua](https://leafo.net/guides/dsl-in-lua.html)
 
+It even has a 'subapps' support! You can register a group of route within a group of route.
 
 # Comparison with...
 
@@ -54,7 +61,7 @@ end
 Trails equivalent (Lua)
 
 ```lua
-Routes(server) {
+local app = Routes {
   middleware = ctx,
 
   { GET, "/", function(_, rp) rp:redirect_to("/hello") end },
@@ -82,7 +89,7 @@ Routes(server) {
 Trails equivalent (MoonScript/YueScript)
 
 ```moonscript
-Routes(server) {
+app = Routes {
   middleware: ctx
 
   { GET, "/", (_, rp) -> rp\redirect_to("/hello") }
@@ -145,7 +152,7 @@ Employee = {
   [3]: {name: "Bobab"}
 }
 
-Routes(server) {
+app = Routes {
   middleware: chain [ctx, not_found]
 
   scope("/employee/{employee_id}") {
@@ -169,6 +176,8 @@ Routes(server) {
       rp\redirect_to(rq\uri()) }
   }
 }
+
+app(server)
 
 server\run!
 ```
