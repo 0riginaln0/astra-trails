@@ -143,7 +143,7 @@ not_found = (next_handler) -> (rq, rp, ctx) ->
     return result
   if result.status == 404
     rp\set_status_code(404)
-    result.message
+    return result.message
   error result
 
 Employee = {
