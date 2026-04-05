@@ -101,7 +101,7 @@ local function escape_lua_string(str)
   end
 end
 
----@param str string SQL template with named placeholders like :name
+---@param str string SQL template with named placeholders
 ---@param dialect "sqlite"|"postgres"
 local function SQL(str, dialect)
   local order = {}
