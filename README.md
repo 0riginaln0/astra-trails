@@ -19,6 +19,8 @@ Generated sql/queries.lua with 9 queries.
         GET /
         GET /hello
         GET /tier-list
+        GET /hype
+       POST /hype/like
         GET /guestbook
        POST /guestbook
         GET /api/guestbook
@@ -47,8 +49,10 @@ local app = Routes {
 
   scope {
     middleware = html,
-    { GET, "/hello",     function() return "hello world" end },
-    { GET, "/tier-list", tier_list },
+    { GET,  "/hello",     function() return "hello world" end },
+    { GET,  "/tier-list", tier_list },
+    { GET,  "/hype",      hype_handler },
+    { POST, "/hype/like", hype_like }
   },
 
   { GET,  "/guestbook", html(guestbook_page) },
@@ -61,7 +65,7 @@ local app = Routes {
 
   { GET, "/health", function() return { status = "UP" } end },
 
-  { STATIC_FILE, "/preman", "preman.html" },
+  { STATIC_FILE, "/preman", "trails/preman.html" },
   { STATIC_DIR,  "/static", "static" },
 
   today_app,
@@ -71,6 +75,7 @@ local app = Routes {
       require("guess_number_game")
     }
   },
+
 
   fallback = chain { html } (function() return "Page not Found" end)
 }

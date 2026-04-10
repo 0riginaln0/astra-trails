@@ -51,6 +51,20 @@ local function tier_list(req)
   return lustache:render(views["tier-list.html"], params)
 end
 
+local likes = 0
+
+local function hype_handler()
+  return lustache:render(views['layout.html'], {
+    title = "Hypermedia",
+    body = lustache:render(views['hype.html'], {likes = likes})
+  })
+end
+
+local function hype_like()
+  likes = likes + 1
+  return tostring(likes)
+end
+
 
 ---@param rq HTTPServerRequest
 ---@param rp HTTPServerResponse
@@ -141,8 +155,10 @@ local app = Routes {
 
   scope {
     middleware = html,
-    { GET, "/hello",     function() return "hello world" end },
-    { GET, "/tier-list", tier_list },
+    { GET,  "/hello",     function() return "hello world" end },
+    { GET,  "/tier-list", tier_list },
+    { GET,  "/hype",      hype_handler },
+    { POST, "/hype/like", hype_like }
   },
 
   { GET,  "/guestbook", html(guestbook_page) },
@@ -165,6 +181,7 @@ local app = Routes {
       require("guess_number_game")
     }
   },
+
 
   fallback = chain { html } (function() return "Page not Found" end)
 }

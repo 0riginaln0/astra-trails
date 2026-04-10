@@ -1,0 +1,25 @@
+<div>
+  <strong>How this works:</strong><br>
+  Mustache - renders the initial like count from the server.<br>
+  Fixi.js - sends a POST request to <code>/hype/like</code> without reloading, then replaces the inner HTML of <code>#like-count</code> with the server's response.<br>
+  Hyperscript - handles animations: fades the counter in/out when the number changes (<code>on mutation</code>), and scales the button on hover (<code>mouseenter/mouseleave</code>).
+</div><br>
+
+<div>
+  <span id="like-count"
+        _="on mutation of childList
+           transition my opacity to 0 over 50ms
+           then transition my opacity to 1 over 500ms">
+    {{likes}}
+  </span>
+  <br><br>
+  <button fx-action="/hype/like"
+          fx-method="post"
+          fx-target="#like-count"
+          fx-swap="innerHTML"
+          _="on mouseenter transition *transform to 'scale(1.07)' over 150ms 
+             on mouseleave transition *transform to 'scale(1)' over 150ms">
+    Like
+  </button>
+</div>
+
