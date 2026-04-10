@@ -1,5 +1,5 @@
 # Astra Trails
-Examples, hacks, and tricks for [Astra](https://github.com/ArkForgeLabs/Astra)—a web server runtime for Lua.
+Examples, hacks, and tricks for [Astra](https://github.com/ArkForgeLabs/Astra) - a web server runtime for Lua.
 
 - [Middleware](trails/middleware.md): Introduces patterns for middleware.
 - [Routes Grouping](trails/routing.md): A DSL for registering a group of routes in one place.
