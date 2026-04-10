@@ -1,9 +1,31 @@
-<div>
-  <strong>How this works:</strong><br>
-  Mustache - renders the initial like count from the server.<br>
-  Fixi.js - sends a POST request to <code>/hype/like</code> without reloading, then replaces the inner HTML of <code>#like-count</code> with the server's response.<br>
-  Hyperscript - handles animations: fades the counter in/out when the number changes (<code>on mutation</code>), and scales the button on hover (<code>mouseenter/mouseleave</code>).
-</div><br>
+<h1>How it works</h1>
+
+<table border="1" cellpadding="8" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Library</th>
+      <th>Role</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Lustache</td>
+      <td>Presentation</td>
+      <td>renders the template to html:  initial like count from the server.</td>
+    </tr>
+    <tr>
+      <td>Fixi.js</td>
+      <td>Network Updates</td>
+      <td>sends a POST request to <code>/hype/like</code>, then replaces the inner HTML of <code>#like-count</code> with the server's response without page reload.</td>
+    </tr>
+    <tr>
+      <td>Hyperscript</td>
+      <td>Behavior</td>
+      <td>handles animations: fades the counter in/out when the number changes (<code>on mutation</code>), and scales the button on hover (<code>mouseenter/mouseleave</code>).</td>
+    </tr>
+  </tbody>
+</table><br><br>
 
 <div>
   <span id="like-count"
