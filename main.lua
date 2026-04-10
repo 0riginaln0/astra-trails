@@ -1,3 +1,5 @@
+require "setup"
+
 local server = require("http").server:new()
 local sc = require("http").status_codes
 local validation = require("validation")
@@ -153,7 +155,7 @@ local app = Routes {
 
   { GET, "/health", function() return { status = "UP" } end },
 
-  { STATIC_FILE, "/preman", "preman.html" },
+  { STATIC_FILE, "/preman", "trails/preman.html" },
   { STATIC_DIR,  "/static", "static" },
 
   today_app,

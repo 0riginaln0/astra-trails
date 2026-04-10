@@ -1,13 +1,13 @@
 # Astra Trails
-Examples, hacks &amp; tricks around [Astra](https://github.com/ArkForgeLabs/Astra) - a web server runtime for Lua.
+Examples, hacks, and tricks for [Astra](https://github.com/ArkForgeLabs/Astra)—a web server runtime for Lua.
 
+- [Middleware](trails/middleware.md): Introduces patterns for middleware.
+- [Routes Grouping](trails/routing.md): A DSL for registering a group of routes in one place.
+- [Templating with Lustache](trails/lustache.md): A full overview of Mustache templates in pure Lua.
+- [LugSQL](trails/lugsql.md): Converts parameterized SQL into Lua functions.
+- [Preman](trails/preman.md): A simple API client embedded within the app.
 
-- [Middleware](middleware.md): Introducing pattern for middleware.
-- [Routes grouping](routing.md): DSL to register a group of routes in one place.
-- [Templating with Lustache](lustache.md): Full overview of Mustache templates in pure Lua.
-- [LugSQL](lugsql.md): Turns parameterized SQL into Lua functions.
-
-Check out [main.lua](main.lua) for an app example.
+Check out [main.lua](main.lua) for an example app.
 
 ```sh
 $ astra export
