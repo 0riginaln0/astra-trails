@@ -9,7 +9,7 @@ local sc = require("http").status_codes
 local validation = require("validation")
 local serde = require("serde")
 
-local routing = require("trouting")
+local routing = require("routing")
 local Routes, scope = routing.Routes, routing.scope
 local GET, POST, STATIC_FILE, STATIC_DIR = routing.GET, routing.POST, routing.STATIC_FILE, routing.STATIC_DIR
 
