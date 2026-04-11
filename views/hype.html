@@ -17,32 +17,69 @@
     <tr>
       <td>Fixi.js</td>
       <td>Network Updates</td>
-      <td>sends a POST request to <code>/hype/like</code>, then replaces the inner HTML of <code>#like-count</code> with the server's response without page reload.</td>
+      <td>sends a POST request to <code>/hype/like</code>, 
+        then replaces the inner HTML of <code>#like-count</code> with the server's
+        response without page reload. Dispatches <a href="https://github.com/bigskysoftware/fixi?tab=readme-ov-file#events">events</a>:
+        <code>fx:before</code> - triggered on an element just before a fetch() request is made.
+        <code>fx:after</code> - triggered on an element just after a fetch() request finishes normally but before content is swapped
+        <code>fx:swapped</code> - triggered after the swap and any associated View Transition has completed.
+      </td>
     </tr>
     <tr>
       <td>Hyperscript</td>
       <td>Behavior</td>
-      <td>handles animations: fades the counter in/out when the number changes (<code>on mutation</code>), and scales the button on hover (<code>mouseenter/mouseleave</code>).</td>
+      <td>listens to Fixi.js events: on <code>fx:before</code> disables the button and scales it down to 0.9; on <code>fx:swapped</code> scales back to 1 and re‑enables the button; on <code>fx:after</code> (from the button) → fades the like counter in/out.</td>
     </tr>
   </tbody>
 </table><br><br>
 
 <div>
   <span id="like-count"
-        _="on mutation of childList
+        _="on fx:after from #like-button
            transition my opacity to 0 over 50ms
            then transition my opacity to 1 over 500ms">
     {{likes}}
   </span>
   <br><br>
-  <button fx-action="/hype/like"
+  <button id="like-button"
+          fx-action="/hype/like"
           fx-method="post"
           fx-target="#like-count"
           fx-swap="innerHTML"
-          _="on click toggle @disabled for 600ms
-             on mouseenter transition *transform to 'scale(1.07)' over 150ms 
-             on mouseleave transition *transform to 'scale(1)' over 150ms">
+          _="on fx:before from me 
+                toggle @disabled on me then
+                transition *transform to 'scale(0.9)'
+             
+             on fx:swapped from me
+                transition *transform to 'scale(1)' then
+                toggle @disabled on me ">
     Like
   </button>
 </div>
 
+
+<pre><code>
+&lt;div&gt;
+  &lt;span id="like-count"
+        _="on fx:after from #like-button
+           transition my opacity to 0 over 50ms
+           then transition my opacity to 1 over 500ms"&gt;
+    &#123;{likes}&#125;
+  &lt;/span&gt;
+  &lt;br&gt;&lt;br&gt;
+  &lt;button id="like-button"
+          fx-action="/hype/like"
+          fx-method="post"
+          fx-target="#like-count"
+          fx-swap="innerHTML"
+          _="on fx:before from me 
+                toggle @disabled on me then
+                transition *transform to 'scale(0.9)'
+             
+             on fx:swapped from me
+                transition *transform to 'scale(1)' then
+                toggle @disabled on me "&gt;
+    Like
+  &lt;/button&gt;
+&lt;/div&gt;
+</code></pre>
