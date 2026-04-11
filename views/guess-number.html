@@ -34,6 +34,7 @@
         {{^game_won}}
         <form method="post" action="{{path}}">
             <input type="hidden" name="attempts" value="{{attempts}}">
+            <input type="hidden" name="secret_number" value="{{secret_number}}">
             <label for="guess">Your guess (1-100): </label>
             <input type="number" id="guess" name="guess" required min="1" max="100" step="1" autofocus>
             <button type="submit">Submit Guess</button>
