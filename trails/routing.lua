@@ -1,7 +1,6 @@
 local r = {}
 
-local utils = require "utils"
-local set = utils.set
+local set = require("utils").set
 local chain = require("middleware").chain
 
 r.GET = "GET"
