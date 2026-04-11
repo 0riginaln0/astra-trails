@@ -1,34 +1,38 @@
+local _dbg = require("vendor.debugger")
+
+
 require "setup"
+
 
 local server = require("http").server:new()
 local sc = require("http").status_codes
 local validation = require("validation")
 local serde = require("serde")
 
-local routing = require("routing")
+local routing = require("trails.routing")
 local Routes, scope = routing.Routes, routing.scope
 local GET, POST, STATIC_FILE, STATIC_DIR = routing.GET, routing.POST, routing.STATIC_FILE, routing.STATIC_DIR
 
 
-local middleware = require("middleware")
+local middleware = require("trails.middleware")
 local chain = middleware.chain
 local html = middleware.html
 local logger = middleware.console_logger
 local ctx = middleware.context
 
 
-local lustache = require("lustache")
-local escape_html = require("utils").escape_html
+local lustache = require("vendor.lustache")
+local escape_html = require("trails.utils").escape_html
 
 
-require("lugsql")("sql/queries.sql", "sqlite")
+require("trails.lugsql")("sql/queries.sql", "sqlite")
 
 local queries = require("sql.queries")(Registry.db)
 -- queries.drop_tables()
 queries.create_tables()
 
 
-local views = require("cache-dir")("views", {hotreload = true})
+local views = require("trails.cache-dir")("views", {hotreload = true})
 
 
 local function homepage() return views["homepage.html"] end

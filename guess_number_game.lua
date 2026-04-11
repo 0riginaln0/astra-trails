@@ -1,12 +1,12 @@
-local routing = require("routing")
+local routing = require("trails.routing")
 local Routes = routing.Routes
 local GET, POST = routing.GET, routing.POST
 
-local middleware = require("middleware")
+local middleware = require("trails.middleware")
 local html = middleware.html
 
-local lustache = require("lustache")
-local cache_dir = require("cache-dir")
+local lustache = require("vendor.lustache")
+local cache_dir = require("trails.cache-dir")
 
 local views = cache_dir("views", { hotreload = true })
 local template = views["guess-number.html"]
