@@ -18,23 +18,23 @@
     </thead>
     <tbody>
       <tr>
-        <td>Lustache</td>
+        <td><a href="https://github.com/Olivine-Labs/lustache">Lustache</a></td>
         <td>Presentation</td>
         <td>Renders the templates to html. Escaped/unescaped variables, sections, partials.</td>
       </tr>
       <tr>
-        <td>Fixi.js</td>
+        <td><a href="https://github.com/bigskysoftware/fixi">Fixi.js</a></td>
         <td>Network Updates</td>
-        <td>Sends fetch requests and replaces the target with the server's response without page reload. Dispatches <a
+        <td>Sends fetch requests and patches the DOM with the server's response. Dispatches <a
             href="https://github.com/bigskysoftware/fixi?tab=readme-ov-file#events">events</a>.</td>
       </tr>
       <tr>
-        <td>Hyperscript</td>
+        <td><a href="https://github.com/bigskysoftware/_hyperscript">Hyperscript</a></td>
         <td>Behavior</td>
-        <td>Adds client-side interactive/decorative features.</td>
+        <td>Adds client-side interactive/decorative features. Can listen and send events</td>
       </tr>
       <tr>
-        <td>css-scope-inline</td>
+        <td><a href="https://github.com/gnat/css-scope-inline">css-scope-inline</a></td>
         <td>Styling</td>
         <td>Scopes CSS to the parent element using the <code>me</code> selector. Works with dynamic
           content.</td>
@@ -49,7 +49,7 @@
         text-align: center;
       }
     </style>
-    <span id="like-count" 
+    <span id="like-count"
            _="on fx:before from #like-button
                   transition my opacity to 0 over 300ms
 
@@ -62,9 +62,10 @@
     <button id="like-button"
             fx-action="/hype/like"
             fx-method="post"
+            fx-trigger="click"
             fx-target="#like-count"
             fx-swap="innerHTML"
-            _="on fx:before from me toggle @disabled on me          
+            _="on fx:before from me toggle @disabled on me
                on like:updated toggle @disabled on me">
       Like
     </button>
@@ -104,7 +105,7 @@
       text-align: center;
     }
   &lt;/style&gt;
-  &lt;span id="like-count" 
+  &lt;span id="like-count"
          _="on fx:before from #like-button
                 transition my opacity to 0 over 300ms
 
@@ -117,9 +118,10 @@
   &lt;button id="like-button"
           fx-action="/hype/like"
           fx-method="post"
+          fx-trigger="click"
           fx-target="#like-count"
           fx-swap="innerHTML"
-          _="on fx:before from me toggle @disabled on me          
+          _="on fx:before from me toggle @disabled on me
              on like:updated toggle @disabled on me"&gt;
     Like
   &lt;/button&gt;
