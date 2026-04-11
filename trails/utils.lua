@@ -8,13 +8,13 @@ function utils.set(entries)
   return new_set
 end
 
-function table:to_string(t)
+local function table_to_string(t)
   local function v_to_string(v)
     local str
     if type(v) == "string" then
       str = "'"..v.."'"
     elseif type(v) == "table" then
-      str = table:to_string(v)
+      str = table_to_string(v)
     else
       str = tostring(v)
     end
@@ -54,7 +54,7 @@ end
 function pp(...args)
   local n = #args
   for i, v in ipairs(args) do
-    io.write(type(v) == "table" and table:to_string(v) or tostring(v))
+    io.write(type(v) == "table" and table_to_string(v) or tostring(v))
     if i ~= n then io.write("\t") end
   end
   io.write("\n")
@@ -72,5 +72,7 @@ local html_escape_characters = {
 function utils.escape_html(str)
   return string.gsub(str, '[&<>"\'/]', function(s) return html_escape_characters[s] end)
 end
+
+pp {a=23, {v=3}}
 
 return utils
