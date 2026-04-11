@@ -3,9 +3,9 @@ Examples, hacks, and tricks for [Astra](https://github.com/ArkForgeLabs/Astra) -
 
 - [Middleware](trails/middleware.md): Introduces patterns for middleware.
 - [Routes Grouping](trails/routing.md): A DSL for registering a group of routes in one place.
-- [Templating with Lustache](trails/lustache.md): A full overview of Mustache templates in pure Lua.
+- [Templating with Lustache](vendor/lustache.md): A full overview of Mustache templates in pure Lua.
 - [LugSQL](trails/lugsql.md): Converts parameterized SQL into Lua functions.
-- [Preman](trails/preman.md): A simple API client embedded within the app.
+- [Preman](vendor/preman.md): A simple API client embedded within the app.
 
 Check out [main.lua](main.lua) for an example app.
 
@@ -46,10 +46,10 @@ local app = Routes {
   middleware = chain { ctx, logger },
 
   { GET, "/", html(homepage) },
+  { GET, "/hello", function() return "hello world" end },
 
   scope {
     middleware = html,
-    { GET,  "/hello",     function() return "hello world" end },
     { GET,  "/tier-list", tier_list },
     { GET,  "/hype",      hype_handler },
     { POST, "/hype/like", hype_like }
@@ -65,7 +65,7 @@ local app = Routes {
 
   { GET, "/health", function() return { status = "UP" } end },
 
-  { STATIC_FILE, "/preman", "trails/preman.html" },
+  { STATIC_FILE, "/preman", "vendor/preman.html" },
   { STATIC_DIR,  "/static", "static" },
 
   today_app,
@@ -75,7 +75,6 @@ local app = Routes {
       require("guess_number_game")
     }
   },
-
 
   fallback = chain { html } (function() return "Page not Found" end)
 }

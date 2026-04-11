@@ -173,7 +173,7 @@ local app = Routes {
 
   { GET, "/health", function() return { status = "UP" } end },
 
-  { STATIC_FILE, "/preman", "trails/preman.html" },
+  { STATIC_FILE, "/preman", "vendor/preman.html" },
   { STATIC_DIR,  "/static", "static" },
 
   today_app,
@@ -183,7 +183,6 @@ local app = Routes {
       require("guess_number_game")
     }
   },
-
 
   fallback = chain { html } (function() return "Page not Found" end)
 }
