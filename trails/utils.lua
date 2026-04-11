@@ -73,6 +73,4 @@ function utils.escape_html(str)
   return string.gsub(str, '[&<>"\'/]', function(s) return html_escape_characters[s] end)
 end
 
-pp {a=23, {v=3}}
-
 return utils
