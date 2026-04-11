@@ -1,70 +1,117 @@
-<h1>How it works</h1>
-
-<table border="1" cellpadding="8" cellspacing="0">
-  <thead>
-    <tr>
-      <th>Library</th>
-      <th>Role</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Lustache</td>
-      <td>Presentation</td>
-      <td>renders the template to html:  initial like count from the server.</td>
-    </tr>
-    <tr>
-      <td>Fixi.js</td>
-      <td>Network Updates</td>
-      <td>sends a POST request to <code>/hype/like</code>, 
-        then replaces the inner HTML of <code>#like-count</code> with the server's
-        response without page reload. Dispatches <a href="https://github.com/bigskysoftware/fixi?tab=readme-ov-file#events">events</a>:
-        <code>fx:before</code> - triggered on an element just before a fetch() request is made.
-        <code>fx:after</code> - triggered on an element just after a fetch() request finishes normally but before content is swapped
-        <code>fx:swapped</code> - triggered after the swap and any associated View Transition has completed.
-      </td>
-    </tr>
-    <tr>
-      <td>Hyperscript</td>
-      <td>Behavior</td>
-      <td>listens to Fixi.js events: on <code>fx:before</code> disables the button and scales it down to 0.9; on <code>fx:swapped</code> scales back to 1 and re‑enables the button; on <code>fx:after</code> (from the button) → fades the like counter in/out.</td>
-    </tr>
-  </tbody>
-</table><br><br>
-
 <div>
-  <span id="like-count"
-        _="on fx:after from #like-button
-           transition my opacity to 0 over 50ms
-           then transition my opacity to 1 over 500ms">
-    {{likes}}
-  </span>
+  <style>
+    me {
+      max-width: 900px;
+      margin: 2rem auto;
+    }
+  </style>
+
+  <h1>How it works</h1>
+
+  <table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+      <tr>
+        <th>Library</th>
+        <th>Role</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Lustache</td>
+        <td>Presentation</td>
+        <td>Renders the templates to html. Escaped/unescaped variables, sections, partials.</td>
+      </tr>
+      <tr>
+        <td>Fixi.js</td>
+        <td>Network Updates</td>
+        <td>Sends fetch requests and replaces the target with the server's response without page reload. Dispatches <a
+            href="https://github.com/bigskysoftware/fixi?tab=readme-ov-file#events">events</a>.</td>
+      </tr>
+      <tr>
+        <td>Hyperscript</td>
+        <td>Behavior</td>
+        <td>Adds client-side interactive/decorative features.</td>
+      </tr>
+      <tr>
+        <td>css-scope-inline</td>
+        <td>Styling</td>
+        <td>Scopes CSS to the parent element using the <code>me</code> selector. Works with dynamic
+          content.</td>
+      </tr>
+    </tbody>
+  </table>
   <br><br>
-  <button id="like-button"
-          fx-action="/hype/like"
-          fx-method="post"
-          fx-target="#like-count"
-          fx-swap="innerHTML"
-          _="on fx:before from me 
-                toggle @disabled on me then
-                transition *transform to 'scale(0.9)'
-             
-             on fx:swapped from me
-                transition *transform to 'scale(1)' then
-                toggle @disabled on me ">
-    Like
-  </button>
-</div>
 
+  <div>
+    <style>
+      me {
+        text-align: center;
+      }
+    </style>
+    <span id="like-count" 
+           _="on fx:before from #like-button
+                  transition my opacity to 0 over 300ms
 
-<pre><code>
-&lt;div&gt;
-  &lt;span id="like-count"
-        _="on fx:after from #like-button
-           transition my opacity to 0 over 50ms
-           then transition my opacity to 1 over 500ms"&gt;
-    &#123;{likes}&#125;
+              on fx:finally from #like-button
+                  transition my opacity to 1 over 400ms
+                  send like:updated to #like-button">
+      {{likes}}
+    </span>
+    <br><br>
+    <button id="like-button"
+            fx-action="/hype/like"
+            fx-method="post"
+            fx-target="#like-count"
+            fx-swap="innerHTML"
+            _="on fx:before from me toggle @disabled on me          
+               on like:updated toggle @disabled on me">
+      Like
+    </button>
+  </div>
+  <br><br>
+
+  <div>
+    <style>
+      me {
+        display: block;
+        border: 1px solid light-dark(#aec9eb, #334155);
+        border-radius: 14px;
+        background: light-dark(#f1f8ff, #1e293b);
+        padding: 1rem;
+        overflow-x: auto;
+      }
+      me pre {
+        margin: 0;
+        background: transparent;
+        padding: 0;
+        font-family: 'SF Mono', 'JetBrains Mono', monospace;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        color: light-dark(#0f172a, #e2e8f0);
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      me code {
+        background: transparent;
+        padding: 0;
+        font-family: inherit;
+      }
+    </style>
+<pre><code>&lt;div&gt;
+  &lt;style&gt;
+    me {
+      text-align: center;
+    }
+  &lt;/style&gt;
+  &lt;span id="like-count" 
+         _="on fx:before from #like-button
+                transition my opacity to 0 over 300ms
+
+            on fx:finally from #like-button
+                transition my opacity to 1 over 400ms
+                send like:updated to #like-button"&gt;
+    &#123;&#123;likes&#125;&#125;
   &lt;/span&gt;
   &lt;br&gt;&lt;br&gt;
   &lt;button id="like-button"
@@ -72,14 +119,10 @@
           fx-method="post"
           fx-target="#like-count"
           fx-swap="innerHTML"
-          _="on fx:before from me 
-                toggle @disabled on me then
-                transition *transform to 'scale(0.9)'
-             
-             on fx:swapped from me
-                transition *transform to 'scale(1)' then
-                toggle @disabled on me "&gt;
+          _="on fx:before from me toggle @disabled on me          
+             on like:updated toggle @disabled on me"&gt;
     Like
   &lt;/button&gt;
-&lt;/div&gt;
-</code></pre>
+&lt;/div&gt;</code></pre>
+  </div>
+</div>
