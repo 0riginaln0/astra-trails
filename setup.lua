@@ -1,13 +1,11 @@
-local paths = {
-  "?.lua",
-  "./trails/?.lua",
-  "./vendor/?.lua",
-  "./vendor/?/init.lua",
-  "./vendor/?/?.lua",
-}
-
-package.path = table.concat(paths, ";")..";"..package.path
-
+package.path = table.concat({
+                              "?.lua",
+                              "./trails/?.lua",
+                              "./vendor/?.lua",
+                              "./vendor/?/init.lua",
+                              "./vendor/?/?.lua",
+                              package.path
+                            }, ";")
 
 local db = require("database").new("sqlite", "db.sqlite")
 db:execute "PRAGMA journal_mode = WAL"
