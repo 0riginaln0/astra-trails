@@ -152,10 +152,10 @@ local app = Routes {
   middleware = chain { ctx, logger },
 
   { GET, "/", html(homepage) },
+  { GET, "/hello", function() return "hello world" end },
 
   scope {
     middleware = html,
-    { GET,  "/hello",     function() return "hello world" end },
     { GET,  "/tier-list", tier_list },
     { GET,  "/hype",      hype_handler },
     { POST, "/hype/like", hype_like }
