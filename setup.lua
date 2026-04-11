@@ -15,5 +15,5 @@ db:execute "PRAGMA synchronous  = NORMAL"
 db:execute "PRAGMA foreign_keys = ON"
 db:execute "PRAGMA busy_timeout = 5000"
 
-Registry = require("registry")
-Registry.register("db", db)
+Registry = {}
+Registry.db = db
