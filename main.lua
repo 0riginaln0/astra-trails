@@ -23,8 +23,7 @@ local escape_html = require("utils").escape_html
 
 require("lugsql")("sql/queries.sql", "sqlite")
 
-
-local db = require("database").new("sqlite", "db.sqlite")
+local db = require("registry").get("db")
 local queries = require("sql.queries")(db)
 -- queries.drop_tables()
 queries.create_tables()
