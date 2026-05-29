@@ -9,6 +9,15 @@ Examples, hacks, and tricks for [Astra](https://github.com/ArkForgeLabs/Astra) -
 
 Check out [main.lua](main.lua) for an example app.
 
+
+```sh
+$ git clone https://github.com/0riginaln0/astra-trails.git
+```
+
+```sh
+$ cd astra-trails
+```
+
 ```sh
 $ astra export
 ```
