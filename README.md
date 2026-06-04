@@ -93,3 +93,49 @@ app(server)
 require("print-server-info")(server)
 server:run()
 ```
+
+The same snippet but in YueScript
+```moonscript
+today_app = Routes
+  - [ GET, "/today", () -> "Today is #{os.date()}"]
+
+app = Routes {
+  middleware: chain [ ctx, logger ]
+
+  [ GET, "/", html homepate ]
+  [ GET, "/hello", () -> "Hello world" ]
+
+  scope {
+    middleware: html
+    [ GET,  "/tier-list", tier_list ]
+    [ GET,  "/hype",      hype_handler ]
+    [ POST, "/hype/like", hype_like ]
+  }
+
+  [ GET,  "/guestbook", html guestbook_page ]
+  [ POST, "/guestbook", post_guestbook_form ]
+
+  scope("api") {
+    [ GET,  "/guestbook", get_api_guestbook ]
+    [ POST, "/guestbook", post_api_guestbook ]
+  }
+
+  [ GET, "/health", () -> status: "UP" ]
+  
+  [ STATIC_FILE, "/preman", "vendor/preman.html" ]
+  [ STATIC_DIR,  "/static", "static" ]
+
+  today_app
+
+  scope("/games")
+    - scope("/guess_number")
+      - require "guess_number_page"
+
+  fallback: html () -> "Page not found"
+}
+
+app server
+
+require("print-server-info") server
+server\run!
+```
