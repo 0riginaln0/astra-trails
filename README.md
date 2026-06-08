@@ -7,6 +7,10 @@ Examples, hacks, and tricks for [Astra](https://github.com/ArkForgeLabs/Astra) -
 - [LugSQL](trails/lugsql.md): Converts parameterized SQL into Lua functions.
 - [Preman](vendor/preman.md): A simple API client embedded within the app.
 
+
+Confirmed to work with Astra [v0.48.0](https://github.com/ArkForgeLabs/Astra/releases/tag/v0.48.0)
+
+
 Check out [main.lua](main.lua) for an example app.
 
 
